@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UB Blockchain Week 2026
 
-## Getting Started
+Single-page site for UB Blockchain Week, 23 to 27 November 2026, Ulaanbaatar. Built with Next.js (App Router, TypeScript) from the brand assets in the Figma file "UB-Blockchain-week": logo, palette, posters and business card.
 
-First, run the development server:
+## Run it
 
-```bash
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000. `npm run build` followed by `npm start` serves the production build. `npm run lint` runs ESLint.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Set `NEXT_PUBLIC_SITE_URL` to the public URL before building so Open Graph links resolve to the real domain.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where things live
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/layout.tsx`: fonts (Poppins and Montserrat through next/font), metadata and theme color.
+- `app/page.tsx`: the page, assembled from the sections in `components/`.
+- `app/globals.css`: all styling. Brand tokens are at the top (`--blue`, `--navy`, `--green`, pixel accents, fonts).
+- `app/icon.png`, `app/apple-icon.png`, `app/favicon.ico`, `app/opengraph-image.jpg`: icons and the social share image, picked up by the Next.js file conventions.
+- `lib/site.ts`: the content that changes most: dates, contact email, navigation, the four "call for" cards, the 2025 key visuals and the decorative pixel clusters.
+- `components/`: one component per section. `SiteHeader` and `Countdown` are client components; everything else renders on the server.
+- `public/assets/`: logo cutouts, poster JPEGs and partner logos exported from Figma.
