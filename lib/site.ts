@@ -1,15 +1,23 @@
+/* Public origin for absolute metadata links (Open Graph image). Explicit env wins,
+   then Vercel's production domain, then the local dev server. */
+function siteUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
 export const site = {
   name: "UB Blockchain Week",
   year: "2026",
   title: "UB Blockchain Week 2026",
   description:
-    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 23 to 27 November 2026 in Ulaanbaatar. Hosted by TenGer HD.",
+    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 16 to 20 November 2026 in Ulaanbaatar. Hosted by TenGer HD.",
   city: "Ulaanbaatar, Mongolia",
   /* opening morning and closing evening, Ulaanbaatar time (UTC+8) */
-  start: "2026-11-23T09:00:00+08:00",
-  end: "2026-11-27T20:00:00+08:00",
+  start: "2026-11-16T09:00:00+08:00",
+  end: "2026-11-20T20:00:00+08:00",
   email: "oyunbiligt@gmail.com",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: siteUrl(),
 } as const;
 
 export const navLinks = [
@@ -26,11 +34,11 @@ export function mailto(subject: string): string {
 }
 
 export const days = [
-  { name: "Mon", num: "23" },
-  { name: "Tue", num: "24" },
-  { name: "Wed", num: "25" },
-  { name: "Thu", num: "26" },
-  { name: "Fri", num: "27" },
+  { name: "Mon", num: "16" },
+  { name: "Tue", num: "17" },
+  { name: "Wed", num: "18" },
+  { name: "Thu", num: "19" },
+  { name: "Fri", num: "20" },
 ] as const;
 
 export type PixelColor = "cyan" | "lime" | "magenta" | "white";

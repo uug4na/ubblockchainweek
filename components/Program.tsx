@@ -7,7 +7,7 @@ export default function Program() {
         <div className="section__head">
           <h2 className="section__title" id="program-title">Five days in November</h2>
           <p className="section__intro">
-            Monday to Friday, 23 to 27 November 2026. Sessions are being confirmed now and the full agenda will be published
+            Monday to Friday, 16 to 20 November 2026. Sessions are being confirmed now and the full agenda will be published
             on this page.
           </p>
         </div>

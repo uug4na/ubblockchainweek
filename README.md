@@ -1,6 +1,6 @@
 # UB Blockchain Week 2026
 
-Single-page site for UB Blockchain Week, 23 to 27 November 2026, Ulaanbaatar. Built with Next.js (App Router, TypeScript) from the brand assets in the Figma file "UB-Blockchain-week": logo, palette, posters and business card.
+Single-page site for UB Blockchain Week, 16 to 20 November 2026, Ulaanbaatar. Built with Next.js (App Router, TypeScript) from the brand assets in the Figma file "UB-Blockchain-week": logo, palette, posters and business card.
 
 ## Run it
 

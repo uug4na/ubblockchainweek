@@ -28,9 +28,9 @@ export default function Hero() {
             </span>
           </h1>
           <p className="hero__date">
-            <time dateTime="2026-11-23">2026 11.23</time>
+            <time dateTime="2026-11-16">2026 11.16</time>
             <span className="hero__date-dash">-</span>
-            <time dateTime="2026-11-27">27</time>
+            <time dateTime="2026-11-20">20</time>
           </p>
           <p className="hero__lede">Five days of talks, exhibition and meetups for Mongolia&apos;s blockchain community.</p>
           <div className="hero__actions">
