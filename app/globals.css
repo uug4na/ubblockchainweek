@@ -377,7 +377,7 @@ b { font-weight: 600; }
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.marquee__track { display: flex; gap: 1rem; width: max-content; animation: marquee 50s linear infinite; }
+.marquee__track { display: flex; gap: 1rem; width: max-content; animation: marquee 100s linear infinite; }
 .marquee__track img { width: clamp(260px, 32vw, 420px); height: auto; flex: none; }
 .marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(calc(-50% - .5rem)); } }

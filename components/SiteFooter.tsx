@@ -13,7 +13,7 @@ export default function SiteFooter() {
             </li>
           ))}
         </ul>
-        <p className="site-footer__note">16 to 20 November 2026, Ulaanbaatar. Hosted by TenGer HD.</p>
+        <p className="site-footer__note">30 November to 4 December 2026, Ulaanbaatar. Hosted by TenGer HD.</p>
       </div>
     </footer>
   );
