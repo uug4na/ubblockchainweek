@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { keyVisuals2025 } from "@/lib/site";
+import { recap2025 } from "@/lib/site";
 
 export default function Recap() {
   /* the strip is rendered twice so the marquee loops without a gap;
@@ -17,10 +17,10 @@ export default function Recap() {
           </div>
         </div>
       </div>
-      <div className="marquee" aria-label="Key visuals from UB Blockchain Week 2025">
+      <div className="marquee" aria-label="Photos from UB Blockchain Week 2025">
         <div className="marquee__track">
           {strips.map((strip) =>
-            keyVisuals2025.map((visual) => (
+            recap2025.map((visual) => (
               <Image
                 key={`${strip}-${visual.src}`}
                 src={visual.src}

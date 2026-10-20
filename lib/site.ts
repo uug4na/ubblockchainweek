@@ -11,11 +11,11 @@ export const site = {
   year: "2026",
   title: "UB Blockchain Week 2026",
   description:
-    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 16 to 20 November 2026 in Ulaanbaatar. Hosted by TenGer HD.",
+    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 30 November to 4 December 2026 in Ulaanbaatar. Hosted by TenGer HD.",
   city: "Ulaanbaatar, Mongolia",
   /* opening morning and closing evening, Ulaanbaatar time (UTC+8) */
-  start: "2026-11-16T09:00:00+08:00",
-  end: "2026-11-20T20:00:00+08:00",
+  start: "2026-11-30T09:00:00+08:00",
+  end: "2026-12-04T20:00:00+08:00",
   email: "oyunbiligt@gmail.com",
   url: siteUrl(),
 } as const;
@@ -34,11 +34,11 @@ export function mailto(subject: string): string {
 }
 
 export const days = [
-  { name: "Mon", num: "16" },
-  { name: "Tue", num: "17" },
-  { name: "Wed", num: "18" },
-  { name: "Thu", num: "19" },
-  { name: "Fri", num: "20" },
+  { name: "Mon", num: "30", month: "Nov" },
+  { name: "Tue", num: "1", month: "Dec" },
+  { name: "Wed", num: "2", month: "Dec" },
+  { name: "Thu", num: "3", month: "Dec" },
+  { name: "Fri", num: "4", month: "Dec" },
 ] as const;
 
 export type PixelColor = "cyan" | "lime" | "magenta" | "white";
@@ -113,9 +113,22 @@ export const calls: {
   },
 ];
 
-export const keyVisuals2025: Poster[] = ["blue", "green", "dark", "orange accents", "light blue", "purple"].map((tone, i) => ({
-  src: `/assets/posters/key-visual-2025-${i + 1}.jpg`,
-  alt: `UB Blockchain Week 2025 key visual, ${tone}`,
-  width: 673,
-  height: 352,
+export const recap2025: Poster[] = [
+  "Stablecoin panel on stage at UB Blockchain Week 2025",
+  "Web3 Hackathon teams listening to a talk",
+  "Research conference winners holding their prize boards",
+  "Panelist speaking during a discussion",
+  "Hackathon participant's \"Let me show you the game\" T-shirt",
+  "Presenter at the research conference",
+  "Roundtable discussion in front of the stablecoin panel screen",
+  "Speaker addressing hackathon teams",
+  "Research conference prize winner",
+  "Panelists in conversation",
+  "Hackathon team member giving a thumbs up",
+  "Student presenting at the research conference",
+].map((alt, i) => ({
+  src: `/assets/recap/recap-2025-${String(i + 1).padStart(2, "0")}.jpg`,
+  alt,
+  width: 1280,
+  height: 720,
 }));
