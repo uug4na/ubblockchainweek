@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: site.description,
   openGraph: {
     title: site.title,
-    description: "30 November to 4 December 2026, Ulaanbaatar, Mongolia. Hosted by TenGer HD.",
+    description: "11.30-12.04, 2026, Ulaanbaatar, Mongolia. Hosted by TenGer HD.",
     type: "website",
   },
 };
