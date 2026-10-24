@@ -120,8 +120,8 @@ export default function Home() {
               </p>
             </div>
             <figure className="t-gal-portrait" data-reveal>
-              <img src={img("2025/speaker-undral.jpg")} alt="A. Undral, speaker at UB Blockchain Week 2025" loading="lazy" />
-              <figcaption><small>Speaker · 2025</small><b>A. Undral</b><span>Director, TenGer TV</span></figcaption>
+              <img src={img("2025/recap/hack/p01.webp")} alt="Web3 Hackathon poster, UB Blockchain Week 2025" loading="lazy" />
+              <figcaption><small>2025</small><b>Web3 Hackathon</b><span>₮20,000,000 prize pool</span></figcaption>
             </figure>
             <QuoteCard
               by="UB Blockchain Week 2026"
