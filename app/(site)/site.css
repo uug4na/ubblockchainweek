@@ -51,7 +51,16 @@
   .t-nav { display: none; }
   .t-header-actions .hide-sm { display: none; }
 }
-@media (max-width: 420px) { .t-header-actions .t-btn { padding: 0 12px; font-size: 12.5px; } }
+/* phones: two columns (the nav is hidden), tighter gaps and a 40px button pair, so the menu button never leaves the screen */
+@media (max-width: 560px) {
+  .t-header-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .t-header-actions { grid-column: 2; gap: 8px; }
+  .t-header-actions > .t-btn { height: 40px; padding: 0 12px; font-size: 12px; }
+  .t-menu { width: 40px; height: 40px; flex: none; }
+  .t-header .logo-img { height: 24px; }
+  .t-header .logo-year { font-size: 10px; }
+}
+@media (max-width: 374px) { .t-header .logo-year { display: none; } }
 
 .t-header .logo-year { font-size: 11px; color: #fff; align-self: flex-end; margin-bottom: 1px; }
 @media (max-width: 1100px) { .t-header .logo-img { height: 28px; } }
