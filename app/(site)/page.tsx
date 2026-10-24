@@ -12,6 +12,7 @@ import { Marquee } from "@/components/report/Marquee";
 import { PartnerCards } from "@/components/PartnerCards";
 import { ScrollFx } from "@/components/ScrollFx";
 import { Faq } from "@/components/Faq";
+import { PowerFx } from "@/components/PowerFx";
 
 // Landing page, laid out like token2049.com/dubai: full-bleed hero with a stats strip, a light
 // centred carousel, a bento gallery, a dark "attended by" band, a partner wall, three CTA cards.
@@ -255,6 +256,7 @@ export default function Home() {
       </section>
 
       <ScrollFx />
+      <PowerFx />
     </>
   );
 }
