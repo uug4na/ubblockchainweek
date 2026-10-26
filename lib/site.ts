@@ -11,11 +11,11 @@ export const site = {
   year: "2026",
   title: "UB Blockchain Week 2026",
   description:
-    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 30 November to 4 December 2026 in Ulaanbaatar. Hosted by TenGer HD.",
+    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 30 November to 5 December 2026 in Ulaanbaatar. Hosted by TenGer HD.",
   city: "Ulaanbaatar, Mongolia",
   /* opening morning and closing evening, Ulaanbaatar time (UTC+8) */
   start: "2026-11-30T09:00:00+08:00",
-  end: "2026-12-04T20:00:00+08:00",
+  end: "2026-12-05T20:00:00+08:00",
   email: "oyunbiligt@gmail.com",
   url: siteUrl(),
 } as const;

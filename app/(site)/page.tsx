@@ -152,7 +152,7 @@ export default function Home() {
             <h2 className="t-title">Five days<span>one city</span></h2>
             <p className="t-net-lede">Explore emerging projects, meet the people building them, develop new ideas, and take part in conversations about the future of blockchain and crypto in Mongolia.</p>
             <dl className="t-net-stats">
-              <div><dt>30 November – 4 December 2026</dt><dd>5 days</dd></div>
+              <div><dt>30 November – 5 December 2026</dt><dd>5 days</dd></div>
               <div><dt>Free with advance registration</dt><dd>Free entry</dd></div>
               <div><dt>Program and speakers to be announced</dt><dd>Agenda soon</dd></div>
             </dl>
@@ -224,7 +224,7 @@ export default function Home() {
         <div className="t-wrap">
           <div className="r-involve-head" data-reveal>
             <div>
-              <p className="t-eyebrow">Join us on 30 November – 4 December 2026</p>
+              <p className="t-eyebrow">Join us on 30 November – 5 December 2026</p>
               <h2 className="t-title">Get involved</h2>
               <p className="r-involve-mn">Технологийг дэмжигч та бүхнийг хамтран ажиллахыг урьж байна</p>
             </div>

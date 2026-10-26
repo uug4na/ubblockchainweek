@@ -5,9 +5,9 @@ export default function Program() {
     <section className="section section--program" id="program" aria-labelledby="program-title">
       <div className="container">
         <div className="section__head">
-          <h2 className="section__title" id="program-title">Five days, 30 November to 4 December</h2>
+          <h2 className="section__title" id="program-title">Five days, 30 November to 5 December</h2>
           <p className="section__intro">
-            Monday to Friday, 30 November to 4 December 2026. Sessions are being confirmed now and the full agenda will be published
+            Monday to Friday, 30 November to 5 December 2026. Sessions are being confirmed now and the full agenda will be published
             on this page.
           </p>
         </div>

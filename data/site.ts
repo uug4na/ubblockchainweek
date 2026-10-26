@@ -8,9 +8,9 @@ export const site = {
   origin: "https://michealbuilds.site",
   city: "Ulaanbaatar",
   country: "Mongolia",
-  dates: "November 30 – December 4, 2026",
+  dates: "November 30 – December 5, 2026",
   startISO: "2026-11-30T09:00:00+08:00",
-  endISO: "2026-12-04T22:00:00+08:00",
+  endISO: "2026-12-05T22:00:00+08:00",
   tz: "Asia/Ulaanbaatar",
   email: "oyunbiligt@gmail.com",
   // TODO: real handles and links. Social tasks in the app point here.
