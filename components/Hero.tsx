@@ -32,7 +32,7 @@ export default function Hero() {
             <span className="hero__date-dash">-</span>
             <time dateTime="2026-12-05">12.05</time>
           </p>
-          <p className="hero__lede">Five days of talks, exhibition and meetups for Mongolia&apos;s blockchain community.</p>
+          <p className="hero__lede">Six days of talks, exhibition and meetups for Mongolia&apos;s blockchain community.</p>
           <div className="hero__actions">
             <a className="btn btn--green" href="#get-involved">Become a partner</a>
             <a className="btn btn--ghost" href={mailto("Call for Speakers")}>Apply to speak</a>

@@ -32,6 +32,7 @@ export const days: Day[] = [
   { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Conference · Day 1", blurb: "Main stage, builders' room and the hearth lounge. Ideas from Mongolia and far beyond." },
   { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Conference · Day 2", blurb: "Deep dives and lightning talks. Teams form in the afternoon and UB Hack starts at 18:00." },
   { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "UB Hack · Demos & Closing", blurb: "Hack through the night, demo after lunch. Prizes, then one long table for everyone." },
+  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "To be announced", blurb: "Details coming soon." },
 ];
 
 export const pillars = [

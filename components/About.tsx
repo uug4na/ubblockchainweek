@@ -6,7 +6,7 @@ export default function About() {
           <h2 className="section__title" id="about-title">One week, the whole ecosystem in one place</h2>
           <p className="section__intro">
             UB Blockchain Week brings Mongolia&apos;s founders, developers, investors, regulators and the curious together in
-            Ulaanbaatar for five days every November. Talks on stage, companies on the exhibition floor, and meetups around
+            Ulaanbaatar for six days every November. Talks on stage, companies on the exhibition floor, and meetups around
             the edges.
           </p>
         </div>

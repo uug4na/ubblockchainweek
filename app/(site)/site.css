@@ -209,7 +209,7 @@
 .t-net-stats dd { margin: 0; font-size: clamp(30px, 3.6vw, 44px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; }
 .t-net-art .iso-corner { bottom: 6px; }
 @media (max-width: 600px) { .t-net-art .iso-corner span:first-child { display: none; } .t-net-art .iso-corner { justify-content: flex-end; padding: 0 6%; } }
-.t-week { grid-column: 1 / -1; position: relative; list-style: none; margin: clamp(48px, 7vw, 84px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid rgba(255, 255, 255, .14); }
+.t-week { grid-column: 1 / -1; position: relative; list-style: none; margin: clamp(48px, 7vw, 84px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid rgba(255, 255, 255, .14); }
 .t-week li { padding: 18px 14px 0 0; display: grid; gap: 8px; border-right: 1px solid rgba(255, 255, 255, .08); padding-left: 14px; }
 .t-week li:first-child { padding-left: 0; }
 .t-week li:last-child { border-right: 0; }

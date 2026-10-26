@@ -334,7 +334,7 @@ b { font-weight: 600; }
 @media (max-width: 900px) { .speakers { grid-template-columns: repeat(2, 1fr); } }
 
 /* ---------- program ---------- */
-.days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+.days { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
 .day { display: grid; gap: .15rem; padding: 1.25rem 1.25rem 1.5rem; background: var(--navy-deep); }
 .day:nth-child(odd) { background: rgba(41, 69, 213, .22); }
 .day__name, .day__month { font-size: .9rem; color: var(--muted); }

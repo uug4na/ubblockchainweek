@@ -39,8 +39,8 @@ const involve = [
 ];
 
 const stats = [
-  { n: "5", label: "days" },
-  { n: "30–4", label: "Nov–Dec" },
+  { n: "6", label: "days" },
+  { n: "30–5", label: "Nov–Dec" },
   { n: "Free", label: "entry" },
   { n: "Soon", label: "agenda" },
 ];
@@ -50,7 +50,7 @@ const slides: Slide[] = [
     eyebrow: "Free with advance registration",
     title: "Join the ",
     accent: "community",
-    body: "Builders, researchers, students, companies and policymakers meet in Ulaanbaatar for five days of learning, collaboration and discussion. Every event is free to attend with advance registration.",
+    body: "Builders, researchers, students, companies and policymakers meet in Ulaanbaatar for six days of learning, collaboration and discussion. Every event is free to attend with advance registration.",
     cta: { label: "Get involved", href: "/get-involved" },
     photo: withBase(recap("hack/07")), inset: withBase(recap("research/08", true)), alt: "A full room at UB Blockchain Week 2025",
   },
@@ -149,10 +149,10 @@ export default function Home() {
         <div className="t-wrap t-net">
           <div className="t-net-copy" data-reveal>
             <p className="t-eyebrow">Built for builders</p>
-            <h2 className="t-title">Five days<span>one city</span></h2>
+            <h2 className="t-title">Six days<span>one city</span></h2>
             <p className="t-net-lede">Explore emerging projects, meet the people building them, develop new ideas, and take part in conversations about the future of blockchain and crypto in Mongolia.</p>
             <dl className="t-net-stats">
-              <div><dt>30 November – 5 December 2026</dt><dd>5 days</dd></div>
+              <div><dt>30 November – 5 December 2026</dt><dd>6 days</dd></div>
               <div><dt>Free with advance registration</dt><dd>Free entry</dd></div>
               <div><dt>Program and speakers to be announced</dt><dd>Agenda soon</dd></div>
             </dl>

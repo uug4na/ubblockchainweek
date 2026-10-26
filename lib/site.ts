@@ -11,7 +11,7 @@ export const site = {
   year: "2026",
   title: "UB Blockchain Week 2026",
   description:
-    "UB Blockchain Week 2026: five days of talks, exhibition and meetups for Mongolia's blockchain community. 30 November to 5 December 2026 in Ulaanbaatar. Hosted by TenGer HD.",
+    "UB Blockchain Week 2026: six days of talks, exhibition and meetups for Mongolia's blockchain community. 30 November to 5 December 2026 in Ulaanbaatar. Hosted by TenGer HD.",
   city: "Ulaanbaatar, Mongolia",
   /* opening morning and closing evening, Ulaanbaatar time (UTC+8) */
   start: "2026-11-30T09:00:00+08:00",
@@ -39,6 +39,7 @@ export const days = [
   { name: "Wed", num: "2", month: "Dec" },
   { name: "Thu", num: "3", month: "Dec" },
   { name: "Fri", num: "4", month: "Dec" },
+  { name: "Sat", num: "5", month: "Dec" },
 ] as const;
 
 export type PixelColor = "cyan" | "lime" | "magenta" | "white";
