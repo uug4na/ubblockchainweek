@@ -13,7 +13,6 @@ import mic from "@/components/iso/figures/minis/mic";
 import ger from "@/components/iso/figures/minis/ger";
 import badge from "@/components/iso/figures/minis/badge";
 import { SukhbaatarSquare, type Spot } from "@/components/iso/SukhbaatarSquare";
-import { usePersisted } from "@/lib/store";
 
 const roles: { id: Spot; mini: { vb: number[]; svg: string }; title: string; line: string; prompt: string }[] = [
   { id: "partner", mini: gears, title: "Partnership", line: "Expertise, venues, technology or funding.", prompt: "What would you like to support?" },
@@ -22,14 +21,12 @@ const roles: { id: Spot; mini: { vb: number[]; svg: string }; title: string; lin
   { id: "volunteer", mini: badge, title: "Volunteers", line: "Help run the week.", prompt: "Which days are you free?" },
 ];
 
-type Entry = { type: Spot; name: string; email: string; org: string; note: string; at: number };
-const NONE: Entry[] = [];
-
 export function GetInvolved() {
   const [role, setRole] = useState<Spot>("partner");
   const [hover, setHover] = useState<Spot | null>(null);
   const [sent, setSent] = useState(false);
-  const [, setEntries] = usePersisted<Entry[]>("ubbw.interest", NONE);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
   const current = roles.find((r) => r.id === role)!;
 
@@ -45,19 +42,31 @@ export function GetInvolved() {
 
   function open() {
     setSent(false);
+    setError("");
     dialog.current?.showModal();
   }
 
-  function submit(e: React.FormEvent<HTMLFormElement>) {
+  // emailed to the organiser by app/api/get-involved (Resend)
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    // TODO: POST to the real backend / form service. Stored locally for now (same as the old form).
-    setEntries((prev) => [
-      ...prev,
-      { type: role, name: String(f.get("name")), email: String(f.get("email")), org: String(f.get("org")), note: String(f.get("note")), at: Date.now() },
-    ]);
-    setSent(true);
-    e.currentTarget.reset();
+    const form = e.currentTarget;
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/get-involved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: role, ...Object.fromEntries(new FormData(form)) }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Could not send, please try again");
+      setSent(true);
+      form.reset();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not send, please try again");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -121,7 +130,9 @@ export function GetInvolved() {
                 <label><span><em>02</em>Email</span><input name="email" type="email" required autoComplete="email" placeholder="you@example.com" /></label>
                 <label><span><em>03</em>Organisation <i>optional</i></span><input name="org" autoComplete="organization" placeholder="Company, team or school" /></label>
                 <label><span><em>04</em>{current.prompt}</span><textarea name="note" rows={4} placeholder="A few lines is enough" /></label>
-                <button type="submit" className="t-btn t-btn-fill">Send application <ArrowRight size={16} /></button>
+                <input name="website" className="gi-trap" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+                {error && <p className="gi-error" role="alert">{error}</p>}
+                <button type="submit" className="t-btn t-btn-fill" disabled={sending}>{sending ? "Sending…" : <>Send application <ArrowRight size={16} /></>}</button>
               </form>
             )}
           </div>

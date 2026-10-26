@@ -1050,6 +1050,9 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .gi-form input::placeholder, .gi-form textarea::placeholder { color: rgba(255, 255, 255, .3); }
 .gi-form input:focus, .gi-form textarea:focus { outline: none; border-bottom-color: var(--t-accent-dark); }
 .gi-form .t-btn { width: 100%; height: 52px; margin-top: 8px; }
+.gi-form .t-btn:disabled { opacity: .6; cursor: progress; }
+.gi-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.gi-error { margin: 0; font-size: 14px; color: #ff8a8a; }
 .gi-sent { display: grid; gap: 12px; align-content: center; min-height: 100%; }
 .gi-sent b { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; color: var(--t-accent-dark); }
 .gi-sent p { margin: 0 0 12px; font-size: 16px; color: rgba(255, 255, 255, .8); }
