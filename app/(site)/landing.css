@@ -1739,8 +1739,8 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 :root[data-theme="light"] .hero::before { opacity: 0; }
 :root[data-theme="light"] .hero-sun { color: var(--blue); }
 
-/* logo lockup (site, app, crew): the brand file as a mask so it takes currentColor */
-.logo-img { display: block; height: 34px; aspect-ratio: 1014 / 349; background: currentColor; -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+/* logo lockup: the 2026 brand file drawn as is (its year badge has its own grey gradient, so no mask) */
+.logo-img { display: block; height: 34px; aspect-ratio: 1014 / 350; background: var(--logo) center / contain no-repeat; }
 .app-top-mark { width: auto; color: var(--label); }
 .app-top-mark .logo-img { height: 26px; }
 .app-side .logo, .staff-side .logo { display: inline-flex; align-items: flex-end; gap: 8px; color: var(--label); }

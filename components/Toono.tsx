@@ -34,14 +34,12 @@ export function Toono({ size = 32, className, title }: Props) {
   );
 }
 
-// The official lockup (mark + "UB Blockchain Week") from the brand files, drawn as a mask so it
-// takes the text colour: white on navy, navy in light mode. The year sits in the brand's badge.
-export function Logo({ compact = false, year = true }: { compact?: boolean; year?: boolean }) {
+// The official 2026 lockup (mark + "UB Blockchain Week" + the 2026 badge), white, for the dark site.
+export function Logo({ compact = false }: { compact?: boolean }) {
   if (compact) return <span className="logo"><Toono size={30} className="logo-mark" /></span>;
   return (
     <span className="logo">
       <span className="logo-img" role="img" aria-label="UB Blockchain Week" style={{ "--logo": `url(${withBase("/brand/logo-white.webp")})` } as React.CSSProperties} />
-      {year && <span className="logo-year">2026</span>}
     </span>
   );
 }

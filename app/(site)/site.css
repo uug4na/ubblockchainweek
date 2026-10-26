@@ -52,18 +52,16 @@
   .t-header-actions .hide-sm { display: none; }
 }
 /* phones: two columns (the nav is hidden), tighter gaps and a 40px button pair, so the menu button never leaves the screen */
+/* the 2026 lockup carries its own year badge, so it runs a little taller than the old one */
+.t-header .logo-img { height: 40px; }
+@media (max-width: 1100px) { .t-header .logo-img { height: 34px; } }
 @media (max-width: 560px) {
   .t-header-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
   .t-header-actions { grid-column: 2; gap: 8px; }
   .t-header-actions > .t-btn { height: 40px; padding: 0 12px; font-size: 12px; }
   .t-menu { width: 40px; height: 40px; flex: none; }
-  .t-header .logo-img { height: 24px; }
-  .t-header .logo-year { font-size: 10px; }
+  .t-header .logo-img { height: 30px; }
 }
-@media (max-width: 374px) { .t-header .logo-year { display: none; } }
-
-.t-header .logo-year { font-size: 11px; color: #fff; align-self: flex-end; margin-bottom: 1px; }
-@media (max-width: 1100px) { .t-header .logo-img { height: 28px; } }
 
 /* ── type ── */
 .t-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--t-accent-dark); margin: 0 0 14px; }
@@ -321,7 +319,7 @@
 .t-footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 28px 32px; padding: clamp(28px, 4vw, 44px) 0 0; }
 .t-footer-brand { display: grid; gap: 18px; align-content: start; justify-items: start; }
 .t-footer-brand .logo { display: inline-flex; gap: 8px; align-items: flex-end; color: #fff; }
-.t-footer-brand .logo-img { height: 38px; }
+.t-footer-brand .logo-img { height: 48px; }
 .t-footer-grid nav { display: grid; gap: 10px; align-content: start; }
 .t-footer-grid h4 { margin: 0 0 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .7); }
 .t-footer-grid nav a { font-size: 14px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: rgba(255, 255, 255, .9); }

@@ -117,7 +117,7 @@ export default function Home() {
             <div className="t-gal-text" data-reveal>
               <h2 className="t-title t-title-sm"><span>What is</span>UBBW 2026?</h2>
               <p data-words>
-                {words("UB Blockchain Week is Mongolia's blockchain and crypto community gathering, initiated by TenGer TV for builders, developers, researchers, students, companies and policymakers. Over five days in Ulaanbaatar, it brings the ecosystem together through a Web3 hackathon, developer workshops, project AMAs, industry panels, an academic conference and a policy roundtable.")}
+                {words("UB Blockchain Week is Mongolia's blockchain and crypto community gathering, initiated by TenGer TV for builders, developers, researchers, students, companies and policymakers. Over six days in Ulaanbaatar, it brings the ecosystem together through a Web3 hackathon, developer workshops, project AMAs, industry panels, an academic conference and a policy roundtable.")}
               </p>
             </div>
             <figure className="t-gal-portrait" data-reveal>
