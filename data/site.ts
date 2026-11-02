@@ -24,7 +24,8 @@ export const site = {
   },
 };
 
-export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string };
+// allDay: the label is the day's one full-day event, with no set hours.
+export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string; allDay?: boolean };
 
 export const days: Day[] = [
   { date: "2026-11-30", short: "30", month: "Nov", weekday: "Mon", label: "Roundtable", blurb: "Roundtable, the first TenGer panel and an AMA." },
@@ -32,7 +33,7 @@ export const days: Day[] = [
   { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Hackathon opens", blurb: "The hackathon opens, with a workshop, a TenGer panel and an AMA." },
   { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Academic conference", blurb: "The academic conference, a workshop and day 2 of the hackathon." },
   { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "Hackathon final", blurb: "The hackathon final, the last TenGer panel and an AMA." },
-  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Full-day event." },
+  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Full-day event.", allDay: true },
 ];
 
 export const pillars = [

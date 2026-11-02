@@ -224,6 +224,64 @@
   .t-week li { padding: 14px 12px 14px 0 !important; border-right: 0; border-top: 1px solid rgba(255, 255, 255, .12); }
 }
 
+/* Montserrat Cyrillic cut to Poppins' stroke weight, for Mongolian titles in the agenda only */
+@font-face { font-family: "UB Cyrillic"; font-weight: 600; font-display: swap; src: url("/fonts/ub-cyrillic-600.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "UB Cyrillic"; font-weight: 600; font-display: swap; src: url("/fonts/ub-cyrillic-ext-600.woff2") format("woff2"); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+@font-face { font-family: "UB Cyrillic"; font-weight: 700; font-display: swap; src: url("/fonts/ub-cyrillic-700.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "UB Cyrillic"; font-weight: 700; font-display: swap; src: url("/fonts/ub-cyrillic-ext-700.woff2") format("woff2"); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+.t-agenda { font-family: "Poppins", "UB Cyrillic", system-ui, sans-serif; }
+.t-agenda h2, .t-agenda b { font-family: inherit; }
+
+/* ── /program: the agenda, a row per day ── */
+.t-agenda-day { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); padding: clamp(24px, 3vw, 36px) 0; border-top: 1px solid var(--t-line); scroll-margin-top: 90px; }
+.t-agenda-day:last-child { border-bottom: 1px solid var(--t-line); }
+.t-agenda-day h2 { margin: 0; font-size: clamp(22px, 2.4vw, 30px); font-weight: 700; letter-spacing: .01em; text-transform: uppercase; color: var(--t-ink); }
+.t-agenda-day ol { list-style: none; margin: 0; padding: 0; }
+.t-agenda-day li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--t-line); }
+.t-agenda-day li:first-child { padding-top: 0; border-top: 0; }
+.t-agenda-day time { display: flex; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--t-muted); }
+.t-agenda-day time b { font: inherit; color: inherit; letter-spacing: inherit; }
+.t-agenda-day time span::before { content: "–"; }
+.t-agenda-day li > div { display: grid; gap: 2px; min-width: 0; }
+.t-agenda-day li > div b { font-size: clamp(16px, 1.5vw, 19px); font-weight: 600; line-height: 1.3; letter-spacing: .02em; color: var(--t-ink); }
+.t-agenda-tabs { display: none; }
+.prog-head { display: none; }
+
+/* phones: a soft light page under the dark hero, a sticky day picker, one day as a white grouped list */
+@media (max-width: 720px) {
+  .t-agenda.band-light { padding: 18px 0 8px; background: #f3f5fd; color: var(--t-ink); }
+  .t-agenda-tabs { position: sticky; top: 64px; z-index: 5; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; margin: 0 -16px; padding: 10px 16px; background: #f3f5fd; }
+  .t-agenda-tabs button { display: grid; justify-items: center; gap: 2px; min-height: 58px; padding: 8px 0; border: 1px solid var(--t-line); border-radius: 10px; background: #fff; color: var(--t-ink); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color .15s, color .15s, border-color .15s; }
+  .t-agenda-tabs small { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--t-muted); }
+  .t-agenda-tabs b { font-size: 20px; font-weight: 700; line-height: 1; }
+  .t-agenda-tabs .is-on { border-color: var(--t-navy); background: var(--t-navy); color: #fff; }
+  .t-agenda-tabs .is-on small { color: rgba(255, 255, 255, .75); }
+  .t-agenda-tabs button:focus-visible { outline: 2px solid var(--t-accent-light); outline-offset: 2px; }
+
+  .t-agenda-day { display: none; padding: 14px 0 0; border: 0; scroll-margin-top: 142px; }
+  .t-agenda-day:last-child { border-bottom: 0; }
+  .t-agenda-day.is-on { display: block; }
+  .t-agenda-day header { margin-bottom: 12px; }
+  .t-agenda-day h2 { font-size: 20px; color: var(--t-ink); }
+  .t-agenda-day ol { overflow: hidden; border: 1px solid var(--t-line); border-radius: 12px; background: #fff; }
+  .t-agenda-day li, .t-agenda-day li:first-child { grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 16px; }
+  .t-agenda-day time { display: grid; gap: 3px; }
+  .t-agenda-day time b { font-size: 15px; font-weight: 700; color: var(--t-ink); }
+  .t-agenda-day time span { font-size: 12px; font-weight: 500; color: var(--t-muted); }
+  .t-agenda-day time span::before { content: none; }
+  .t-agenda-day li > div b { font-size: 16px; line-height: 1.3; color: var(--t-ink); }
+
+  .t-site .prog-section { padding: 36px 0 56px; background: #f3f5fd; }
+  .t-site .prog-section .wrap { padding-inline: clamp(16px, 4vw, 40px); }
+  .prog-head { display: block; margin: 0 0 14px; font-size: 20px; font-weight: 700; letter-spacing: .01em; text-transform: uppercase; color: var(--t-ink); }
+}
+@media (max-width: 900px) {
+  .t-net { grid-template-columns: 1fr; }
+  .t-net-art { order: -1; margin: -20px -6% 0; }
+  .t-week { grid-template-columns: repeat(2, 1fr); border-top: 0; gap: 0; }
+  .t-week li { padding: 14px 12px 14px 0 !important; border-right: 0; border-top: 1px solid rgba(255, 255, 255, .12); }
+}
+
 /* ── hosts + partner card (few partners: no logo wall) ── */
 .t-hosts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
 .t-hosts-list { display: grid; grid-template-rows: 1.4fr 1fr; gap: 20px; }
@@ -970,23 +1028,23 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .t-site .prog-formats { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .t-site .prog-card .prog-cta { margin-top: auto; font-weight: 600; }
 .t-site .prog-n { display: none; }
-@media (max-width: 560px) {
+@media (max-width: 720px) {
   .t-site .prog-formats { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .t-site .prog-card { position: relative; min-height: 0; gap: 8px; padding: 16px 14px; border-radius: 10px; background: #0a1a7a; border: 1px solid rgba(255, 255, 255, .12); }
-  .t-site .prog-card > svg { width: 38px; height: 38px; padding: 9px; border-radius: 8px; background: rgba(19, 239, 253, .12); }
-  .t-site .prog-n { display: block; position: absolute; top: 14px; right: 14px; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: rgba(255, 255, 255, .45); }
-  .t-site .prog-card h3 { margin: 6px 0 0; font-size: 16px; line-height: 1.2; }
-  .t-site .prog-card p { margin: 0; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, .7); }
+  .t-site .prog-card { position: relative; min-height: 0; gap: 8px; padding: 16px 14px; border-radius: 12px; background: #fff; border: 1px solid var(--t-line); color: var(--t-ink); }
+  .t-site .prog-card > svg { width: 38px; height: 38px; padding: 9px; border-radius: 10px; background: #f3f5fd; color: var(--t-ink); }
+  .t-site .prog-n { display: block; position: absolute; top: 14px; right: 14px; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--t-muted); }
+  .t-site .prog-card h3 { margin: 6px 0 0; font-size: 16px; line-height: 1.2; color: var(--t-ink); }
+  .t-site .prog-card p { margin: 0; font-size: 13px; line-height: 1.4; color: var(--t-muted); }
   .t-site .prog-card p b { font-weight: 500; color: inherit; }
   .t-site .prog-card .prog-cta { display: none; }
   /* tiles: tagline only, the long description stays on the feature card and on desktop */
   .t-site .prog-card:not(:first-child) p { font-size: 0; }
   .t-site .prog-card:not(:first-child) p b { font-size: 13px; }
   /* feature: the hackathon, full width on the brand blue, full copy and a green button */
-  .t-site .prog-card:first-child { grid-column: 1 / -1; gap: 10px; padding: 22px 20px; background: #2945d5; border-color: transparent; }
+  .t-site .prog-card:first-child { grid-column: 1 / -1; gap: 10px; padding: 22px 20px; background: var(--t-navy); border-color: transparent; }
   .t-site .prog-card:first-child > svg { background: rgba(255, 255, 255, .16); color: #fff; }
   .t-site .prog-card:first-child .prog-n { color: rgba(255, 255, 255, .7); top: 22px; right: 20px; }
-  .t-site .prog-card:first-child h3 { font-size: 22px; max-width: 16ch; }
+  .t-site .prog-card:first-child h3 { font-size: 22px; max-width: 16ch; color: #fff; }
   .t-site .prog-card:first-child p { font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, .85); }
   .t-site .prog-card:first-child p b { display: block; margin-bottom: 2px; font-weight: 600; color: #fff; }
   .t-site .prog-card:first-child .prog-cta { display: inline-flex; align-items: center; align-self: start; height: 42px; margin-top: 8px; padding: 0 16px; border-radius: var(--r); background: var(--green); color: var(--t-navy); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }

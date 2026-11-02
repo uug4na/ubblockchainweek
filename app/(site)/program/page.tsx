@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Code2, Gamepad2, GraduationCap, Landmark, MessagesSquare, Mic, Newspaper } from "lucide-react";
 import { site } from "@/data/site";
-import { ComingSoon } from "@/components/ComingSoon";
+import { ProgramAgenda } from "@/components/ProgramAgenda";
 
 export const metadata: Metadata = { title: "Program" };
 
-// The seven formats of the week (approved copy, 22 Oct). The day-by-day agenda isn't final,
-// so the page lists what the week holds and says the rest is on its way.
+// The day-by-day agenda, then the seven formats of the week (approved copy, 22 Oct).
 const formats = [
   { icon: Gamepad2, title: "Web3 Game Development Hackathon", tag: "Build a game. Demonstrate its potential.", body: "Teams of 2–4 build a playable prototype that uses Web3 technology and a clear business model, then present it at Demo Day.", cta: "Join the hackathon", href: "/hackathon" },
   { icon: Code2, title: "Developer workshops", tag: "Learn through practical work.", body: "Smart contracts, wallet integration, Web3 game development, blockchain data and security practices. Each session lists its skill level.", cta: "Propose a workshop", href: "/get-involved#speak" },
@@ -25,12 +24,15 @@ export default function ProgramPage() {
         <div className="wrap">
           <span className="eyebrow">Program · {site.dates}</span>
           <h1>Explore the program.</h1>
-          <p className="lede">Seven formats across Ulaanbaatar. Venues, speakers and the detailed program will be announced.</p>
+          <p className="lede">Six days in Ulaanbaatar. All times are local. Venues and speakers will be announced.</p>
         </div>
       </section>
 
-      <section className="section">
+      <ProgramAgenda />
+
+      <section className="section prog-section">
         <div className="wrap">
+          <h2 className="prog-head">Seven formats</h2>
           <div className="involve prog-formats">
             {formats.map((f, i) => (
               <Link href={f.href} className="involve-card prog-card" key={f.title}>
@@ -45,7 +47,6 @@ export default function ProgramPage() {
         </div>
       </section>
 
-      <ComingSoon what="The agenda" items={["Day-by-day schedule", "Venues", "Speakers", "Registration for each activity"]} action={{ label: "Apply to speak", href: "/get-involved#speak" }} />
     </>
   );
 }
