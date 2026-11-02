@@ -154,7 +154,7 @@ export default function Home() {
             <dl className="t-net-stats">
               <div><dt>30 November – 5 December 2026</dt><dd>6 days</dd></div>
               <div><dt>Free with advance registration</dt><dd>Free entry</dd></div>
-              <div><dt>Program and speakers to be announced</dt><dd>Agenda soon</dd></div>
+              <div><dt>Venues and speakers to be announced</dt><dd>20 sessions</dd></div>
             </dl>
             <Link href="/get-involved#partner" className="t-btn t-btn-fill">Become a partner</Link>
           </div>
@@ -165,7 +165,8 @@ export default function Home() {
             {days.map((d) => (
               <li key={d.date}>
                 <span className="t-week-day">{d.weekday} {d.short} {d.month}</span>
-                <b>Coming soon</b>
+                <b>{d.label}</b>
+                <small>{d.blurb}</small>
               </li>
             ))}
           </ol>

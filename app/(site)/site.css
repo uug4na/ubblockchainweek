@@ -207,7 +207,7 @@
 .t-net-stats dd { margin: 0; font-size: clamp(30px, 3.6vw, 44px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; }
 .t-net-art .iso-corner { bottom: 6px; }
 @media (max-width: 600px) { .t-net-art .iso-corner span:first-child { display: none; } .t-net-art .iso-corner { justify-content: flex-end; padding: 0 6%; } }
-.t-week { grid-column: 1 / -1; position: relative; list-style: none; margin: clamp(48px, 7vw, 84px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid rgba(255, 255, 255, .14); }
+.t-week { grid-column: 1 / -1; position: relative; list-style: none; margin: clamp(48px, 7vw, 84px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid rgba(255, 255, 255, .14); }
 .t-week li { padding: 18px 14px 0 0; display: grid; gap: 8px; border-right: 1px solid rgba(255, 255, 255, .08); padding-left: 14px; }
 .t-week li:first-child { padding-left: 0; }
 .t-week li:last-child { border-right: 0; }
@@ -215,6 +215,8 @@
 .t-week b { font-size: 15px; font-weight: 600; line-height: 1.25; }
 .t-week li.is-conf .t-week-day { color: var(--green); }
 .t-week li.is-hack .t-week-day { color: var(--lime); }
+.t-week b, .t-week small { letter-spacing: .02em; }
+.t-week small { font-size: 13px; line-height: 1.45; color: rgba(255, 255, 255, .62); }
 @media (max-width: 900px) {
   .t-net { grid-template-columns: 1fr; }
   .t-net-art { order: -1; margin: -20px -6% 0; }
@@ -443,7 +445,9 @@
   .t-net-art { margin: -12px -8% -8%; }
   .t-net-stats { gap: 16px; margin-bottom: 26px; }
   .t-week { grid-template-columns: 1fr; margin-top: 40px; }
-  .t-week li { grid-template-columns: 76px 1fr; align-items: baseline; padding: 14px 0 !important; }
+  .t-week li { grid-template-columns: 92px minmax(0, 1fr); align-items: baseline; gap: 4px 8px; padding: 14px 0 !important; }
+  .t-week-day { white-space: nowrap; }
+  .t-week small { grid-column: 2; }
   .t-week b { font-size: 15px; }
 
   /* hosts side by side, compact */
@@ -539,7 +543,7 @@
   .t-net-art { order: 5; width: 74%; align-self: center; margin: 28px 0 24px; }
   .t-net-copy > .t-btn { order: 7; width: 100%; height: 50px; margin: 0; }
   .t-net-art .iso-corner { display: none; }
-  .t-week { display: none; }
+  .t-week { order: 8; margin-top: 28px; }
 }
 
 /* ═════════════════ 2025 REPORT ═════════════════
