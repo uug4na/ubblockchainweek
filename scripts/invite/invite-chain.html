@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* C — chain: the six days drop in as blocks and link into a chain. 9:16 story. */
+  :root { --w: 1080px; --h: 1920px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: 230px; display: flex; align-items: center; justify-content: space-between; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: 440px; }
+  h1 { font-size: 124px; margin-top: 26px; }
+  .chain { position: absolute; left: var(--pad); right: var(--pad); top: 960px; height: 300px; }
+  .blk { position: absolute; top: 0; width: 124px; height: 124px; border-radius: 4px; }
+  .link { position: absolute; top: 58px; height: 8px; width: 24px; background: #fff; border-radius: 4px; transform-origin: 0 50%; transform: scaleX(0); }
+  .day { position: absolute; top: 156px; width: 124px; text-align: center; }
+  .day b { display: block; font-size: 64px; font-weight: 600; line-height: 1; }
+  .day small { display: block; margin-top: 12px; font-family: "JetBrains Mono", monospace; font-size: 17px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+  .chips { position: absolute; left: var(--pad); right: var(--pad); top: 1360px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: 290px; display: flex; align-items: center; gap: 16px; }
+  .px, .fx, .blk, .day { opacity: 0; }
+  .line > span { transform: translateY(110%); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div id="pixels"></div>
+  <div class="top fx">
+    <div class="logo"><img src="../../public/brand/logo-white.webp" alt="UB Blockchain Week"><span class="year">2026</span></div>
+    <span class="eyebrow">Invitation</span>
+  </div>
+  <div class="copy">
+    <span class="line invited pull"><span><mark class="hl" id="inv">You're invited</mark></span></span>
+    <h1><span class="line"><span>UB Blockchain</span></span><span class="line"><span>Week <span class="acc">2026</span></span></span></h1>
+  </div>
+  <div class="chain" id="chain"></div>
+  <div class="chips"><span class="chip fx">Ulaanbaatar</span><span class="chip fx">6 days</span><span class="chip fx">Free entry</span></div>
+  <div class="cta" id="cta"></div>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="base.js"></script>
+<script>
+ctaRow(document.getElementById("cta"));
+const px = pixels(document.getElementById("pixels"), [
+  [0,0,2,1,"cyan"],[2,0,1,1,"magenta"],[0,1,1,1,"lime"],[0,2,1,1,"violet"],
+  [19,34,1,1,"lime"],[18,34,1,1,"blue"],[19,33,1,1,"magenta"],[17,34,1,1,"cyan"],[19,31,1,1,"white"],
+  [19,13,1,1,"cyan"],[0,24,1,1,"lime"],
+]);
+const days = [["30", "Mon · Nov", "cyan"], ["1", "Tue · Dec", "lime"], ["2", "Wed · Dec", "magenta"], ["3", "Thu · Dec", "violet"], ["4", "Fri · Dec", "green"], ["5", "Sat · Dec", "blue"]];
+const chain = document.getElementById("chain");
+const STEP = 148;
+const blks = [], links = [], labels = [];
+days.forEach(([n, d, col], i) => {
+  const b = document.createElement("div"); b.className = "blk " + col; b.style.left = i * STEP + "px"; chain.appendChild(b); blks.push(b);
+  const l = document.createElement("div"); l.className = "day"; l.style.left = i * STEP + "px"; l.innerHTML = `<b>${n}</b><small>${d}</small>`; chain.appendChild(l); labels.push(l);
+  if (i) { const k = document.createElement("div"); k.className = "link"; k.style.left = i * STEP - 24 + "px"; chain.appendChild(k); links.push(k); }
+});
+
+play(() => {
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 900 } });
+  tl.add(px, { opacity: [0, 1], scale: [0, 1], ease: "outBack(1.8)", duration: 700, delay: stagger(60, { from: "random", seed: 5 }) }, 0)
+    .add(".top", { opacity: [0, 1], y: [-24, 0] }, 200)
+    .add(words, { y: ["110%", "0%"], duration: 1100, delay: stagger(110) }, 350)
+    .add("#inv", { "--hl": ["0%", "100%"], color: ["#ffffff", "#010d58"], duration: 500, ease: "outQuart" }, 800);
+  // each day drops in, then links to the one before it
+  blks.forEach((b, i) => {
+    const at = 1000 + i * 220;
+    tl.add(b, { opacity: [0, 1], y: [-420, 0], rotate: [-8, 0], ease: "outElastic(1, .75)", duration: 1000 }, at)
+      .add(labels[i], { opacity: [0, 1], y: [20, 0], duration: 700 }, at + 180);
+    if (i) tl.add(links[i - 1], { scaleX: [0, 1], ease: "outQuart", duration: 380 }, at + 160);
+  });
+  tl.add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(80) }, 2500)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(100) }, 2700)
+    // a pulse runs down the chain, block to block
+    .add(blks, { y: [0, -26, 0], scale: [1, 1.06, 1], ease: "inOutSine", duration: 700, delay: stagger(130) }, 3300)
+    // out
+    .add(words, { y: "-110%", duration: 700, ease: "inExpo", delay: stagger(60) }, 5800)
+    .add(".chip, .btn, .site, .top, .day", { opacity: 0, y: -20, duration: 600, ease: "inQuad", delay: stagger(30) }, 5850)
+    .add(links, { scaleX: 0, ease: "inQuart", duration: 300, delay: stagger(40, { from: "last" }) }, 5900)
+    .add(blks, { opacity: 0, y: 360, rotate: 10, ease: "inBack(1.6)", duration: 650, delay: stagger(60) }, 6050)
+    .add(px, { opacity: 0, scale: 0, ease: "inBack(2)", duration: 500, delay: stagger(30, { from: "random", seed: 9 }) }, 6200);
+  return tl;
+}, 7000);
+</script>
+</body>
+</html>

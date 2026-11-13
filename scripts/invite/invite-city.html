@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · City</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="figures/iso.css">
+<style>
+  /* E — city: the site's Sükhbaatar Square model assembles block by block, its spots light up
+     one after another, then the invitation. No text on the figure. 4:5 feed. */
+  :root { --w: 1080px; --h: 1350px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: var(--pad); display: flex; align-items: center; justify-content: space-between; }
+  .iso { /* the site's navy kit tokens (site.css) */
+    --anatomy-paper:#0b1766;--anatomy-face:#13208a;--anatomy-top:#16248f;
+    --anatomy-shade-0:#08125a;--anatomy-shade-1:#0a1562;--anatomy-shade-2:#0d196c;--anatomy-shade-3:#101d77;
+    --anatomy-lit-top:#1e33a6;--anatomy-lit-shade:#172a96;
+    --anatomy-hi:#e6ebff;--anatomy-mid:#7484dc;--anatomy-lo:#3d4eae;--anatomy-faint:#24348f;--anatomy-lit:#13effd;
+    --anatomy-halo:#000428;--anatomy-halo-opacity:.85;--anatomy-dot:#e6ebff;
+    position: absolute; left: 110px; top: 210px; width: 860px;
+  }
+  .iso-solid, .iso-line, .iso-dots, .iso-halo { opacity: 0; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: 830px; }
+  h1 { font-size: 66px; margin-top: 16px; }
+  .chips { margin-top: 36px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: 100px; display: flex; align-items: center; gap: 16px; }
+  .px, .fx { opacity: 0; }
+  .line > span { transform: translateY(110%); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div id="pixels"></div>
+  <div class="top">
+    <div class="logo" id="logo"></div>
+    <span class="eyebrow fx" id="invitation">Invitation</span>
+  </div>
+  <figure class="iso"><svg class="iso-svg" id="fig" aria-hidden="true"></svg></figure>
+  <div class="copy">
+    <span class="line invited pull"><span><mark class="hl" id="inv">You're invited</mark></span></span>
+    <h1><span class="line"><span>UB Blockchain Week <span class="acc">2026</span></span></span></h1>
+    <div class="chips"><span class="chip fx">Nov 30 – Dec 5</span><span class="chip fx">Ulaanbaatar</span><span class="chip fx">Free entry</span></div>
+  </div>
+  <div class="cta" id="cta"></div>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="figures/sukhbaatar-square.js"></script>
+<script src="base.js"></script>
+<script>
+document.getElementById("logo").innerHTML = LOCKUP;
+ctaRow(document.getElementById("cta"));
+const fig = document.getElementById("fig");
+fig.setAttribute("viewBox", `0 0 ${SQUARE.width} ${SQUARE.height}`);
+fig.innerHTML = SQUARE.svg;
+const px = pixels(document.getElementById("pixels"), [
+  [19,0,1,1,"cyan"],[18,0,1,1,"magenta"],[19,1,1,2,"blue"],[17,0,1,1,"lime"],
+  [0,24,1,1,"lime"],[1,24,1,1,"cyan"],[0,23,1,1,"violet"],[0,10,1,1,"white"],
+]);
+
+play(() => {
+  const solids = fig.querySelectorAll(".iso-solid");
+  const rest = fig.querySelectorAll(".iso-line, .iso-dots, .iso-halo");
+  const spots = ["partner", "speak", "exhibit", "volunteer"].map((s) => fig.querySelectorAll(`[data-spot="${s}"] .iso-top`));
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 800 } });
+  tl.add(px, { opacity: [0, 1], scale: [0, 1], ease: "outBack(1.8)", duration: 600, delay: stagger(50, { from: "random", seed: 3 }) }, 0);
+  lockupIn(tl, 150)
+    .add("#invitation", { opacity: [0, 1], translateY: [-20, 0], duration: 600 }, 500)
+    // the square builds itself, back to front, one block at a time
+    .add(rest, { opacity: [0, 1], duration: 600, ease: "linear" }, 300)
+    .add(solids, { opacity: [0, 1], translateY: [-60, 0], ease: "outQuart", duration: 500, delay: stagger(7) }, 300)
+    // then each role's place on the square lights up in turn
+    .add([...spots[0], ...spots[1], ...spots[2], ...spots[3]], { fill: ["#16248f", "#13effd", "#1e33a6"], ease: "inOutSine", duration: 700, delay: (el) => [0, 1, 2, 3].find((i) => [...spots[i]].includes(el)) * 220 }, 2200)
+    .add(words, { y: ["110%", "0%"], duration: 1000, delay: stagger(120) }, 1700)
+    .add("#inv", { "--hl": ["0%", "100%"], color: ["#ffffff", "#010d58"], duration: 500, ease: "outQuart" }, 2150)
+    .add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(70) }, 2300)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(90) }, 2450)
+    // out
+    .add(words, { y: "-110%", duration: 600, ease: "inExpo", delay: stagger(60) }, 5400)
+    .add(".chip, .btn, .site, #invitation, " + LOCKUP_PARTS, { opacity: 0, duration: 450, ease: "inQuad", delay: stagger(25) }, 5450)
+    .add(solids, { opacity: 0, translateY: 40, ease: "inQuad", duration: 350, delay: stagger(3, { from: "last" }) }, 5400)
+    .add(rest, { opacity: 0, duration: 400, ease: "linear" }, 5900)
+    .add(px, { opacity: 0, scale: 0, ease: "inBack(2)", duration: 450, delay: stagger(25, { from: "random", seed: 6 }) }, 5900);
+  return tl;
+}, 6500);
+</script>
+</body>
+</html>
