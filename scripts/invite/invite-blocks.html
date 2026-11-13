@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · Blocks</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* B — blocks: a wave of brand pixels fills the frame, then clears to reveal a date-led card.
+     A few blocks stay behind as the corner pixels. 4:5 feed. */
+  :root { --w: 1080px; --h: 1350px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: var(--pad); display: flex; align-items: center; justify-content: space-between; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: 380px; }
+  .date { font-size: 172px; line-height: 1; margin-top: 30px; }
+  .name { font-size: 58px; margin-top: 40px; }
+  .chips { margin-top: 48px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: 100px; display: flex; align-items: center; gap: 16px; }
+  #cells { position: absolute; inset: 0; z-index: 5; }
+  .cell { position: absolute; width: 108px; height: 108px; transform: scale(0); }
+  .cell.navy { background: #0a1a7a; }
+  .fx { opacity: 0; }
+  .line > span { transform: translateY(110%); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div class="top fx">
+    <div class="logo"><img src="../../public/brand/logo-white.webp" alt="UB Blockchain Week"><span class="year">2026</span></div>
+    <span class="eyebrow">Invitation</span>
+  </div>
+  <div class="copy">
+    <span class="line invited pull"><span><mark class="hl" id="inv">You're invited</mark></span></span>
+    <h1 class="date"><span class="line"><span>Nov 30 –</span></span><span class="line"><span class="acc">Dec 5</span></span></h1>
+    <h1 class="name"><span class="line"><span>UB Blockchain Week 2026</span></span></h1>
+    <div class="chips"><span class="chip fx">Ulaanbaatar</span><span class="chip fx">6 days</span><span class="chip fx">Free entry</span></div>
+  </div>
+  <div class="cta" id="cta"></div>
+  <div id="cells"></div>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="base.js"></script>
+<script>
+ctaRow(document.getElementById("cta"));
+const COLS = 10, ROWS = 13;
+const palette = ["blue", "blue", "blue", "navy", "navy", "cyan", "violet", "magenta", "lime", "white", "green"];
+let seed = 11;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+// cells that stay as corner pixels: [col, row, transform-origin]
+const keep = { "0,0": "0 0", "1,0": "0 0", "0,1": "0 0", "9,12": "100% 100%", "8,12": "100% 100%", "9,11": "100% 100%", "9,4": "100% 0" };
+const host = document.getElementById("cells");
+const cells = [], stay = [];
+for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+  const d = document.createElement("div");
+  const k = keep[c + "," + r];
+  d.className = "cell " + (k ? ["cyan", "magenta", "lime", "violet"][(c + r) % 4] : palette[Math.floor(rnd() * palette.length)]);
+  d.style.cssText = `left:${c * 108}px;top:${r * 108}px;`;
+  if (k) d.style.transformOrigin = k;
+  host.appendChild(d);
+  cells.push(d);
+  (k ? stay : []).push(d);
+}
+const go = cells.filter((d) => !stay.includes(d));
+
+play(() => {
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 900 } });
+  tl.add(cells, { scale: [0, 1], ease: "outQuart", duration: 520, delay: stagger(26, { grid: [COLS, ROWS], from: "first" }) }, 0)
+    .add(go, { scale: 0, ease: "inOutQuart", duration: 560, delay: stagger(24, { grid: [COLS, ROWS], from: "first" }) }, 1000)
+    .add(stay, { scale: 0.5, ease: "inOutQuart", duration: 700 }, 1500)
+    .add(".top", { opacity: [0, 1], y: [-24, 0] }, 1500)
+    .add(words, { y: ["110%", "0%"], duration: 1100, delay: stagger(120) }, 1550)
+    .add("#inv", { "--hl": ["0%", "100%"], color: ["#ffffff", "#010d58"], duration: 500, ease: "outQuart" }, 2000)
+    .add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(80) }, 2150)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(100) }, 2400)
+    .add(stay, { scale: [0.5, 0.42, 0.5], ease: "inOutSine", duration: 1600, delay: stagger(140) }, 3000)
+    // out
+    .add(words, { y: "-110%", duration: 700, ease: "inExpo", delay: stagger(60) }, 5300)
+    .add(".chip, .btn, .site, .top", { opacity: 0, y: -20, duration: 600, ease: "inQuad", delay: stagger(40) }, 5350)
+    .add(stay, { scale: 0, ease: "inBack(2)", duration: 500, delay: stagger(40) }, 5700);
+  return tl;
+}, 6500);
+</script>
+</body>
+</html>

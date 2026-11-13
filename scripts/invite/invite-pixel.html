@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · Pixel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* F — pixel: a giant "20 / 26" flies together from scattered brand pixels, a wave runs through
+     it, then the invitation. 9:16 story. */
+  :root { --w: 1080px; --h: 1920px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: 230px; display: flex; align-items: center; justify-content: space-between; }
+  #digits { position: absolute; left: 0; top: 0; }
+  .d { position: absolute; width: 52px; height: 52px; border-radius: 2px; opacity: 0; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: 1265px; }
+  h1 { font-size: 76px; margin-top: 14px; }
+  .chips { margin-top: 32px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: 290px; display: flex; align-items: center; gap: 16px; }
+  .fx { opacity: 0; }
+  .line > span { transform: translateY(110%); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div class="top">
+    <div class="logo" id="logo"></div>
+    <span class="eyebrow fx" id="invitation">Invitation</span>
+  </div>
+  <div id="digits"></div>
+  <div class="copy">
+    <span class="line invited pull"><span><mark class="hl" id="inv">You're invited</mark></span></span>
+    <h1><span class="line"><span>UB Blockchain Week</span></span></h1>
+    <div class="chips"><span class="chip fx">Nov 30 – Dec 5</span><span class="chip fx">Ulaanbaatar</span><span class="chip fx">Free entry</span></div>
+  </div>
+  <div class="cta" id="cta"></div>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="base.js"></script>
+<script>
+document.getElementById("logo").innerHTML = LOCKUP;
+ctaRow(document.getElementById("cta"));
+// 5×7 pixel digits
+const FONT = {
+  2: ["01110", "10001", "00001", "00010", "00100", "01000", "11111"],
+  0: ["01110", "10001", "10011", "10101", "11001", "10001", "01110"],
+  6: ["00110", "01000", "10000", "11110", "10001", "10001", "01110"],
+};
+const CELL = 56, X0 = 540 - (11 * CELL) / 2 + 2, Y0 = 380;
+const colours = ["cyan", "lime", "magenta", "violet", "blue", "white", "green"];
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const host = document.getElementById("digits");
+const blocks = [];
+// "20" on the top row, "26" under it, the 6 in green
+[["2", 0, 0], ["0", 6, 0], ["2", 0, 8], ["6", 6, 8]].forEach(([ch, cx, cy], di) => {
+  FONT[ch].forEach((row, r) => [...row].forEach((on, c) => {
+    if (on !== "1") return;
+    const d = document.createElement("div");
+    d.className = "d " + (di === 3 ? "green" : colours[Math.floor(rnd() * 6)]);
+    d.style.left = X0 + (cx + c) * CELL + "px";
+    d.style.top = Y0 + (cy + r) * CELL + "px";
+    d.dataset.sx = Math.round((rnd() - 0.5) * 1400);
+    d.dataset.sy = Math.round((rnd() - 0.5) * 1800);
+    d.dataset.sr = Math.round((rnd() - 0.5) * 180);
+    host.appendChild(d);
+    blocks.push(d);
+  }));
+});
+
+play(() => {
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 800 } });
+  // scattered pixels fly together into 20 / 26
+  tl.add(blocks, {
+    opacity: [0, 1],
+    translateX: [(el) => +el.dataset.sx, 0], translateY: [(el) => +el.dataset.sy, 0], rotate: [(el) => +el.dataset.sr, 0], scale: [0.3, 1],
+    ease: "outExpo", duration: 1300, delay: stagger(12, { from: "random", seed: 11 }),
+  }, 0);
+  lockupIn(tl, 1200)
+    .add("#invitation", { opacity: [0, 1], translateY: [-20, 0], duration: 600 }, 1500)
+    // a wave runs down through the digits
+    .add(blocks, { scale: [1, 0.6, 1], ease: "inOutSine", duration: 600, delay: (el) => (parseFloat(el.style.top) - Y0) * 1.6 + (parseFloat(el.style.left) - X0) * 0.4 }, 2700)
+    .add(words, { y: ["110%", "0%"], duration: 1000, delay: stagger(120) }, 1700)
+    .add("#inv", { "--hl": ["0%", "100%"], color: ["#ffffff", "#010d58"], duration: 500, ease: "outQuart" }, 2150)
+    .add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(70) }, 2300)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(90) }, 2450)
+    // out: the pixels scatter again
+    .add(words, { y: "-110%", duration: 600, ease: "inExpo", delay: stagger(60) }, 5400)
+    .add(".chip, .btn, .site, #invitation, " + LOCKUP_PARTS, { opacity: 0, duration: 450, ease: "inQuad", delay: stagger(25) }, 5450)
+    .add(blocks, {
+      opacity: 0, translateX: (el) => -el.dataset.sx, translateY: (el) => -el.dataset.sy, rotate: (el) => -el.dataset.sr, scale: 0.3,
+      ease: "inExpo", duration: 800, delay: stagger(6, { from: "random", seed: 13 }),
+    }, 5450);
+  return tl;
+}, 6500);
+</script>
+</body>
+</html>

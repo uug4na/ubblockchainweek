@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 · Cube</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Figtree:wght@400;700&display=block" rel="stylesheet">
+<style>
+  /* G — cube, from the two 2026 key-visual posters. The cube stays put: it starts scrambled,
+     solves itself turn by turn into the poster pattern (middle layer twisted, one top cubie slid
+     out, white centre), holds, then scrambles back, so the loop closes. 3D coins fly in around it.
+     The logo is rebuilt live (SVG mark + Figtree wordmark) so it can draw itself.
+     Sizes (?f=): 45 1080×1350 (default) and 916 1080×1920 follow poster 1; 169t is 1920×1080 in the
+     poster-2 look with the date and tagline; wide 1920×1004,
+     169 1920×1080 and 43 1440×1080 follow poster 2 (they get the .wide class). The LAYOUT table
+     below holds every per-size position. */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #14096e; }
+  .card { position: relative; width: var(--w); height: var(--h); overflow: hidden; font-family: Montserrat, sans-serif; color: #fff;
+    background: radial-gradient(48% 34% at 50% 58%, rgba(70, 90, 255, .55), transparent 70%), linear-gradient(180deg, #170c86 0%, #1f22b8 42%, #2a1db0 70%, #3a1696 100%); }
+  .wide .card { background: radial-gradient(34% 52% at 50% 56%, rgba(160, 80, 255, .75), transparent 72%), linear-gradient(180deg, #3d14b8 0%, #4a1ccc 50%, #3a12a6 100%); }
+  canvas { position: absolute; left: 0; top: 0; width: var(--w); height: var(--h); }
+  #fg { filter: blur(7px); }
+  .beam { position: absolute; opacity: .9; filter: blur(34px); mix-blend-mode: screen; }
+  .b1 { left: 560px; top: -260px; width: 360px; height: 1100px; transform: rotate(38deg); background: linear-gradient(180deg, rgba(60, 220, 255, .85), rgba(40, 140, 255, 0)); }
+  .b2 { left: 40px; top: -300px; width: 260px; height: 1000px; transform: rotate(-30deg); background: linear-gradient(180deg, rgba(90, 120, 255, .8), rgba(60, 60, 255, 0)); }
+  .b3 { left: -200px; top: 640px; width: 1500px; height: 240px; transform: rotate(-14deg); background: linear-gradient(90deg, rgba(150, 120, 255, .55), rgba(120, 60, 255, 0) 70%); }
+  .wide .beam { display: none; }
+  .tall .b1, .tall .b2 { height: 1500px; }
+  .tall .b3 { top: 1000px; }
+  .ln { position: absolute; height: 4px; transform: scaleX(0); }
+  .glyph { position: absolute; opacity: 0; filter: blur(5px) drop-shadow(0 0 18px currentColor); }
+  .dot { position: absolute; }
+  .dot i { display: block; width: 100%; height: 100%; border-radius: 50%; transform: scale(0); }
+  .pxb { position: absolute; transform: scale(0); }
+  .bar { position: absolute; }
+  .logo { position: absolute; left: 0; right: 0; top: var(--logo-top); display: flex; justify-content: center; }
+  /* the lockup, drawn on the official file's 1400×483 grid and scaled to --logo-h */
+  .lockup { position: relative; height: var(--logo-h); aspect-ratio: 1400 / 483; }
+  .lg { position: absolute; left: 0; top: 0; width: 1400px; height: 483px; transform-origin: 0 0; transform: scale(calc(var(--logo-h) / 483px)); }
+  .lg-mark { position: absolute; left: 0; top: 0; width: 430px; height: 483px; overflow: visible; filter: drop-shadow(0 0 12px rgba(255, 255, 255, .45)); }
+  .wm { position: absolute; left: 493px; font-family: Figtree, sans-serif; font-weight: 700; font-size: 186px; line-height: 1; letter-spacing: -.012em; white-space: nowrap; }
+  .wm .row { display: block; height: 161px; overflow: hidden; }
+  .wm .ch { display: inline-block; transform: translateY(105%); }
+  .yr { position: absolute; left: 1007px; top: 368px; width: 393px; height: 115px; overflow: hidden; }
+  .yr i { position: absolute; inset: 0; background: linear-gradient(90deg, #8d8d96 0%, #a9a9b2 55%, rgba(200, 200, 210, 0) 100%); transform-origin: 0 50%; transform: scaleX(0); }
+  .yr b { position: absolute; left: 68px; top: 4px; font: 400 104px/1 Figtree, sans-serif; letter-spacing: .03em; color: #fff; }
+  .yr b span { display: inline-block; transform: translateY(110%); }
+  .line { display: block; overflow: hidden; }
+  .line > span { display: inline-block; transform: translateY(110%); }
+  .date { position: absolute; left: 0; right: 0; top: var(--date-top); text-align: center; font-size: 36px; font-weight: 700; color: #c6fc1f; letter-spacing: .01em; text-shadow: 0 0 22px rgba(198, 252, 31, .45); }
+  .tag { position: absolute; left: 0; right: 0; top: var(--tag-top); text-align: center; font-size: 31px; font-weight: 600; line-height: 1.42; text-transform: uppercase; }
+  .tag b { color: #c6fc1f; font-weight: 800; }
+  .wide .date, .wide .tag, .wide .sq { display: none; }
+  /* 16:9 with text: date under the logo, the tagline on one line at the bottom */
+  :root.wide.text .date, :root.wide.text .tag { display: block; }
+  .text .tag { font-size: 32px; }
+  .text .tag .line { display: inline-block; vertical-align: top; }
+</style>
+<script>
+  // every size's positions. box = poster 2's room look; otherwise poster 1's round tunnel + text
+  const LAYOUT = {
+    45: { w: 1080, h: 1350, logoH: 160, logoTop: 95, date: 290, tag: 1128, cam: { dist: 17.6, cy: 790 } },
+    916: { w: 1080, h: 1920, logoH: 180, logoTop: 220, date: 440, tag: 1560, cam: { dist: 21.7, cy: 1040 }, tall: true },
+    wide: { w: 1920, h: 1004, logoH: 190, logoTop: 26, box: true, cam: { dist: 12.4, cy: 624 } },
+    169: { w: 1920, h: 1080, logoH: 200, logoTop: 30, box: true, cam: { dist: 13.3, cy: 660 } },
+    "169t": { w: 1920, h: 1080, logoH: 160, logoTop: 22, date: 206, tag: 988, box: true, text: true, cam: { dist: 15.6, cy: 612 } },
+    43: { w: 1440, h: 1080, logoH: 190, logoTop: 30, box: true, cam: { dist: 13.3, cy: 660 } },
+  };
+  const QS = new URLSearchParams(location.search);
+  const FMT = QS.has("wide") ? "wide" : QS.get("f") || "45";
+  const L = LAYOUT[FMT];
+  const WIDE = !!L.box;
+  const root = document.documentElement;
+  if (WIDE) root.classList.add("wide");
+  if (L.tall) root.classList.add("tall");
+  if (L.text) root.classList.add("text");
+  Object.entries({ w: L.w, h: L.h, "logo-h": L.logoH, "logo-top": L.logoTop, "date-top": L.date || 0, "tag-top": L.tag || 0 })
+    .forEach(([k, v]) => root.style.setProperty("--" + k, v + "px"));
+</script>
+</head>
+<body>
+<div class="card">
+  <canvas id="bg"></canvas>
+  <i class="beam b1"></i><i class="beam b2"></i><i class="beam b3"></i>
+  <div id="deco"></div>
+  <canvas id="gl"></canvas>
+  <canvas id="fg"></canvas>
+  <div class="logo">
+    <div class="lockup" role="img" aria-label="UB Blockchain Week 2026">
+      <div class="lg">
+        <svg class="lg-mark" id="mark" viewBox="0 0 430 483" aria-hidden="true">
+          <path id="tour" d="M212 16L408 131L212 238L408 355L212 463L18 352L18 131L212 16" fill="none" stroke="none"/>
+        </svg>
+        <div class="wm" style="top:0"><span class="row">UB</span></div>
+        <div class="wm" style="top:161px"><span class="row">Blockchain</span></div>
+        <div class="wm" style="top:322px"><span class="row">Week</span></div>
+        <div class="yr"><i></i><b>2026</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="date"><span class="line"><span>11.30 - 12.05</span></span></div>
+  <p class="tag"><span class="line"><span><b>Блокчэйн, крипто</b> комюнитигийн</span></span> <span class="line"><span>хамгийн том цугларалт.</span></span></p>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="vendor/three.min.js"></script>
+<script>
+const { createTimeline, stagger, svg } = anime;
+const W = L.w, H = L.h, LOOP = 9000;
+const clamp = (v) => Math.min(1, Math.max(0, v));
+const prog = (t, a, d) => clamp((t - a) / d);
+const outExpo = (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+const inExpo = (p) => (p <= 0 ? 0 : Math.pow(2, 10 * p - 10));
+const outBack = (p, s = 1.7) => 1 + (s + 1) * Math.pow(p - 1, 3) + s * Math.pow(p - 1, 2);
+const inOutSine = (p) => -(Math.cos(Math.PI * p) - 1) / 2;
+let seed = 11;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+// ---------- decoration (DOM) ----------
+const deco = document.getElementById("deco");
+const el = (cls, css, html = "") => { const d = document.createElement("div"); d.className = cls; Object.assign(d.style, css); d.innerHTML = html; deco.appendChild(d); return d; };
+const DY = WIDE ? 0 : L.logoTop - 95, DH = H - 1350; // poster-1 sizes: shift for the logo block / the extra height
+const LINES = WIDE ? [] : [
+  [0, 148, 275, "#ff2d8a", "left"], [0, 182, 205, "#c6fc1f", "left"],
+  [800, 148, 280, "#c6fc1f", "right"], [875, 182, 205, "#ff2d8a", "right"],
+].map(([x, y, w, background, o]) => el("ln", { left: x + "px", top: y + DY + 10 * !!L.tall + "px", width: w + "px", background, transformOrigin: o }));
+const GLYPHS = WIDE ? [] : [
+  el("glyph", { left: "36px", top: 330 + DY * 1.6 + "px", color: "#2ff0ff" }, '<svg width="200" height="130" viewBox="0 0 200 130"><path d="M10 20 L60 20 L60 60 L110 60 L110 100" stroke="#2ff0ff" stroke-width="28" fill="none"/><path d="M90 10 L140 10 L140 50 L190 50 L190 90" stroke="#9ff8ff" stroke-width="22" fill="none" opacity=".7"/></svg>'),
+  el("glyph", { left: "868px", top: 270 + DY * 1.6 + "px", color: "#c6fc1f" }, '<svg width="180" height="160" viewBox="0 0 180 160"><path d="M20 140 L20 100 L70 100 L70 60 L120 60 L120 20 L165 20" stroke="#c6fc1f" stroke-width="34" fill="none"/></svg>'),
+];
+const DOTS = WIDE ? [] : [
+  [96, 512, 34, "#c6fc1f"], [934, 518, 20, "#ff2d8a"], [100, 666, 20, "#ff2d8a"], [925, 652, 40, "#c6fc1f"],
+].map(([x, y, s, c]) => el("dot", { left: x + "px", top: y + (L.cam.cy - 790) + "px", width: s + "px", height: s + "px" }, `<i style="background:radial-gradient(circle at 50% 45%,#fff 0 18%,${c} 46%);box-shadow:0 0 18px ${c}"></i>`));
+const PX = (WIDE ? [] : [
+  [0, 1030, 55, 120, "#14ff6a"], [55, 1090, 60, 120, "#14ff6a"], [0, 1212, 40, 130, "#ffffff"], [40, 1298, 42, 52, "#ffffff"],
+  [868, 1262, 132, 88, "#e81bfe"], [955, 1220, 85, 80, "#c6fc1f"], [1040, 1220, 40, 130, "#c6fc1f"],
+]).map(([x, y, w, h, c]) => el("pxb", { left: x + "px", top: y + DH + "px", width: w + "px", height: h + "px", background: c, boxShadow: `0 0 26px ${c}` }));
+const BX = W / 1920, BY = (L.cam.cy - 624);
+const BARS = WIDE ? [
+  el("bar", { left: 312 * BX + "px", top: "0px", width: "78px", height: 120 + BY / 3 + "px", background: "#ff1f6e", boxShadow: "0 0 30px #ff1f6e", transform: "translateY(-160px)" }),
+  el("bar", { left: 1656 * BX + "px", top: 516 + BY + "px", width: 114 * Math.sqrt(BX) + "px", height: "192px", background: "#14ff6a", boxShadow: "0 0 30px #14ff6a", transform: "translateX(300px)" }),
+] : [];
+
+// ---------- background grid tunnel (2D canvas, a pure function of t) ----------
+const bg = document.getElementById("bg");
+bg.width = W; bg.height = H;
+const g2 = bg.getContext("2d");
+function drawBg(t, fade) {
+  g2.clearRect(0, 0, W, H);
+  g2.globalAlpha = fade;
+  const f = t / LOOP;
+  if (!WIDE) {
+    // poster 1: a round tunnel, rings rushing outward, spokes turning
+    const cx = W / 2, cy = L.cam.cy - 20, N = 28;
+    g2.strokeStyle = "rgba(110,130,255,.42)";
+    for (let k = 0; k < N; k++) {
+      const a = (k / N) * Math.PI * 2 + f * (Math.PI * 2 / N);
+      g2.lineWidth = 2;
+      g2.beginPath(); g2.moveTo(cx + Math.cos(a) * 60, cy + Math.sin(a) * 60); g2.lineTo(cx + Math.cos(a) * 1700, cy + Math.sin(a) * 1700); g2.stroke();
+    }
+    for (let k = -2; k < 16; k++) {
+      const r = 40 * Math.pow(1.36, k + f * 2);
+      g2.lineWidth = 1 + r / 380;
+      g2.globalAlpha = fade * Math.min(1, r / 260);
+      g2.beginPath(); g2.ellipse(cx, cy, r, r * 0.9, 0, 0, Math.PI * 2); g2.stroke();
+    }
+  } else {
+    // poster 2: a box room, frames rushing outward, wall lines to the vanishing point
+    const RH = (1120 / 1004) * H, cx = W / 2, cy = RH / 2, back = 0.36;
+    const rect = (s) => [cx - (s * W) / 2, cy - (s * RH) / 2, s * W, s * RH];
+    g2.strokeStyle = "rgba(205,190,255,.42)";
+    g2.lineWidth = 2;
+    const [bx, by, bw, bh] = rect(back);
+    const edge = (u, v) => { g2.beginPath(); g2.moveTo(cx + (u - cx) * back, cy + (v - cy) * back); g2.lineTo(cx + (u - cx) * 3, cy + (v - cy) * 3); g2.stroke(); };
+    for (let i = 0; i <= 10; i++) { edge((i * W) / 10, 0); edge((i * W) / 10, RH); }
+    for (let i = 1; i < 6; i++) { edge(0, (i * RH) / 6); edge(W, (i * RH) / 6); }
+    for (let k = 0; k < 12; k++) {
+      const s = back * Math.pow(1.3, k + f * 2);
+      g2.globalAlpha = fade * Math.min(1, (s - back) / 0.12);
+      g2.lineWidth = 1.2 + s * 1.6;
+      const [x, y, w, h] = rect(s);
+      g2.strokeRect(x, y, w, h);
+    }
+    g2.globalAlpha = fade * 0.9;
+    g2.lineWidth = 2;
+    g2.strokeRect(bx, by, bw, bh);
+  }
+  g2.globalAlpha = 1;
+}
+
+// ---------- three.js scene ----------
+const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 200);
+const CAM = L.cam;
+cam.position.set(1, 0.78, 1).normalize().multiplyScalar(CAM.dist);
+cam.lookAt(0, 0, 0);
+cam.setViewOffset(W, H, 0, (H / 2 - CAM.cy), W, H); // push the cube's centre to the poster's spot
+cam.updateMatrixWorld();
+
+function mkRenderer(id, ratio) {
+  const r = new THREE.WebGLRenderer({ canvas: document.getElementById(id), antialias: true, alpha: true, preserveDrawingBuffer: true });
+  r.setPixelRatio(ratio);
+  r.setSize(W, H, false);
+  return r;
+}
+const rMain = mkRenderer("gl", 2), rFg = mkRenderer("fg", 1);
+const scene = new THREE.Scene(), sceneFg = new THREE.Scene();
+
+// a colourful equirect sky so the coins have something to reflect
+const env = (() => {
+  const c = document.createElement("canvas"); c.width = 512; c.height = 256;
+  const g = c.getContext("2d");
+  const v = g.createLinearGradient(0, 0, 0, 256);
+  v.addColorStop(0, "#f4f0ff"); v.addColorStop(0.35, "#8a7cff"); v.addColorStop(0.5, "#ff4fb0"); v.addColorStop(0.62, "#3ae6ff"); v.addColorStop(1, "#140a5a");
+  g.fillStyle = v; g.fillRect(0, 0, 512, 256);
+  const t = new THREE.CanvasTexture(c); t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+})();
+for (const s of [scene, sceneFg]) {
+  s.environment = env;
+  s.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(-4, 6, 8); s.add(key);
+  const rim = new THREE.DirectionalLight(0xff4fb0, 1.6); rim.position.set(6, -3, -4); s.add(rim);
+}
+
+// cube faces: radial gradient + grain + the pale-yellow outline from the poster
+function faceTex(inner, outer, line = "#fbf4a6") {
+  const c = document.createElement("canvas"); c.width = c.height = 256;
+  const g = c.getContext("2d");
+  const grd = g.createRadialGradient(128, 128, 8, 128, 128, 182);
+  grd.addColorStop(0, inner); grd.addColorStop(1, outer);
+  g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+  const im = g.getImageData(0, 0, 256, 256);
+  for (let i = 0; i < im.data.length; i += 4) { const n = (rnd() - 0.5) * 22; im.data[i] += n; im.data[i + 1] += n; im.data[i + 2] += n; }
+  g.putImageData(im, 0, 0);
+  if (line) { g.strokeStyle = line; g.lineWidth = 8; g.strokeRect(4, 4, 248, 248); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return new THREE.MeshBasicMaterial({ map: t });
+}
+const MAT = {
+  M: faceTex("#cf0f78", "#ff5fbd"),
+  C: faceTex("#0f9fd0", "#3be8ff"),
+  L: faceTex("#ecff6c", "#bdec1c"),
+  W: faceTex("#ffffff", "#efeaff"),
+  D: faceTex("#1a1060", "#120a4a", "#3a2c90"),
+};
+
+// the poster pattern, read off poster 2. Camera sits at +x +y +z: +z is the left face, +x the right.
+const LEFT = { 1: "MMM", 0: "MLC", "-1": "MMM" };   // +z face, x = -1..1
+const RIGHT = { 1: "CMC", 0: "CCL", "-1": "CMC" };  // +x face, z = 1..-1
+const NOTCH = [-1, 1, 0];                             // the top cubie that slides out
+const AX = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
+const cubeGroup = new THREE.Group();
+scene.add(cubeGroup);
+const box = new THREE.BoxGeometry(0.985, 0.985, 0.985);
+const cubies = [];
+const hidden = () => "MCL"[Math.floor(rnd() * 3)];
+for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) for (let z = -1; z <= 1; z++) {
+  // BoxGeometry face order: +x, -x, +y, -y, +z, -z. Inner +y faces are lime (seen when a layer twists)
+  const f = [
+    x === 1 ? RIGHT[y][1 - z] : "D",
+    x === -1 ? hidden() : "D",
+    y === 1 ? (x === 0 && z === 0 ? "W" : "L") : "L",
+    y === -1 ? hidden() : "D",
+    z === 1 ? LEFT[y][x + 1] : "D",
+    z === -1 ? hidden() : "D",
+  ];
+  if (x === NOTCH[0] && y === NOTCH[1] && z === NOTCH[2]) { f[0] = "M"; f[4] = "C"; }
+  if (x === -1 && y === 1 && z === -1) f[4] = "M"; // seen through the empty slot
+  const mesh = new THREE.Mesh(box, f.map((k) => MAT[k]));
+  cubeGroup.add(mesh);
+  cubies.push({ mesh, home: new THREE.Vector3(x, y, z), notch: x === NOTCH[0] && y === NOTCH[1] && z === NOTCH[2] });
+}
+
+// scramble = these turns applied to the poster pattern. The loop starts scrambled, plays them
+// backwards (the cube solves itself into the poster), holds, then plays them forwards again
+const MOVES = [["x", 1, 1], ["y", 1, -1], ["z", 1, 1], ["x", -1, -1], ["y", -1, 1], ["z", 0, 1], ["y", 1, 1]];
+const PLAY = MOVES.slice().reverse().map(([a, l, n]) => [a, l, -n]);
+const qTmp = new THREE.Quaternion();
+const turn = (st, [a, l, n], amount) => {
+  qTmp.setFromAxisAngle(AX[a], (n * Math.PI / 2) * amount);
+  st.forEach((s) => { if (Math.round(s.p[a]) === l) { s.p.applyQuaternion(qTmp); s.q.premultiply(qTmp); } });
+};
+const snap = (st) => st.forEach((s) => s.p.set(Math.round(s.p.x), Math.round(s.p.y), Math.round(s.p.z)));
+const SCRAMBLED = cubies.map((c) => ({ p: c.home.clone(), q: new THREE.Quaternion() }));
+MOVES.forEach((m) => { turn(SCRAMBLED, m, 1); snap(SCRAMBLED); });
+const T = { solve: 500, step: 290, dur: 270, notch: 2550, twist: 2650, white: 3200, unpose: 6000, scramble: 6650 };
+
+// a soft glow over the white centre tile
+const glow = (() => {
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const g = c.getContext("2d"); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.4, "rgba(255,255,255,.35)"); r.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0 }));
+  s.position.set(0, 1.6, 0); s.scale.set(2.6, 2.6, 1);
+  cubeGroup.add(s);
+  return s;
+})();
+
+// ---------- coins ----------
+const SYM = {
+  eth(g) {
+    g.beginPath(); g.moveTo(0, -175); g.lineTo(110, 2); g.lineTo(0, 66); g.lineTo(-110, 2); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(0, 92); g.lineTo(110, 28); g.lineTo(0, 178); g.lineTo(-110, 28); g.closePath(); g.fill();
+  },
+  ltc(g) { g.font = "800 330px Montserrat"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("Ł", 0, 18); },
+  usdt(g) {
+    g.fillRect(-130, -160, 260, 62); g.fillRect(-36, -160, 72, 330);
+    g.lineWidth = 30; g.beginPath(); g.ellipse(0, -20, 165, 50, 0, 0, Math.PI * 2); g.stroke();
+  },
+  sol(g) {
+    [-1, 0, 1].forEach((i) => {
+      const y = i * 92, m = i === 0;
+      g.beginPath();
+      g.moveTo(m ? -160 : -120, y - 32); g.lineTo(m ? 120 : 160, y - 32); g.lineTo(m ? 160 : 120, y + 32); g.lineTo(m ? -120 : -160, y + 32);
+      g.closePath(); g.fill();
+    });
+  },
+  btc(g) {
+    g.rotate(0.24);
+    g.font = "800 340px Montserrat"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("B", 8, 16);
+    [-40, 34].forEach((x) => { g.fillRect(x - 12, -170, 26, 50); g.fillRect(x - 12, 128, 26, 50); });
+  },
+};
+function coinMats(base, light, ink, sym) {
+  const c = document.createElement("canvas"); c.width = c.height = 512;
+  const g = c.getContext("2d");
+  const grd = g.createRadialGradient(190, 170, 20, 256, 256, 300);
+  grd.addColorStop(0, light); grd.addColorStop(1, base);
+  g.fillStyle = grd; g.fillRect(0, 0, 512, 512);
+  g.strokeStyle = ink; g.globalAlpha = 0.4; g.lineWidth = 12;
+  g.beginPath(); g.arc(256, 256, 218, 0, Math.PI * 2); g.stroke();
+  g.globalAlpha = 1;
+  g.save(); g.translate(262, 262); g.fillStyle = g.strokeStyle = "rgba(255,255,255,.35)"; SYM[sym](g); g.restore(); // emboss highlight
+  g.save(); g.translate(256, 256); g.fillStyle = g.strokeStyle = ink; SYM[sym](g); g.restore();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  t.center.set(0.5, 0.5); t.rotation = Math.PI / 2; // cylinder caps map the canvas a quarter turn off
+  const face = new THREE.MeshStandardMaterial({ map: t, roughness: 0.45, metalness: 0.15, envMapIntensity: 0.45, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.12 });
+  const side = new THREE.MeshStandardMaterial({ color: base, roughness: 0.3, metalness: 0.6, emissive: base, emissiveIntensity: 0.2 });
+  return { face, side };
+}
+const cylinder = new THREE.CylinderGeometry(1, 1, 0.17, 72);
+const rimGeo = new THREE.TorusGeometry(0.94, 0.055, 14, 72);
+function coin(def) {
+  const { face, side } = coinMats(def.base, def.light, def.ink, def.sym);
+  const g = new THREE.Group(), body = new THREE.Group();
+  const m = new THREE.Mesh(cylinder, [side, face, face]);
+  m.rotation.x = Math.PI / 2; // caps face ±z
+  body.add(m);
+  [0.088, -0.088].forEach((z) => { const r = new THREE.Mesh(rimGeo, side); r.position.z = z; body.add(r); });
+  g.add(body);
+  (def.fg ? sceneFg : scene).add(g);
+  // place by screen position + distance from the camera
+  const ndc = new THREE.Vector3((def.x / W) * 2 - 1, -((def.y / H) * 2 - 1), 0.5).unproject(cam);
+  const dir = ndc.sub(cam.position).normalize();
+  const pos = cam.position.clone().addScaledVector(dir, def.d);
+  const perPx = (2 * def.d * Math.tan((cam.fov * Math.PI) / 360)) / H;
+  g.scale.setScalar(def.r * perPx);
+  const from = pos.clone().add(new THREE.Vector3(def.x < W / 2 ? -1 : 1, def.y < H / 2 ? 0.6 : -0.6, 0).applyQuaternion(cam.quaternion).multiplyScalar(def.r * perPx * 9));
+  return { ...def, g, body, pos, from };
+}
+const C = {
+  eth: { base: "#b6ee10", light: "#ecff8a", ink: "#25330a", sym: "eth" },
+  ltc: { base: "#1d6c58", light: "#3fae8e", ink: "#0a2a22", sym: "ltc" },
+  usdt: { base: "#ff1f7e", light: "#ff8cc4", ink: "#56001f", sym: "usdt" },
+  sol: { base: "#36208c", light: "#6a4fd0", ink: "#120634", sym: "sol" },
+  btc: { base: "#12c978", light: "#4ff0a6", ink: "#04482b", sym: "btc" },
+};
+const COIN_LAYOUT = {
+  45: [["eth", 168, 440, 54, 15, -18, 34, 1500, 0], ["sol", 930, 392, 62, 15, 16, -30, 1850, 1], ["usdt", 40, 880, 160, 13, -28, 34, 1600, 1],
+    ["btc", 1000, 920, 150, 14, -14, -36, 1700, 0], ["ltc", 905, 1095, 44, 15, 10, -40, 1950, 1]],
+  916: [["eth", 130, 470, 58, 18, -18, 34, 1500, 0], ["sol", 950, 400, 64, 18, 16, -30, 1850, 1], ["usdt", 40, 1290, 170, 16, -28, 34, 1600, 1],
+    ["btc", 1010, 1330, 160, 17, -14, -36, 1700, 0], ["ltc", 120, 1500, 46, 18, 10, -40, 1950, 1]],
+  wide: [["eth", 198, 252, 66, 11, -18, 34, 1500, 0], ["ltc", 420, 552, 54, 11, 10, -40, 1750, 1], ["usdt", 180, 864, 250, 9, -28, 30, 1600, 1],
+    ["sol", 1584, 282, 92, 11, 16, -30, 1850, 1], ["btc", 1596, 828, 205, 10, -14, -34, 1700, 0]],
+  169: [["eth", 198, 272, 68, 12, -18, 34, 1500, 0], ["ltc", 420, 594, 56, 12, 10, -40, 1750, 1], ["usdt", 180, 930, 262, 10, -28, 30, 1600, 1],
+    ["sol", 1584, 304, 96, 12, 16, -30, 1850, 1], ["btc", 1596, 890, 215, 11, -14, -34, 1700, 0]],
+  "169t": [["eth", 200, 300, 64, 13, -18, 34, 1500, 0], ["ltc", 430, 600, 52, 13, 10, -40, 1750, 1], ["usdt", 100, 880, 228, 11, -28, 30, 1600, 1],
+    ["sol", 1600, 310, 90, 13, 16, -30, 1850, 1], ["btc", 1690, 800, 190, 12, -14, -34, 1700, 0]],
+  43: [["eth", 150, 280, 60, 12, -18, 34, 1500, 0], ["ltc", 300, 600, 48, 12, 10, -40, 1750, 1], ["usdt", 100, 940, 230, 10, -28, 30, 1600, 1],
+    ["sol", 1260, 300, 84, 12, 16, -30, 1850, 1], ["btc", 1280, 905, 190, 11, -14, -34, 1700, 0]],
+};
+const COINS = COIN_LAYOUT[FMT].map(([k, x, y, r, d, tx, ty, at, fg]) => coin({ ...C[k], x, y, r, d, tx, ty, at, fg: !!fg }));
+
+// ---------- one frame of the 3D, as a pure function of t ----------
+const v = new THREE.Vector3(), q = new THREE.Quaternion(), qB = new THREE.Quaternion();
+const euler = new THREE.Euler();
+function draw3d(t) {
+  // cube state: scrambled → solved into the poster → scrambled again; it never leaves its spot
+  const st = SCRAMBLED.map((s) => ({ p: s.p.clone(), q: s.q.clone() }));
+  const play = (moves, at) => moves.forEach((m, k) => {
+    const p = prog(t, at + k * T.step, T.dur);
+    if (p <= 0) return;
+    turn(st, m, outBack(p, 1.4));
+    if (p >= 1) snap(st);
+  });
+  play(PLAY, T.solve);
+  play(MOVES, T.scramble);
+  const back = inOutSine(prog(t, T.unpose, 550));
+  const twist = -0.3 * (outBack(prog(t, T.twist, 700), 2.2) - back);
+  qB.setFromAxisAngle(AX.y, twist);
+  cubies.forEach((c, i) => {
+    const s = st[i];
+    if (c.notch) s.p.x -= 1.65 * (outBack(prog(t, T.notch, 650), 1.8) - back);
+    if (Math.round(s.p.y) === 0 && twist !== 0) { s.p.applyQuaternion(qB); s.q.premultiply(qB); }
+    c.mesh.position.copy(s.p);
+    c.mesh.quaternion.copy(s.q);
+  });
+  // a slow sway that closes on itself over the loop
+  cubeGroup.rotation.y = 0.07 * Math.sin((Math.PI * 2 * t) / LOOP);
+  cubeGroup.position.y = 0.1 * Math.sin((Math.PI * 4 * t) / LOOP);
+  const wf = prog(t, T.white, 700);
+  glow.material.opacity = (wf < 1 ? Math.sin(Math.PI * wf) * 0.95 + 0.4 * wf : 0.4) * (1 - prog(t, T.unpose, 400));
+  // coins: spin in, wobble, spin out
+  COINS.forEach((c, i) => {
+    const a = outExpo(prog(t, c.at, 1300));
+    const o = inExpo(prog(t, 7900 + i * 60, 700));
+    c.g.position.lerpVectors(c.from, c.pos, a - o);
+    c.g.quaternion.copy(cam.quaternion);
+    euler.set(THREE.MathUtils.degToRad(c.tx) + 0.12 * Math.sin((t / 1300) * Math.PI + i), THREE.MathUtils.degToRad(c.ty) + (1 - a + o) * Math.PI * 3, 0);
+    c.body.quaternion.setFromEuler(euler);
+    c.g.visible = a - o > 0.001;
+    c.g.position.y += 0.15 * Math.sin((t / LOOP) * Math.PI * 4 + i * 1.7) * (a - o);
+  });
+  rMain.render(scene, cam);
+  rFg.render(sceneFg, cam);
+}
+
+// ---------- the logo, rebuilt: B mark as SVG (official file's coordinates), Figtree wordmark ----------
+const NS = "http://www.w3.org/2000/svg";
+const mk = (tag, a, p) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+const markEl = document.getElementById("mark");
+const N = { t: [212, 16], ul: [18, 131], ur: [408, 131], c: [212, 238], ll: [18, 352], lr: [408, 355], b: [212, 463] };
+const edge = ([a, b], op, p) => mk("line", { x1: N[a][0], y1: N[a][1], x2: N[b][0], y2: N[b][1], opacity: op }, p);
+const eg = mk("g", { stroke: "#fff", "stroke-width": 11, "stroke-linecap": "round" }, markEl);
+const FAINT = [["t", "ul"], ["ul", "c"], ["ur", "lr"]].map((e) => edge(e, 0.32, eg));
+// one pen stroke t → ur → c → lr → b → ll → ul, then the spine
+const SOLID = [["t", "ur"], ["ur", "c"], ["c", "lr"], ["lr", "b"], ["b", "ll"], ["ll", "ul"], ["t", "b"]].map((e) => edge(e, 1, eg));
+const ng = mk("g", { fill: "#fff" }, markEl);
+const NODES = ["t", "ur", "c", "lr", "b", "ll", "ul"].map((k) => mk("circle", { cx: N[k][0], cy: N[k][1], r: 17, style: `transform-origin:${N[k][0]}px ${N[k][1]}px` }, ng));
+const SPARK = mk("rect", { x: -15, y: -15, width: 30, height: 30, rx: 3, fill: "#c6fc1f", opacity: 0, style: "filter:drop-shadow(0 0 10px #c6fc1f)" }, markEl);
+document.querySelectorAll(".wm .row").forEach((r) => { r.innerHTML = [...r.textContent].map((c) => `<span class="ch">${c}</span>`).join(""); });
+document.querySelectorAll(".yr b").forEach((r) => { r.innerHTML = [...r.textContent].map((c) => `<span>${c}</span>`).join(""); });
+
+function logoIn(tl) {
+  const lines = svg.createDrawable([...SOLID, ...FAINT]);
+  const solid = lines.slice(0, 7), faint = lines.slice(7);
+  tl.set(lines, { draw: "0 0" }, 0).set(NODES, { scale: 0 }, 0);
+  NODES.forEach((n, k) => tl.add(n, { scale: [0, 1], ease: "outBack(2.4)", duration: 420 }, 150 + k * 120));
+  solid.slice(0, 6).forEach((l, k) => tl.add(l, { draw: ["0 0", "0 1"], ease: "inOutSine", duration: 150 }, 200 + k * 120));
+  tl.add(solid[6], { draw: ["0 0", "0 1"], ease: "inOutQuad", duration: 300 }, 920)
+    .add(faint, { draw: ["0 0", "0 1"], ease: "outQuad", duration: 400, delay: stagger(70) }, 1100)
+    // every block flashes lime: confirmed
+    .add(NODES, { fill: ["#ffffff", "#c6fc1f", "#ffffff"], scale: [1, 1.35, 1], ease: "inOutSine", duration: 520, delay: stagger(35) }, 1300)
+    // the wordmark rises letter by letter, then the year badge wipes in
+    .add(".wm .ch", { y: ["105%", "0%"], ease: "outExpo", duration: 900, delay: stagger(22) }, 650)
+    .add(".yr i", { scaleX: [0, 1], ease: "outExpo", duration: 900 }, 1250)
+    .add(".yr b span", { y: ["110%", "0%"], ease: "outExpo", duration: 800, delay: stagger(60) }, 1400)
+    // a lime block runs the B once while the cube holds its pose
+    .add(SPARK, { opacity: [0, 1], duration: 150, ease: "linear" }, 3600)
+    .add(SPARK, { ...svg.createMotionPath("#tour"), ease: "inOutSine", duration: 1900 }, 3600)
+    .add(SPARK, { opacity: 0, duration: 150, ease: "linear" }, 5350)
+    // out
+    .add(".wm .ch", { y: "-105%", ease: "inExpo", duration: 500, delay: stagger(12) }, 8000)
+    .add(".yr b span", { y: "-110%", ease: "inExpo", duration: 450, delay: stagger(40) }, 8050)
+    .add(".yr i", { scaleX: 0, ease: "inExpo", duration: 450 }, 8200)
+    .add(lines, { draw: "1 1", ease: "inOutQuart", duration: 450, delay: stagger(25) }, 8100)
+    .add(NODES, { scale: 0, ease: "inBack(2)", duration: 400, delay: stagger(30) }, 8300);
+}
+
+// ---------- DOM timeline + loop ----------
+function build() {
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 900 } });
+  logoIn(tl);
+  tl.add(words, { y: ["110%", "0%"], duration: 1000, delay: stagger(140) }, 1200);
+  if (LINES.length) tl.add(LINES, { scaleX: [0, 1], duration: 1000, delay: stagger(90) }, 300);
+  if (GLYPHS.length) tl.add(GLYPHS, { opacity: [0, 0.95], translateX: (e, i) => [i ? 60 : -60, 0], duration: 1200, delay: stagger(150) }, 700);
+  if (DOTS.length) tl.add(DOTS.map((d) => d.firstChild), { scale: [0, 1], ease: "outBack(2.4)", duration: 600, delay: stagger(110) }, 1300);
+  if (PX.length) tl.add(PX, { scale: [0, 1], ease: "outBack(1.8)", duration: 600, delay: stagger(60, { from: "random", seed: 3 }) }, 150);
+  if (BARS.length) tl.add(BARS[0], { translateY: [-160, 0], duration: 1000 }, 300).add(BARS[1], { translateX: [300, 0], duration: 1000 }, 500);
+  // out
+  tl.add(words, { y: "-110%", duration: 600, ease: "inExpo", delay: stagger(60) }, 8000);
+  if (LINES.length) tl.add(LINES, { scaleX: 0, duration: 500, ease: "inExpo", delay: stagger(50) }, 8100);
+  if (GLYPHS.length) tl.add(GLYPHS, { opacity: 0, duration: 400, ease: "inQuad" }, 8050);
+  if (DOTS.length) tl.add(DOTS.map((d) => d.firstChild), { scale: 0, ease: "inBack(2)", duration: 400, delay: stagger(50) }, 8000);
+  if (PX.length) tl.add(PX, { scale: 0, ease: "inBack(2)", duration: 450, delay: stagger(40, { from: "random", seed: 6 }) }, 8250);
+  if (BARS.length) tl.add(BARS[0], { translateY: -160, duration: 500, ease: "inExpo" }, 8100).add(BARS[1], { translateX: 300, duration: 500, ease: "inExpo" }, 8150);
+  tl.add({ duration: 1 }, LOOP - 1);
+  return tl;
+}
+function frame(tl, ms) {
+  tl.seek(ms);
+  drawBg(ms, 1);
+  DOTS.forEach((d, i) => { d.style.transform = `translateY(${Math.sin((ms / LOOP) * Math.PI * 4 + i) * 10}px)`; });
+  GLYPHS.forEach((d, i) => { d.style.transform = `translateY(${Math.sin((ms / LOOP) * Math.PI * 2 + i * 2) * 14}px)`; });
+  draw3d(ms);
+}
+Promise.all([document.fonts.ready, document.fonts.load("800 100px Montserrat", "ŁB"), document.fonts.load("700 100px Figtree"), document.fonts.load("400 100px Figtree")]).then(() => {
+  // coin faces were drawn before the font was in; redraw once it is
+  COINS.forEach((c) => { const { face } = coinMats(c.base, c.light, c.ink, c.sym); c.body.children[0].material[1] = c.body.children[0].material[2] = face; });
+  const tl = build();
+  window.__seek = (ms) => { frame(tl, ms % LOOP); return true; };
+  window.__loop = LOOP;
+  const qs = new URLSearchParams(location.search).get("t");
+  if (qs !== null) { frame(tl, +qs * 1000); return; }
+  const t0 = performance.now();
+  const tick = (now) => { frame(tl, (now - t0) % LOOP); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+});
+</script>
+</body>
+</html>

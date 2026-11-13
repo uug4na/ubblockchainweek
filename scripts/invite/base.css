@@ -1,0 +1,67 @@
+/* Shared brand base for the invitation GIFs (2025 brand: navy page, blue cells, green CTA,
+   cyan/lime/magenta/violet pixels, Poppins + Montserrat, 4px corners). */
+:root {
+  --navy: #010d58; --navy-deep: #02073a; --blue: #2945d5;
+  --green: #01fe6d; --cyan: #13effd; --lime: #c6fc1f; --magenta: #e81bfe; --violet: #9a4cf4;
+  --pad: 108px;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { overflow: hidden; background: var(--navy); }
+body { font-family: Poppins, Montserrat, system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+.card { position: relative; width: var(--w); height: var(--h); overflow: hidden; isolation: isolate; background: var(--navy); }
+
+.grid {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 54px 54px;
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 42%, #000 30%, transparent 100%);
+}
+.px { position: absolute; width: 54px; height: 54px; }
+.cyan { background: var(--cyan); box-shadow: 0 0 48px rgba(19,239,253,.45); }
+.lime { background: var(--lime); box-shadow: 0 0 48px rgba(198,252,31,.4); }
+.magenta { background: var(--magenta); box-shadow: 0 0 48px rgba(232,27,254,.4); }
+.violet { background: var(--violet); box-shadow: 0 0 48px rgba(154,76,244,.45); }
+.blue { background: var(--blue); box-shadow: 0 0 48px rgba(41,69,213,.5); }
+.white { background: #fff; box-shadow: 0 0 48px rgba(255,255,255,.4); }
+.green { background: var(--green); box-shadow: 0 0 48px rgba(1,254,109,.4); }
+
+.logo { display: flex; align-items: center; gap: 16px; }
+.logo img { height: 58px; display: block; }
+.year { font-weight: 500; font-size: 30px; letter-spacing: .06em; padding: 2px 12px 4px; border-left: 3px solid #fff;
+  background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.4)); }
+.eyebrow { font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
+h1 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; }
+.acc { color: var(--green); }
+
+/* a line that slides up from behind its own edge */
+.line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.line > span { display: inline-block; will-change: transform; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 14px; }
+.chip { height: 64px; padding: 0 24px; display: inline-flex; align-items: center; font-size: 26px; font-weight: 500; border-radius: 4px; background: var(--blue); }
+.btn { height: 76px; padding: 0 36px; display: inline-flex; align-items: center; gap: 14px; border-radius: 4px;
+  background: var(--green); color: var(--navy); font-weight: 600; font-size: 28px; }
+.url { font-size: 24px; font-weight: 500; color: rgba(255,255,255,.72); }
+
+/* "You're invited": a green marker sweeps behind the words and turns them navy */
+.invited { font-weight: 600; font-size: 44px; letter-spacing: -0.01em; line-height: 1.2; }
+mark.hl {
+  color: inherit; border-radius: 4px; padding: 0 .16em;
+  background: linear-gradient(var(--green), var(--green)) no-repeat left center / var(--hl, 0%) 100%;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* a line holding a marker is pulled left by the marker padding, so the words stay on the margin */
+.pull { margin-left: -.16em; }
+/* the site address, outlined in green next to the CTA */
+.site { height: 76px; padding: 0 28px; display: inline-flex; align-items: center; gap: 12px; border: 2px solid var(--green); border-radius: 4px;
+  font-size: 28px; font-weight: 600; color: #fff; }
+.site svg { color: var(--green); flex: none; }
+/* the official lockup in two parts: the mark, and the wordmark sliding out from behind it
+   (logo-white.webp: mark = left 30.6%, wordmark from 34.8%) */
+.lock { position: relative; display: block; height: 72px; aspect-ratio: 1014 / 349; }
+.lock img { position: absolute; top: 0; height: 100%; display: block; }
+.lk-mark { left: 0; clip-path: inset(0 69.4% 0 0); }
+.lk-word { position: absolute; top: 0; bottom: 0; left: 34.8%; right: 0; overflow: hidden; }
+.lk-word img { left: -53.37%; }
+.lock + .year { font-size: 34px; }
+.lk-mark, .lk-word img, .lock + .year { opacity: 0; }

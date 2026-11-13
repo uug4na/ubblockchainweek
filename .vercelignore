@@ -1,0 +1,11 @@
+# never upload local secrets or data with `vercel deploy`
+.env*.local
+.env.development
+.data
+.vercel
+out
+node_modules
+supabase/.temp
+scripts/deck/assets
+scripts/carousel/out
+scripts/carousel/uploads

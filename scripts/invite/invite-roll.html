@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · Roll</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* D — roll. The B mark is drawn like one pen stroke along the chain, its blocks flash green as
+     "confirmed", then it settles: into the logo (square) or as the big hero (?wide 16:9,
+     ?tall 9:16), and the wordmark slides out from behind the mark. Then who's invited rolls
+     through Builders, Researchers, Students, Founders and lands on "You", and a green marker
+     sweeps behind "You are invited." */
+  :root { --w: 1080px; --h: 1080px; --pad: 96px; --big: 128px; --top: 96px; --copy: 300px; }
+  :root.wide { --w: 1920px; --h: 1080px; --pad: 120px; --big: 156px; --top: 120px; --copy: 300px; }
+  :root.tall { --w: 1080px; --h: 1920px; --pad: 96px; --big: 128px; --top: 230px; --copy: 1010px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: var(--top); display: flex; align-items: center; justify-content: space-between; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: var(--copy); }
+  h1 { font-size: var(--big); line-height: 1.05; margin-top: 18px; }
+  .slot { display: block; height: 1.05em; overflow: hidden; }
+  .reel { display: block; }
+  .reel > span { display: block; height: 1.05em; padding-left: .16em; }
+  .chips { margin-top: 48px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: var(--pad); display: flex; align-items: center; gap: 16px; }
+  .tall .cta { bottom: 290px; }
+  #big { position: absolute; transform-origin: 0 0; overflow: visible; }
+  .px, .fx { opacity: 0; }
+  .line > span, .reel { transform: translateY(110%); }
+</style>
+<script>
+  const MODE = new URLSearchParams(location.search).has("wide") ? "wide" : new URLSearchParams(location.search).has("tall") ? "tall" : "square";
+  document.documentElement.classList.add(MODE);
+</script>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div id="pixels"></div>
+  <div class="top">
+    <div class="logo">
+      <span class="lock" role="img" aria-label="UB Blockchain Week">
+        <img class="lk-mark" id="lkMark" src="../../public/brand/logo-white.webp" alt="">
+        <span class="lk-word"><img id="lkWord" src="../../public/brand/logo-white.webp" alt=""></span>
+      </span>
+      <span class="year">2026</span>
+    </div>
+    <span class="eyebrow fx" id="invitation">Invitation</span>
+  </div>
+  <div class="copy">
+    <span class="line eyebrow"><span>UB Blockchain Week 2026</span></span>
+    <h1>
+      <span class="slot pull"><span class="reel" id="reel"><span>Builders</span><span>Researchers</span><span>Students</span><span>Founders</span><span><mark class="hl acc" id="you">You</mark></span></span></span>
+      <span class="line pull"><span><mark class="hl" id="invited">are invited.</mark></span></span>
+    </h1>
+    <div class="chips"><span class="chip fx">Nov 30 – Dec 5</span><span class="chip fx">Ulaanbaatar</span><span class="chip fx">Free entry</span></div>
+  </div>
+  <div class="cta" id="cta"></div>
+  <svg id="big" viewBox="96 77 316 358" aria-hidden="true">
+    <path id="tour" d="M253 91L398 175L253 252L398 336L253 421L253 91" fill="none" stroke="none"/>
+  </svg>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="base.js"></script>
+<script>
+ctaRow(document.getElementById("cta"));
+const px = pixels(document.getElementById("pixels"), {
+  square: [[19,0,1,1,"cyan"],[18,0,1,1,"magenta"],[19,1,1,2,"blue"],[17,0,1,1,"lime"],[19,3,1,1,"violet"],[0,19,1,1,"lime"],[1,19,1,1,"cyan"],[0,18,1,1,"white"]],
+  wide: [[35,0,1,1,"cyan"],[34,0,1,1,"magenta"],[35,1,1,2,"blue"],[33,0,1,1,"lime"],[35,3,1,1,"violet"],[0,19,1,1,"lime"],[1,19,1,1,"cyan"],[0,18,1,1,"white"],[35,19,1,1,"magenta"],[34,19,1,1,"cyan"],[35,18,1,1,"lime"]],
+  tall: [[19,0,1,1,"cyan"],[18,0,1,1,"magenta"],[19,1,1,2,"blue"],[17,0,1,1,"lime"],[19,3,1,1,"violet"],[0,35,1,1,"lime"],[1,35,1,1,"cyan"],[0,34,1,1,"white"],[19,35,1,1,"magenta"],[19,34,1,1,"cyan"],[0,16,1,1,"violet"]],
+}[MODE]);
+const big = document.getElementById("big");
+const b = drawB(big);
+const spark = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+Object.entries({ x: -11, y: -11, width: 22, height: 22, rx: 2, fill: "#01fe6d", opacity: 0 }).forEach(([k, v]) => spark.setAttribute(k, v));
+big.appendChild(spark);
+
+play(() => {
+  const card = document.querySelector(".card").getBoundingClientRect();
+  const lock = document.querySelector(".lock").getBoundingClientRect();
+  const H = parseFloat(getComputedStyle(document.querySelector("h1")).fontSize) * 1.05; // one reel step
+  const ratio = 316 / 358;
+  // where the mark ends up, and where it's drawn first (centre x, centre y, scale)
+  const end = {
+    square: { h: lock.height, x: lock.left - card.left, y: lock.top - card.top },
+    wide: { h: 560, x: 1440 - (560 * ratio) / 2, y: 280 },
+    tall: { h: 470, x: 540 - (470 * ratio) / 2, y: 400 },
+  }[MODE];
+  const intro = { square: [540, 500, 420 / end.h], wide: [960, 540, 1], tall: [540, 900, 1.15] }[MODE];
+  Object.assign(big.style, { left: end.x + "px", top: end.y + "px", height: end.h + "px", width: end.h * ratio + "px" });
+  // translateX/Y: on an <svg> anime treats x/y as attributes
+  const x0 = intro[0] - (end.h * ratio * intro[2]) / 2 - end.x;
+  const y0 = intro[1] - (end.h * intro[2]) / 2 - end.y;
+  const s0 = intro[2];
+
+  const faint = svg.createDrawable(b.faint);
+  const solid = svg.createDrawable(b.solid);
+  const reel = document.getElementById("reel");
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 800 } });
+  tl.set([...faint, ...solid], { draw: "0 0" }, 0)
+    .set(b.nodes, { scale: 0 }, 0)
+    .set(big, { translateX: x0, translateY: y0, scale: s0, opacity: 1 }, 0)
+    .add(px, { opacity: [0, 1], scale: [0, 1], ease: "outBack(1.8)", duration: 600, delay: stagger(40, { from: "random", seed: 2 }) }, 0);
+
+  // the logo, drawn as one pen stroke: each block appears as the line reaches it
+  const STEP = 130;
+  b.nodes.forEach((n, k) => tl.add(n, { scale: [0, 1], ease: "outBack(2.2)", duration: 380 }, 150 + k * STEP));
+  solid.slice(0, 6).forEach((l, k) => tl.add(l, { draw: ["0 0", "0 1"], ease: "inOutSine", duration: STEP + 20 }, 200 + k * STEP));
+  tl.add(solid[6], { draw: ["0 0", "0 1"], ease: "inOutQuad", duration: 280 }, 200 + 6 * STEP)
+    .add(faint, { draw: ["0 0", "0 1"], ease: "outQuad", duration: 380, delay: stagger(70) }, 1150)
+    // every block flashes green: confirmed
+    .add(b.nodes, { fill: ["#ffffff", "#01fe6d", "#ffffff"], scale: [1, 1.4, 1], ease: "inOutSine", duration: 520, delay: stagger(35) }, 1300)
+    // then it settles into place
+    .add(big, { translateX: [x0, 0], translateY: [y0, 0], scale: [s0, 1], ease: "inOutExpo", duration: 700 }, 1750);
+
+  const word = MODE === "square" ? 2450 : 2150;
+  if (MODE === "square") {
+    // the drawn mark hands over to the official lockup's mark
+    tl.add("#lkMark", { opacity: [0, 1], duration: 100, ease: "linear" }, 2400)
+      .add(big, { opacity: [1, 0], duration: 100, ease: "linear" }, 2420);
+  } else {
+    tl.add("#lkMark", { opacity: [0, 1], scale: [0.6, 1], ease: "outBack(2)", duration: 600 }, 1900);
+  }
+  tl.add("#lkWord", { opacity: [0, 1], translateX: ["-75%", "0%"], duration: 900 }, word)
+    .add(".year", { opacity: [0, 1], translateX: [-16, 0], duration: 600 }, word + 200)
+    .add("#invitation", { opacity: [0, 1], translateY: [-20, 0], duration: 600 }, word + 200)
+    .add(words, { y: ["110%", "0%"], duration: 900, delay: stagger(150) }, 2000)
+    .add(reel, { y: [H * 1.1, 0], duration: 800 }, 2100);
+  // roll one word at a time and land on "You"
+  [0, 1, 2, 3].forEach((i) => tl.add(reel, { y: -(i + 1) * H, duration: i < 3 ? 340 : 650, ease: i < 3 ? "inOutQuart" : "outElastic(1, .75)" }, 2650 + i * 250));
+  // the green marker sweeps behind "You" and "are invited."
+  tl.add("#you, #invited", { "--hl": ["0%", "100%"], duration: 500, ease: "outQuart", delay: stagger(140) }, 3550)
+    .add("#you", { color: ["#01fe6d", "#010d58"], duration: 250, ease: "linear" }, 3600)
+    .add("#invited", { color: ["#ffffff", "#010d58"], duration: 250, ease: "linear" }, 3740)
+    .add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(70) }, 3800)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(90) }, 3950);
+  if (MODE !== "square") {
+    tl.add(spark, { opacity: [0, 1], duration: 150, ease: "linear" }, 4000)
+      .add(spark, { ...svg.createMotionPath("#tour"), ease: "inOutSine", duration: 1700 }, 4000)
+      .add(spark, { opacity: 0, duration: 150, ease: "linear" }, 5550);
+  }
+  // out (back to the empty first frame)
+  tl.add(reel, { y: -5 * H, duration: 600, ease: "inExpo" }, 5800)
+    .add(words, { y: "-110%", duration: 600, ease: "inExpo", delay: stagger(60) }, 5800)
+    .add(".chip, .btn, .site, #invitation, .year, #lkMark, #lkWord", { opacity: 0, duration: 450, ease: "inQuad", delay: stagger(25) }, 5850)
+    .add(px, { opacity: 0, scale: 0, ease: "inBack(2)", duration: 450, delay: stagger(25, { from: "random", seed: 4 }) }, 6000);
+  if (MODE !== "square") {
+    tl.add([...solid, ...faint], { draw: "1 1", ease: "inOutQuart", duration: 450, delay: stagger(30) }, 5850)
+      .add(b.nodes, { scale: 0, ease: "inBack(2)", duration: 400, delay: stagger(30) }, 6000);
+  }
+  return tl;
+}, 6500);
+</script>
+</body>
+</html>

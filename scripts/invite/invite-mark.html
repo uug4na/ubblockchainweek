@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UBBW 2026 Invite · Mark</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* A — the mark: the block-graph B builds itself, a green block runs its outline. 4:5 feed. */
+  :root { --w: 1080px; --h: 1350px; }
+  .top { position: absolute; left: var(--pad); right: var(--pad); top: var(--pad); display: flex; align-items: center; justify-content: space-between; }
+  .mark { position: absolute; left: 50%; top: 250px; width: 470px; height: 470px; margin-left: -235px; overflow: visible; }
+  .copy { position: absolute; left: var(--pad); right: var(--pad); top: 770px; }
+  h1 { font-size: 104px; margin-top: 22px; }
+  .chips { margin-top: 44px; }
+  .cta { position: absolute; left: var(--pad); right: var(--pad); bottom: 100px; display: flex; align-items: center; gap: 16px; }
+  .px, .fx { opacity: 0; }
+  .line > span { transform: translateY(110%); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div id="pixels"></div>
+  <div class="top fx">
+    <div class="logo"><img src="../../public/brand/logo-white.webp" alt="UB Blockchain Week"><span class="year">2026</span></div>
+    <span class="eyebrow">Invitation</span>
+  </div>
+  <svg class="mark" id="mark" viewBox="76 76 360 360" aria-hidden="true">
+    <path id="tour" d="M253 91L398 175L253 252L398 336L253 421L253 91" fill="none" stroke="none"/>
+  </svg>
+  <div class="copy">
+    <span class="line invited pull"><span><mark class="hl" id="inv">You're invited</mark></span></span>
+    <h1><span class="line"><span>UB Blockchain</span></span><span class="line"><span>Week <span class="acc">2026</span></span></span></h1>
+    <div class="chips"><span class="chip fx">Nov 30 – Dec 5</span><span class="chip fx">Ulaanbaatar</span><span class="chip fx">Free entry</span></div>
+  </div>
+  <div class="cta" id="cta"></div>
+</div>
+<script src="vendor/anime.umd.min.js"></script>
+<script src="base.js"></script>
+<script>
+ctaRow(document.getElementById("cta"));
+const px = pixels(document.getElementById("pixels"), [
+  [0,0,2,1,"cyan"],[2,0,1,1,"magenta"],[0,1,1,2,"blue"],[1,1,1,1,"lime"],[3,0,1,1,"white"],[0,3,1,1,"violet"],
+  [19,24,1,1,"lime"],[18,23,1,1,"cyan"],[17,24,1,1,"blue"],[19,22,1,2,"magenta"],[16,24,1,1,"violet"],[19,21,1,1,"white"],[15,23,1,1,"cyan"],
+  [19,7,1,1,"cyan"],[0,14,1,1,"lime"],
+]);
+const mark = document.getElementById("mark");
+const b = drawB(mark);
+const spark = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+Object.entries({ x: -11, y: -11, width: 22, height: 22, rx: 2, fill: "#01fe6d", opacity: 0 }).forEach(([k, v]) => spark.setAttribute(k, v));
+mark.appendChild(spark);
+
+play(() => {
+  const lines = svg.createDrawable([...b.faint, ...b.solid]);
+  const words = document.querySelectorAll(".line > span");
+  const tl = createTimeline({ autoplay: false, defaults: { ease: "outExpo", duration: 900 } });
+  tl.set(lines, { draw: "0 0" }, 0)
+    .set(b.nodes, { scale: 0 }, 0)
+    // in
+    .add(px, { opacity: [0, 1], scale: [0, 1], ease: "outBack(1.8)", duration: 700, delay: stagger(55, { from: "random", seed: 3 }) }, 0)
+    .add(".top", { opacity: [0, 1], y: [-24, 0] }, 250)
+    .add(b.nodes, { scale: [0, 1], ease: "outElastic(1, .55)", duration: 1100, delay: stagger(70) }, 350)
+    .add(lines, { draw: ["0 0", "0 1"], ease: "inOutQuart", duration: 800, delay: stagger(55, { start: 0 }) }, 650)
+    .add(words, { y: ["110%", "0%"], duration: 1100, delay: stagger(110) }, 1350)
+    .add("#inv", { "--hl": ["0%", "100%"], color: ["#ffffff", "#010d58"], duration: 500, ease: "outQuart" }, 1800)
+    .add(".chip", { opacity: [0, 1], y: [30, 0], delay: stagger(80) }, 1850)
+    .add(".btn, .site", { opacity: [0, 1], y: [30, 0], delay: stagger(100) }, 2100)
+    // the green block runs the B
+    .add(spark, { opacity: [0, 1], duration: 200, ease: "linear" }, 2300)
+    .add(spark, { ...svg.createMotionPath("#tour"), ease: "inOutSine", duration: 2400 }, 2300)
+    .add(spark, { opacity: 0, duration: 200, ease: "linear" }, 4500)
+    // out (back to the empty first frame)
+    .add(words, { y: "-110%", duration: 700, ease: "inExpo", delay: stagger(60) }, 5000)
+    .add(".chip, .btn, .site, .top", { opacity: 0, y: -20, duration: 600, ease: "inQuad", delay: stagger(40) }, 5050)
+    .add(lines, { draw: "1 1", ease: "inOutQuart", duration: 600, delay: stagger(30) }, 5100)
+    .add(b.nodes, { scale: 0, ease: "inBack(2)", duration: 500, delay: stagger(40) }, 5300)
+    .add(px, { opacity: 0, scale: 0, ease: "inBack(2)", duration: 500, delay: stagger(25, { from: "random", seed: 7 }) }, 5250);
+  return tl;
+}, 6000);
+</script>
+</body>
+</html>

@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UBBW 2026 Carousel Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=Poppins:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=JetBrains+Mono:wght@500;700;800&family=Geologica:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Rubik:wght@600;700;800;900&display=block" rel="stylesheet" crossorigin="anonymous">
+<style>
+/* ───────────────────────── editor chrome ───────────────────────── */
+:root { --ui-bg: #070b22; --ui-panel: #0d1333; --ui-line: rgba(255,255,255,.1); --ui-fg: #e9ecff; --ui-mut: rgba(233,236,255,.6); --ui-acc: #01fe6d; --ui-blue: #2945d5; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--ui-bg); color: var(--ui-fg); font: 13px/1.45 Montserrat, system-ui, sans-serif; display: grid; grid-template-rows: auto auto 1fr; overflow: hidden; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 10px 16px; border-bottom: 1px solid var(--ui-line); background: var(--ui-panel); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.01em; font-size: 14px; }
+.brand i { width: 14px; height: 14px; background: var(--ui-acc); display: inline-block; }
+.grp { display: flex; align-items: center; gap: 8px; }
+.grp > span { color: var(--ui-mut); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+.seg { display: inline-flex; border: 1px solid var(--ui-line); border-radius: 6px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: 6px 11px; color: var(--ui-mut); font-weight: 600; }
+.seg button + button { border-left: 1px solid var(--ui-line); }
+.seg button.on { background: var(--ui-blue); color: #fff; }
+.btn-ui { background: rgba(255,255,255,.06); border: 1px solid var(--ui-line); border-radius: 6px; padding: 6px 12px; font-weight: 600; }
+.btn-ui:hover { background: rgba(255,255,255,.12); }
+.btn-ui.go { background: var(--ui-acc); color: #010d58; border-color: var(--ui-acc); }
+.btn-ui:disabled { opacity: .45; cursor: progress; }
+.sp { flex: 1; }
+.pill { border: 1px solid var(--ui-line); border-radius: 6px; padding: 6px 11px; font-weight: 600; color: var(--ui-fg); }
+.srv { float: right; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--ui-acc); }
+.srv.bad { color: #ff9ad0; }
+.warn { background: rgba(232,27,254,.14); color: #f6b4ff; padding: 6px 16px; font-size: 12px; border-bottom: 1px solid var(--ui-line); display: none; }
+.warn.show { display: block; }
+.main { display: grid; grid-template-columns: 290px minmax(0, 1fr) 380px; min-height: 0; }
+.panel { overflow: auto; padding: 14px; border-right: 1px solid var(--ui-line); background: var(--ui-panel); }
+.panel.right { border-right: 0; border-left: 1px solid var(--ui-line); }
+.panel h3 { margin: 18px 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--ui-mut); font-weight: 700; }
+.panel h3:first-child { margin-top: 0; }
+.row-ui { display: flex; gap: 6px; align-items: center; }
+.row-ui > select, .row-ui > input { flex: 1; min-width: 0; }
+select, .inp { background: rgba(255,255,255,.05); border: 1px solid var(--ui-line); border-radius: 6px; padding: 7px 9px; width: 100%; }
+select option { background: #0d1333; }
+textarea.inp { resize: vertical; min-height: 38px; }
+.inp:focus, select:focus { outline: 2px solid var(--ui-blue); outline-offset: -1px; }
+.list { display: flex; flex-direction: column; gap: 4px; }
+.li { display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 8px; border: 1px solid var(--ui-line); border-radius: 6px; cursor: pointer; }
+.li.on { border-color: var(--ui-acc); background: rgba(1,254,109,.06); }
+.li .n { font-family: "JetBrains Mono", monospace; color: var(--ui-mut); font-size: 11px; }
+.li .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li .t small { color: var(--ui-mut); display: block; font-size: 11px; }
+.li.over .n { color: #f6b4ff; }
+.ic { background: none; border: 0; color: var(--ui-mut); padding: 2px 4px; border-radius: 4px; font-size: 13px; line-height: 1; }
+.ic:hover { color: #fff; background: rgba(255,255,255,.1); }
+.fld { margin-bottom: 12px; }
+.fld > label { display: block; font-weight: 700; font-size: 12px; margin-bottom: 5px; }
+.pair { display: grid; gap: 5px; }
+.pair > div { position: relative; }
+.pair .tag { position: absolute; right: 6px; top: 6px; font: 600 9px "JetBrains Mono", monospace; color: var(--ui-mut); pointer-events: none; }
+.hint { color: var(--ui-mut); font-size: 11px; margin: -4px 0 12px; }
+.item { border: 1px solid var(--ui-line); border-radius: 8px; padding: 10px; margin-bottom: 8px; background: rgba(255,255,255,.02); }
+.item-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-weight: 700; font-size: 12px; }
+.item .fld { margin-bottom: 8px; }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 8px; }
+.thumbs button { padding: 0; border: 2px solid transparent; border-radius: 5px; overflow: hidden; aspect-ratio: 1; background: #000; }
+.thumbs button.on { border-color: var(--ui-acc); }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+details summary { cursor: pointer; color: var(--ui-mut); font-weight: 600; }
+.count-ui { font: 500 11px "JetBrains Mono", monospace; color: var(--ui-mut); text-align: right; margin-top: 3px; }
+.count-ui.bad { color: #ff7ab8; }
+.stage { overflow: auto; padding: 22px 24px 40px; min-width: 0; position: relative; }
+.strip { display: flex; gap: 18px; align-items: flex-start; width: max-content; }
+.seamless .strip { gap: 0; }
+.frame { flex: none; position: relative; cursor: pointer; }
+.frame::after { content: ""; position: absolute; inset: -5px; border: 2px solid transparent; border-radius: 4px; pointer-events: none; }
+.frame.sel::after { border-color: var(--ui-acc); }
+.seamless .frame::after { inset: 0; }
+.frame .slide { position: absolute; top: 0; left: 0; transform-origin: 0 0; transform: scale(var(--z)); }
+.cap { font: 500 11px "JetBrains Mono", monospace; color: var(--ui-mut); margin-top: 8px; position: absolute; top: 100%; left: 0; white-space: nowrap; }
+.seamless .cap { display: none; }
+.busy { position: fixed; inset: auto 16px 16px auto; background: var(--ui-blue); color: #fff; padding: 10px 14px; border-radius: 8px; font-weight: 700; display: none; z-index: 10; }
+.busy.show { display: block; }
+#exportRoot { position: fixed; left: -100000px; top: 0; }
+@media (max-width: 1100px) {
+  body { overflow: auto; display: block; }
+  .main { grid-template-columns: 1fr; }
+  .panel { border: 0; border-bottom: 1px solid var(--ui-line); max-height: none; }
+  .stage { min-height: 60vh; }
+}
+
+/* ───────────────────────── slides ─────────────────────────
+   Every size is in --u (1080-px design unit) so one layout serves 1080×1350, 1080×1080 and 1600×900.
+   Text sizes use --f = --u × --k; --k shrinks per slide until the copy fits. */
+.slide {
+  --f: calc(var(--u) * var(--k));
+  --c-cyan: #13effd; --c-green: #01fe6d; --c-lime: #c6fc1f; --c-magenta: #e81bfe; --c-violet: #9a4cf4; --c-blue: #2945d5; --c-white: #fff;
+  position: relative; width: var(--w); height: var(--h); overflow: hidden; isolation: isolate;
+  background: var(--bg); color: var(--fg); font-family: Montserrat, system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+}
+.slide * { box-sizing: border-box; margin: 0; }
+.th-navy  { --bg: #010d58; --bgr: 1,13,88;  --fg: #fff; --mut: rgba(255,255,255,.72); --line: rgba(255,255,255,.16); --card: rgba(255,255,255,.06); --acc: #01fe6d; --acc2: #13effd; --chip: #2945d5; --chipfg: #fff; --btn: #01fe6d; --btnfg: #010d58; --grid: rgba(255,255,255,.07); --glow: rgba(41,69,213,.75); }
+.th-night { --bg: #04071c; --bgr: 4,7,28;   --fg: #fff; --mut: rgba(255,255,255,.7);  --line: rgba(255,255,255,.14); --card: rgba(255,255,255,.05); --acc: #01fe6d; --acc2: #13effd; --chip: #2945d5; --chipfg: #fff; --btn: #01fe6d; --btnfg: #04071c; --grid: rgba(255,255,255,.06); --glow: rgba(41,69,213,.5); }
+.th-paper { --bg: #f2f4fb; --bgr: 242,244,251; --fg: #010d58; --mut: rgba(1,13,88,.7); --line: rgba(1,13,88,.16); --card: #fff; --acc: #2945d5; --acc2: #2945d5; --chip: #010d58; --chipfg: #fff; --btn: #010d58; --btnfg: #01fe6d; --grid: rgba(1,13,88,.07); --glow: rgba(41,69,213,.16); }
+.th-volt  { --bg: #01fe6d; --bgr: 1,254,109; --fg: #010d58; --mut: rgba(1,13,88,.78); --line: rgba(1,13,88,.2); --card: rgba(1,13,88,.07); --acc: #2945d5; --acc2: #010d58; --chip: #010d58; --chipfg: #01fe6d; --btn: #010d58; --btnfg: #01fe6d; --grid: rgba(1,13,88,.09); --glow: rgba(255,255,255,.55); }
+
+.s-glow, .s-seam { position: absolute; top: 0; height: 100%; pointer-events: none; }
+.s-glow { z-index: -2; }
+.s-grid { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: calc(var(--u) * 54) calc(var(--u) * 54);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 84%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 84%, transparent 100%); }
+.s-seam { z-index: 1; }
+.s-seam i { position: absolute; display: block; }
+.ph { position: absolute; z-index: 0; overflow: hidden; }
+.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph-full { inset: 0; }
+.ph-full::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(var(--bgr), .55) 0%, rgba(var(--bgr), 0) 26%, rgba(var(--bgr), .35) 48%, rgba(var(--bgr), .92) 74%, rgb(var(--bgr)) 100%); }
+.land .ph-full::after { background: linear-gradient(90deg, rgb(var(--bgr)) 0%, rgba(var(--bgr), .9) 34%, rgba(var(--bgr), .25) 70%, rgba(var(--bgr), .1) 100%); }
+.ph-dim { inset: 0; opacity: .2; filter: grayscale(.5); }
+.ph-inset { left: calc(var(--u) * 88); right: calc(var(--u) * 88); top: calc(var(--u) * 150); height: calc(var(--h) * .4); border-radius: calc(var(--u) * 6); }
+.sq .ph-inset { height: calc(var(--h) * .34); }
+.land .ph-inset { left: auto; right: 0; top: 0; bottom: 0; height: auto; width: 42%; border-radius: 0; }
+.has-inset .s-body { top: calc(var(--u) * 196 + var(--h) * .4); }
+.sq.has-inset .s-body { top: calc(var(--u) * 196 + var(--h) * .34); }
+.land.has-inset .s-body { top: calc(var(--u) * 168); }
+.land.has-inset .s-body, .land.has-inset .s-top, .land.has-inset .s-foot { right: calc(var(--w) * .42 + var(--u) * 64); }
+
+.s-top { position: absolute; z-index: 2; top: calc(var(--u) * 64); left: calc(var(--u) * 88); right: calc(var(--u) * 88); display: flex; align-items: center; gap: calc(var(--u) * 16); }
+.s-top img { height: calc(var(--u) * 50); display: block; }
+.s-top .yr { font-weight: 500; font-size: calc(var(--u) * 24); letter-spacing: .06em; padding: calc(var(--u) * 2) calc(var(--u) * 10) calc(var(--u) * 4); border-left: calc(var(--u) * 3) solid var(--fg); background: linear-gradient(90deg, transparent, var(--line)); }
+.s-top .no { margin-left: auto; font: 700 calc(var(--u) * 22) "JetBrains Mono", monospace; letter-spacing: .12em; color: var(--mut); }
+.s-top .no b { color: var(--fg); }
+.s-foot { position: absolute; z-index: 2; bottom: calc(var(--u) * 58); left: calc(var(--u) * 88); right: calc(var(--u) * 88); display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 20);
+  font: 500 calc(var(--u) * 21) "JetBrains Mono", monospace; letter-spacing: .08em; color: var(--mut); }
+.s-foot .swipe { color: var(--acc); font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: calc(var(--u) * 12); }
+.s-foot .swipe svg { width: calc(var(--u) * 34); height: calc(var(--u) * 34); }
+
+.s-body { position: absolute; z-index: 2; left: calc(var(--u) * 88); right: calc(var(--u) * 88); top: calc(var(--u) * 168); bottom: calc(var(--u) * 132);
+  display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 26); overflow: hidden; }
+.eyebrow { font: 700 calc(var(--f) * 23) "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--acc2); display: flex; align-items: center; gap: calc(var(--u) * 14); }
+.eyebrow::before { content: ""; width: calc(var(--u) * 18); height: calc(var(--u) * 18); background: var(--acc); flex: none; }
+.h1 { font-weight: 800; font-size: calc(var(--f) * 122); line-height: .98; letter-spacing: -.035em; overflow-wrap: break-word; }
+.h2 { font-weight: 800; font-size: calc(var(--f) * 80); line-height: 1.02; letter-spacing: -.03em; overflow-wrap: break-word; }
+.lead { font-size: calc(var(--f) * 34); line-height: 1.35; color: var(--mut); font-weight: 500; }
+.quote { font-weight: 700; font-size: calc(var(--f) * 66); line-height: 1.12; letter-spacing: -.02em; }
+.text { font-size: calc(var(--f) * 30); line-height: 1.45; color: var(--mut); font-weight: 500; }
+.acc { color: var(--acc); }
+.alt { display: block; font-size: .42em; line-height: 1.25; letter-spacing: -.005em; font-weight: 600; color: var(--mut); margin-top: .45em; }
+.alt.alt-p { font-size: .86em; font-weight: 500; margin-top: .4em; opacity: .85; }
+.chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 12); }
+.chip { min-height: calc(var(--f) * 60); padding: calc(var(--u) * 8) calc(var(--u) * 22); display: inline-flex; align-items: center; font-weight: 600; font-size: calc(var(--f) * 26); border-radius: calc(var(--u) * 4); background: var(--chip); color: var(--chipfg); }
+.chip:first-child { background: var(--btn); color: var(--btnfg); }
+
+.t-cover, .t-photo { justify-content: flex-end; }
+.has-inset .t-cover { justify-content: flex-start; }
+.land.has-inset .t-cover { justify-content: center; }
+
+.rows { display: flex; flex-direction: column; }
+.rw { display: grid; grid-template-columns: calc(var(--u) * 150) 1fr; gap: calc(var(--u) * 26); align-items: center; padding: calc(var(--f) * 15) 0; border-top: 1px solid var(--line); }
+.rw:last-child { border-bottom: 1px solid var(--line); }
+.dbox b { display: block; font-weight: 800; font-size: calc(var(--f) * 74); line-height: .95; letter-spacing: -.04em; }
+.dbox span { font: 700 calc(var(--f) * 17) "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--mut); }
+.wk { font: 700 calc(var(--f) * 17) "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: .12em; color: var(--acc2); }
+.lbl { font-weight: 800; font-size: calc(var(--f) * 36); line-height: 1.1; letter-spacing: -.015em; margin-top: calc(var(--u) * 4); }
+.note { font-size: calc(var(--f) * 22); color: var(--mut); margin-top: calc(var(--u) * 6); font-weight: 500; }
+.land .rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--u) * 18); }
+.land .rw, .land .rw:last-child { grid-template-columns: 1fr; gap: calc(var(--u) * 10); border: 1px solid var(--line); background: var(--card); padding: calc(var(--u) * 22); border-radius: calc(var(--u) * 6); align-content: start; align-items: start; }
+
+.t-day .big { font-weight: 800; font-size: calc(var(--f) * 230); line-height: .8; letter-spacing: -.06em; color: var(--acc); }
+.dayhead { display: flex; align-items: flex-end; gap: calc(var(--u) * 26); }
+.dayhead .meta { display: flex; flex-direction: column; gap: calc(var(--u) * 6); padding-bottom: calc(var(--u) * 6); font: 700 calc(var(--f) * 24) "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
+.dayhead .meta span + span { color: var(--mut); }
+.dcol { display: flex; flex-direction: column; gap: calc(var(--u) * 26); }
+.sess { display: flex; flex-direction: column; }
+.se { display: grid; grid-template-columns: calc(var(--u) * 132) 1fr; gap: calc(var(--u) * 18); padding: calc(var(--f) * 16) 0; border-top: 1px solid var(--line); align-items: baseline; }
+.se .tm { font: 700 calc(var(--f) * 24) "JetBrains Mono", monospace; color: var(--acc2); }
+.se .st { font-weight: 700; font-size: calc(var(--f) * 30); line-height: 1.2; }
+.land .t-day { flex-direction: row; align-items: center; gap: calc(var(--u) * 64); }
+.land .t-day > * { flex: 1; min-width: 0; }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 16); }
+.cd { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--u) * 6); padding: calc(var(--f) * 28); display: flex; flex-direction: column; gap: calc(var(--f) * 10); }
+.cd .px { position: absolute; top: 0; right: 0; width: calc(var(--u) * 24); height: calc(var(--u) * 24); border-top-right-radius: calc(var(--u) * 6); }
+.cd .when { font: 700 calc(var(--f) * 17) "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--acc2); }
+.cd h3 { font-weight: 800; font-size: calc(var(--f) * 36); line-height: 1.08; letter-spacing: -.02em; }
+.cd p { font-size: calc(var(--f) * 22); line-height: 1.42; color: var(--mut); font-weight: 500; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--f) * 34) calc(var(--u) * 28); }
+.land .stats { grid-template-columns: repeat(3, 1fr); }
+.st-i { border-top: calc(var(--u) * 5) solid var(--tone); padding-top: calc(var(--f) * 18); }
+.st-i b { display: block; font-weight: 800; font-size: calc(var(--f) * 100); line-height: 1; letter-spacing: -.045em; color: var(--tone); }
+.th-paper .st-i b, .th-volt .st-i b { color: var(--fg); }
+.st-i .l { font-weight: 800; font-size: calc(var(--f) * 28); margin-top: calc(var(--u) * 8); }
+.st-i .s { font-size: calc(var(--f) * 20); color: var(--mut); margin-top: calc(var(--u) * 4); font-weight: 500; }
+
+.people { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--f) * 30) calc(var(--u) * 26); }
+.land .people { grid-template-columns: repeat(3, 1fr); }
+.pp { display: flex; gap: calc(var(--u) * 20); align-items: center; min-width: 0; }
+.av { width: calc(var(--f) * 120); height: calc(var(--f) * 120); border-radius: 50%; flex: none; display: grid; place-items: center; overflow: hidden; font-weight: 800; font-size: calc(var(--f) * 40); color: #010d58; }
+.av img { width: 100%; height: 100%; object-fit: cover; }
+.pp .nm { font-weight: 800; font-size: calc(var(--f) * 29); line-height: 1.15; }
+.pp .rl { font-size: calc(var(--f) * 20); color: var(--mut); margin-top: calc(var(--u) * 4); font-weight: 500; }
+
+.logos { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 16); }
+.land .logos { grid-template-columns: repeat(4, 1fr); }
+.lg { position: relative; height: calc(var(--f) * 170); border-radius: calc(var(--u) * 6); display: grid; place-items: center; border: 1px solid var(--line); background: #010d58; }
+.lg.light { background: #fff; }
+.lg img { position: absolute; left: 14%; right: 14%; top: 18%; bottom: 18%; width: 72%; height: 64%; object-fit: contain; display: block; }
+.lg .ini { font-weight: 800; font-size: calc(var(--f) * 64); color: #fff; }
+.lg.light .ini { color: #010d58; }
+.lgn { font-weight: 700; font-size: calc(var(--f) * 22); margin-top: calc(var(--u) * 10); }
+.lga { font-size: calc(var(--f) * 18); color: var(--mut); margin-top: calc(var(--u) * 2); line-height: 1.35; }
+
+.t-cta { justify-content: center; }
+.ctarow { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 14); }
+.cbtn, .csite { min-height: calc(var(--f) * 80); padding: calc(var(--u) * 10) calc(var(--u) * 32); display: inline-flex; align-items: center; gap: calc(var(--u) * 14); border-radius: calc(var(--u) * 4); font-weight: 700; font-size: calc(var(--f) * 29); }
+.cbtn { background: var(--btn); color: var(--btnfg); }
+.csite { border: calc(var(--u) * 2) solid var(--btn); color: var(--fg); }
+.th-volt .csite { border-color: var(--fg); }
+.cbtn svg, .csite svg { width: calc(var(--f) * 30); height: calc(var(--f) * 30); flex: none; }
+.bigtag { font: 700 calc(var(--f) * 38) "JetBrains Mono", monospace; color: var(--acc2); letter-spacing: .02em; }
+.cn { display: none; }
+
+/* ═════════════ design: Bauhaus — Geologica, a frieze of geometric tiles across the top, solid colour blocks ═════════════ */
+.th-bink   { --bg: #eef1ff; --bgr: 238,241,255; --fg: #010d58; --mut: rgba(1,13,88,.74); --line: rgba(1,13,88,.14); --card: #fff; --acc: #2945d5; --acc2: #e81bfe; --btn: #01fe6d; --btnfg: #010d58;
+  --q1: #2945d5; --q1t: #fff; --q2: #e81bfe; --q2t: #fff; --q3: #c6fc1f; --q3t: #010d58; --q4: #010d58; --q4t: #fff; }
+.th-bnavy  { --bg: #010d58; --bgr: 1,13,88; --fg: #fff; --mut: rgba(238,241,255,.76); --line: rgba(255,255,255,.16); --card: #0a1a7a; --acc: #13effd; --acc2: #01fe6d; --btn: #01fe6d; --btnfg: #010d58;
+  --q1: #2945d5; --q1t: #fff; --q2: #e81bfe; --q2t: #fff; --q3: #01fe6d; --q3t: #010d58; --q4: #13effd; --q4t: #010d58; }
+.th-bblue  { --bg: #2945d5; --bgr: 41,69,213; --fg: #fff; --mut: rgba(255,255,255,.82); --line: rgba(255,255,255,.22); --card: #1b32a8; --acc: #c6fc1f; --acc2: #13effd; --btn: #01fe6d; --btnfg: #010d58;
+  --q1: #010d58; --q1t: #fff; --q2: #e81bfe; --q2t: #fff; --q3: #c6fc1f; --q3t: #010d58; --q4: #13effd; --q4t: #010d58; }
+.ds-bau { font-family: Montserrat, sans-serif; }
+.bh-frz { position: absolute; z-index: 1; top: 0; height: calc(var(--u) * 220); pointer-events: none; }
+.bh-frz svg { display: block; }
+.bh-bar { position: absolute; z-index: 1; bottom: 0; height: calc(var(--u) * 16); }
+.ds-bau .s-foot { bottom: calc(var(--u) * 50); left: calc(var(--u) * 80); right: calc(var(--u) * 80); font: 600 calc(var(--u) * 21) Geologica, sans-serif; color: var(--fg); letter-spacing: .02em; }
+.ds-bau .s-foot img { height: calc(var(--u) * 44); display: block; }
+.ds-bau .s-foot .swipe { color: var(--fg); font-size: calc(var(--u) * 24); }
+.ds-bau .s-foot .swipe svg { color: var(--acc2); }
+.th-bink .s-foot .swipe svg { color: #e81bfe; }
+.ds-bau .s-body { top: calc(var(--u) * 276); bottom: calc(var(--u) * 140); left: calc(var(--u) * 80); right: calc(var(--u) * 80); gap: calc(var(--u) * 28); }
+.ds-bau .eyebrow { font: 700 calc(var(--f) * 22) Geologica, sans-serif; letter-spacing: .14em; color: var(--fg); }
+.ds-bau .eyebrow::before { width: calc(var(--u) * 22); height: calc(var(--u) * 22); border-radius: 50%; background: var(--q2); }
+.ds-bau .eyebrow::after { content: ""; width: calc(var(--u) * 22); height: calc(var(--u) * 22); background: var(--q3); margin-left: calc(var(--u) * -6); order: -1; }
+.ds-bau .h1 { font: 800 calc(var(--f) * 130)/.98 Geologica, sans-serif; letter-spacing: -.045em; }
+.ds-bau .h2 { font: 800 calc(var(--f) * 92)/1 Geologica, sans-serif; letter-spacing: -.04em; }
+.ds-bau .quote { font: 700 calc(var(--f) * 68)/1.1 Geologica, sans-serif; letter-spacing: -.03em; }
+.ds-bau .alt { font-family: Montserrat, sans-serif; letter-spacing: -.01em; }
+.ds-bau .chips { gap: calc(var(--u) * 10); }
+.ds-bau .chip { border-radius: 0; font: 700 calc(var(--f) * 25) Geologica, sans-serif; background: var(--q1); color: var(--q1t); }
+.ds-bau .chip:nth-child(2) { background: var(--q2); color: var(--q2t); border-radius: 999px; }
+.ds-bau .chip:nth-child(3) { background: var(--q3); color: var(--q3t); border-radius: 0 calc(var(--u) * 40) 0 0; }
+.ds-bau .chip:nth-child(4) { background: var(--q4); color: var(--q4t); }
+.ds-bau .rw { grid-template-columns: calc(var(--u) * 136) 1fr; border-top-color: var(--line); padding: calc(var(--f) * 10) 0; }
+.ds-bau .rw:last-child { border-bottom-color: var(--line); }
+.ds-bau .dbox { width: calc(var(--f) * 108); height: calc(var(--f) * 108); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--q1); color: var(--q1t); }
+.ds-bau .rw:nth-child(4n+2) .dbox { background: var(--q2); color: var(--q2t); border-radius: 0; }
+.ds-bau .rw:nth-child(4n+3) .dbox { background: var(--q3); color: var(--q3t); border-radius: 50% 50% 0 0; }
+.ds-bau .rw:nth-child(4n) .dbox { background: var(--q4); color: var(--q4t); border-radius: 0 0 0 50%; }
+.ds-bau .dbox b { font: 800 calc(var(--f) * 48)/1 Geologica, sans-serif; letter-spacing: -.04em; }
+.ds-bau .dbox span { color: inherit; opacity: .85; font-size: calc(var(--f) * 13); }
+.ds-bau .lbl { font: 800 calc(var(--f) * 34)/1.1 Geologica, sans-serif; letter-spacing: -.02em; }
+.ds-bau .wk, .ds-bau .cd .when, .ds-bau .se .tm { color: var(--acc); }
+.th-bink .wk, .th-bink .se .tm { color: #2945d5; }
+.ds-bau .t-day .big { font: 800 calc(var(--f) * 250)/.8 Geologica, sans-serif; color: var(--q2); letter-spacing: -.07em; }
+.ds-bau .se .st { font-family: Geologica, sans-serif; }
+.ds-bau .cards { gap: calc(var(--u) * 14); }
+.ds-bau .cd { border: 0; border-radius: 0; background: var(--q1); color: var(--q1t); padding: calc(var(--f) * 30); }
+.ds-bau .cd:nth-child(4n+2) { background: var(--q2); color: var(--q2t); border-radius: 0 calc(var(--u) * 110) 0 0; }
+.ds-bau .cd:nth-child(4n+3) { background: var(--q3); color: var(--q3t); border-radius: 0 0 0 calc(var(--u) * 110); }
+.ds-bau .cd:nth-child(4n) { background: var(--q4); color: var(--q4t); border-radius: calc(var(--u) * 60); }
+.ds-bau .cd .px { display: none; }
+.ds-bau .cn { display: block; font: 800 calc(var(--f) * 44)/1 Geologica, sans-serif; opacity: .9; }
+.ds-bau .cd .when, .ds-bau .cd p { color: inherit; opacity: .88; }
+.ds-bau .cd h3 { font: 800 calc(var(--f) * 36)/1.08 Geologica, sans-serif; }
+.ds-bau .st-i { border-top: calc(var(--u) * 14) solid var(--q1); }
+.ds-bau .st-i:nth-child(4n+2) { border-top-color: var(--q2); }
+.ds-bau .st-i:nth-child(4n+3) { border-top-color: var(--q3); }
+.ds-bau .st-i:nth-child(4n) { border-top-color: var(--q4); }
+.ds-bau .st-i b { font: 800 calc(var(--f) * 108)/1 Geologica, sans-serif; color: var(--fg) !important; letter-spacing: -.05em; }
+.ds-bau .st-i .l { font-family: Geologica, sans-serif; }
+.ds-bau .lg { border-radius: 0; }
+.ds-bau .partners .lg, .ds-bau .logos > div:nth-child(2) .lg { border-radius: 0 calc(var(--u) * 60) 0 0; }
+.ds-bau .pp .nm, .ds-bau .lgn { font-family: Geologica, sans-serif; }
+.ds-bau .cbtn { border-radius: 0; font-family: Geologica, sans-serif; font-weight: 800; }
+.ds-bau .csite { border-radius: 999px; border-color: var(--fg); }
+.ds-bau .bigtag { font: 800 calc(var(--f) * 42) Geologica, sans-serif; color: var(--acc2); }
+.th-bink .bigtag { color: #e81bfe; }
+.ds-bau .ph-inset { left: calc(var(--u) * 80); right: calc(var(--u) * 80); top: calc(var(--u) * 260); height: calc(var(--h) * .34); border-radius: 0 calc(var(--u) * 200) 0 0; }
+.ds-bau.has-inset .s-body { top: calc(var(--u) * 290 + var(--h) * .34); }
+
+/* ═════════════ design: Neon — 2025 system (Poppins/Montserrat), synthwave sky, a sun on the seams, a glowing grid floor ═════════════ */
+.th-nnavy   { --bg: #02073a; --bgr: 2,7,58; --sky1: #02073a; --sky2: #0a1a7a; --sky3: #2945d5; --floor: #02073a; --fg: #fff; --mut: rgba(238,241,255,.8); --line: rgba(255,255,255,.18); --card: rgba(10,26,122,.66);
+  --acc: #13effd; --acc2: #01fe6d; --grid: #13effd; --sun1: #c6fc1f; --sun2: #01fe6d; --btn: #01fe6d; --btnfg: #010d58; }
+.th-nviolet { --bg: #02073a; --bgr: 2,7,58; --sky1: #02073a; --sky2: #1b32a8; --sky3: #9a4cf4; --floor: #02073a; --fg: #fff; --mut: rgba(238,241,255,.8); --line: rgba(255,255,255,.18); --card: rgba(10,26,122,.66);
+  --acc: #e81bfe; --acc2: #13effd; --grid: #e81bfe; --sun1: #13effd; --sun2: #9a4cf4; --btn: #01fe6d; --btnfg: #010d58; }
+.ds-neon { font-family: Poppins, Montserrat, sans-serif; background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 52%, var(--sky3) 80%, var(--floor) 80%); }
+.nn-sky { position: absolute; z-index: -1; top: 0; height: 100%; pointer-events: none; }
+.nn-sky svg { display: block; }
+.nn-hz { position: absolute; z-index: -1; left: 0; right: 0; top: calc(80% - var(--u) * 2); height: calc(var(--u) * 4); background: var(--acc2); box-shadow: 0 0 calc(var(--u) * 24) var(--acc2), 0 0 calc(var(--u) * 70) var(--acc); }
+.ds-neon .s-top .no { font: italic 800 calc(var(--u) * 26) Poppins, Montserrat, sans-serif; color: var(--mut); }
+.ds-neon .s-top .no b { color: var(--acc); text-shadow: 0 0 calc(var(--u) * 14) var(--acc); }
+.ds-neon .s-foot { font: 600 calc(var(--u) * 22) Poppins, Montserrat, sans-serif; color: #fff; letter-spacing: .06em; bottom: calc(var(--u) * 48); }
+.ds-neon .s-foot .swipe { color: var(--acc2); font-style: italic; font-weight: 800; text-shadow: 0 0 calc(var(--u) * 14) var(--acc2); }
+.ds-neon .s-body { top: calc(var(--u) * 172); bottom: calc(var(--h) * .2 + var(--u) * 44); left: calc(var(--u) * 80); right: calc(var(--u) * 80); }
+.ds-neon .eyebrow { align-self: flex-start; font: 800 calc(var(--f) * 22) Poppins, Montserrat, sans-serif; letter-spacing: .14em; color: var(--acc2); border: calc(var(--u) * 2) solid var(--acc2); border-radius: calc(var(--u) * 4); padding: calc(var(--u) * 8) calc(var(--u) * 22); box-shadow: 0 0 calc(var(--u) * 20) color-mix(in srgb, var(--acc2) 55%, transparent), inset 0 0 calc(var(--u) * 14) color-mix(in srgb, var(--acc2) 35%, transparent); }
+.ds-neon .eyebrow::before { width: calc(var(--u) * 12); height: calc(var(--u) * 12); background: var(--acc); transform: rotate(45deg); box-shadow: 0 0 calc(var(--u) * 10) var(--acc); }
+.ds-neon .h1 { font: italic 800 calc(var(--f) * 132)/.94 Poppins, Montserrat, sans-serif; text-transform: uppercase; letter-spacing: -.02em; text-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--acc) 85%, transparent), 0 0 calc(var(--u) * 70) color-mix(in srgb, var(--acc) 45%, transparent); }
+.ds-neon .h2 { font: italic 800 calc(var(--f) * 92)/.98 Poppins, Montserrat, sans-serif; text-transform: uppercase; letter-spacing: -.015em; text-shadow: 0 0 calc(var(--u) * 22) color-mix(in srgb, var(--acc) 75%, transparent); }
+.ds-neon .quote { font: italic 800 calc(var(--f) * 66)/1.12 Poppins, Montserrat, sans-serif; letter-spacing: -.015em; }
+.ds-neon .acc { color: var(--acc2); text-shadow: 0 0 calc(var(--u) * 22) var(--acc2), 0 0 calc(var(--u) * 60) color-mix(in srgb, var(--acc2) 50%, transparent); }
+.ds-neon .alt { font-style: normal; font-weight: 600; text-transform: none; text-shadow: none; letter-spacing: 0; }
+.ds-neon .lead, .ds-neon .text { font-weight: 500; }
+.ds-neon .chips { gap: calc(var(--u) * 14); }
+.ds-neon .chip { background: rgba(0,0,0,.25); color: #fff; border: calc(var(--u) * 2) solid var(--acc); border-radius: calc(var(--u) * 4); font: 800 calc(var(--f) * 25) Poppins, Montserrat, sans-serif; box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--acc) 50%, transparent); }
+.ds-neon .chip:first-child { background: var(--acc); color: var(--bg); }
+.ds-neon .rw { border-top-color: var(--line); }
+.ds-neon .rw:last-child { border-bottom-color: var(--line); }
+.ds-neon .dbox b { font: italic 800 calc(var(--f) * 74)/.95 Poppins, Montserrat, sans-serif; color: var(--acc2); text-shadow: 0 0 calc(var(--u) * 18) var(--acc2); }
+.ds-neon .lbl { font: 800 calc(var(--f) * 36)/1.1 Poppins, Montserrat, sans-serif; }
+.ds-neon .wk, .ds-neon .dbox span, .ds-neon .cd .when, .ds-neon .se .tm, .ds-neon .dayhead .meta { font-family: Poppins, Montserrat, sans-serif; font-weight: 800; }
+.ds-neon .wk, .ds-neon .cd .when, .ds-neon .se .tm { color: var(--acc); }
+.ds-neon .t-day .big { font: italic 800 calc(var(--f) * 250)/.8 Poppins, Montserrat, sans-serif; color: var(--acc); text-shadow: 0 0 calc(var(--u) * 30) var(--acc); letter-spacing: -.04em; }
+.ds-neon .se { border-top-color: var(--line); }
+.ds-neon .se .st { font-weight: 700; }
+.ds-neon .cd { background: var(--card); border: calc(var(--u) * 2) solid color-mix(in srgb, var(--acc) 70%, transparent); border-radius: calc(var(--u) * 4); box-shadow: 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--acc) 30%, transparent), inset 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--acc) 14%, transparent); }
+.ds-neon .cd .px { display: none; }
+.ds-neon .cd h3 { font: 800 calc(var(--f) * 36)/1.08 Poppins, Montserrat, sans-serif; }
+.ds-neon .st-i { border-top: calc(var(--u) * 3) solid var(--tone); box-shadow: 0 calc(var(--u) * -8) calc(var(--u) * 20) calc(var(--u) * -10) var(--tone); }
+.ds-neon .st-i b { font: italic 800 calc(var(--f) * 104)/1 Poppins, Montserrat, sans-serif; text-shadow: 0 0 calc(var(--u) * 24) var(--tone); }
+.ds-neon .st-i .l { font-weight: 800; }
+.ds-neon .lg { border-radius: calc(var(--u) * 4); }
+.ds-neon .pp .nm, .ds-neon .lgn { font-family: Poppins, Montserrat, sans-serif; }
+.ds-neon .cbtn { border-radius: calc(var(--u) * 4); font: italic 800 calc(var(--f) * 32) Poppins, Montserrat, sans-serif; text-transform: uppercase; box-shadow: 0 0 calc(var(--u) * 40) var(--btn); }
+.ds-neon .csite { border-radius: calc(var(--u) * 4); border-color: var(--acc); box-shadow: 0 0 calc(var(--u) * 20) color-mix(in srgb, var(--acc) 50%, transparent); }
+.ds-neon .bigtag { font: italic 800 calc(var(--f) * 46) Poppins, Montserrat, sans-serif; color: var(--acc); text-shadow: 0 0 calc(var(--u) * 20) var(--acc); }
+.ds-neon .ph-inset { left: calc(var(--u) * 80); right: calc(var(--u) * 80); top: calc(var(--u) * 172); height: calc(var(--h) * .3); border-radius: calc(var(--u) * 4); border: calc(var(--u) * 3) solid var(--acc); box-shadow: 0 0 calc(var(--u) * 40) var(--acc); }
+.ds-neon .ph-inset img { filter: saturate(1.25) contrast(1.05); }
+.ds-neon.has-inset .s-body { top: calc(var(--u) * 196 + var(--h) * .3); }
+
+/* ═════════════ design: Waves — 2025 system (Poppins/Montserrat), layered colour waves flowing across every slide ═════════════ */
+.th-wnavy  { --bg: #010d58; --bgr: 1,13,88; --fg: #fff; --mut: rgba(238,241,255,.76); --line: rgba(255,255,255,.16); --card: #0a1a7a; --acc: #13effd; --accfg: #010d58; --acc2: #01fe6d; --wl: #01fe6d; --w0: #2945d5; --w1: #1b32a8; --w2: #2945d5; --w3: #13effd; --wtext: #010d58; --btn: #01fe6d; --btnfg: #010d58; --chip: #12238c; --chipfg: #fff; --shadow: rgba(0,0,0,.22); }
+.th-wgreen { --bg: #010d58; --bgr: 1,13,88; --fg: #fff; --mut: rgba(238,241,255,.76); --line: rgba(255,255,255,.16); --card: #0a1a7a; --acc: #01fe6d; --accfg: #010d58; --acc2: #13effd; --wl: #13effd; --w0: #2945d5; --w1: #2945d5; --w2: #13effd; --w3: #01fe6d; --wtext: #010d58; --btn: #01fe6d; --btnfg: #010d58; --chip: #12238c; --chipfg: #fff; --shadow: rgba(0,0,0,.22); }
+.th-wink   { --bg: #eef1ff; --bgr: 238,241,255; --fg: #010d58; --mut: rgba(1,13,88,.72); --line: rgba(1,13,88,.1); --card: #fff; --acc: #2945d5; --accfg: #fff; --acc2: #13effd; --wl: #13effd; --w0: #13effd; --w1: #13effd; --w2: #2945d5; --w3: #010d58; --wtext: #fff; --btn: #01fe6d; --btnfg: #010d58; --chip: #fff; --chipfg: #010d58; --shadow: rgba(1,13,88,.08); }
+.ds-wave { font-family: Poppins, Montserrat, sans-serif; }
+.wv { position: absolute; z-index: 1; top: 0; height: 100%; pointer-events: none; }
+.wv svg { display: block; }
+.ds-wave .s-top { top: calc(var(--u) * 54); left: calc(var(--u) * 80); right: calc(var(--u) * 80); }
+.ds-wave .s-top img { height: calc(var(--u) * 50); }
+.wv-no { margin-left: auto; background: var(--card); color: var(--fg); border-radius: calc(var(--u) * 4); padding: calc(var(--u) * 8) calc(var(--u) * 20); font: 700 calc(var(--u) * 22) Poppins, Montserrat, sans-serif; box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 24) var(--shadow); }
+.wv-no b { color: var(--acc); }
+.ds-wave .s-foot { z-index: 3; bottom: calc(var(--u) * 44); left: calc(var(--u) * 80); right: calc(var(--u) * 80); font: 600 calc(var(--u) * 22) Poppins, Montserrat, sans-serif; color: var(--wtext); letter-spacing: .02em; }
+.ds-wave .s-foot .swipe { color: var(--wtext); font-weight: 800; }
+.ds-wave .s-body { top: calc(var(--u) * 178); bottom: calc(var(--u) * 300); left: calc(var(--u) * 80); right: calc(var(--u) * 80); }
+.ds-wave .eyebrow { align-self: flex-start; font: 700 calc(var(--f) * 22) Poppins, Montserrat, sans-serif; letter-spacing: .06em; color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); border-radius: calc(var(--u) * 4); padding: calc(var(--u) * 10) calc(var(--u) * 22); }
+.ds-wave .eyebrow::before { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 0; background: var(--acc); }
+.ds-wave .h1 { font: 800 calc(var(--f) * 126)/1 Poppins, Montserrat, sans-serif; letter-spacing: -.05em; }
+.ds-wave .h2 { font: 800 calc(var(--f) * 86)/1.02 Poppins, Montserrat, sans-serif; letter-spacing: -.045em; }
+.ds-wave .quote { font: 700 calc(var(--f) * 66)/1.14 Poppins, Montserrat, sans-serif; letter-spacing: -.035em; }
+.ds-wave .acc { text-decoration: underline wavy var(--wl); text-decoration-thickness: .07em; text-underline-offset: .16em; text-decoration-skip-ink: none; }
+.ds-wave .alt .acc, .ds-wave .alt { text-decoration: none; }
+.ds-wave .chips { gap: calc(var(--u) * 12); }
+.ds-wave .chip { background: var(--chip); color: var(--chipfg); border-radius: calc(var(--u) * 4); font: 700 calc(var(--f) * 25) Poppins, Montserrat, sans-serif; box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 22) var(--shadow); }
+.ds-wave .chip:first-child { background: var(--acc); color: var(--accfg); }
+.ds-wave .rows { gap: calc(var(--u) * 10); }
+.ds-wave .rw, .ds-wave .rw:last-child { border: 0; background: var(--card); border-radius: calc(var(--u) * 4); padding: calc(var(--f) * 10) calc(var(--u) * 20); grid-template-columns: calc(var(--u) * 124) 1fr; box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 24) var(--shadow); }
+.ds-wave .dbox { width: calc(var(--f) * 96); height: calc(var(--f) * 96); border-radius: calc(var(--u) * 4); background: var(--acc); color: var(--accfg); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ds-wave .dbox b { font: 800 calc(var(--f) * 42)/1 Poppins, Montserrat, sans-serif; letter-spacing: -.04em; }
+.ds-wave .dbox span { color: inherit; opacity: .85; font-size: calc(var(--f) * 12); }
+.ds-wave .lbl { font: 800 calc(var(--f) * 32)/1.1 Poppins, Montserrat, sans-serif; letter-spacing: -.025em; }
+.ds-wave .wk, .ds-wave .cd .when, .ds-wave .se .tm, .ds-wave .dayhead .meta { font-family: Poppins, Montserrat, sans-serif; font-weight: 800; color: var(--acc); }
+.ds-wave .t-day .big { font: 800 calc(var(--f) * 240)/.82 Poppins, Montserrat, sans-serif; color: var(--acc); letter-spacing: -.07em; }
+.ds-wave .sess { background: var(--card); border-radius: calc(var(--u) * 4); padding: 0 calc(var(--u) * 26); box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 24) var(--shadow); }
+.ds-wave .se { border-top-color: var(--line); }
+.ds-wave .se:first-child { border-top: 0; }
+.ds-wave .se .st { font-weight: 700; }
+.ds-wave .cards { gap: calc(var(--u) * 16); }
+.ds-wave .cd { border: 0; border-top: calc(var(--u) * 8) solid var(--tone, var(--acc)); border-radius: calc(var(--u) * 4); box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 24) var(--shadow); }
+.ds-wave .cd:nth-child(1) { border-top-color: var(--w1); } .ds-wave .cd:nth-child(2) { border-top-color: var(--w2); }
+.ds-wave .cd:nth-child(3) { border-top-color: var(--acc2); } .ds-wave .cd:nth-child(4) { border-top-color: var(--w3); }
+.ds-wave .cd .px { display: none; }
+.ds-wave .cd h3 { font: 800 calc(var(--f) * 34)/1.1 Poppins, Montserrat, sans-serif; letter-spacing: -.025em; }
+.ds-wave .stats { gap: calc(var(--u) * 16); }
+.ds-wave .st-i { border: 0; background: var(--card); border-radius: calc(var(--u) * 4); padding: calc(var(--f) * 22) calc(var(--u) * 26); box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 24) var(--shadow); }
+.ds-wave .st-i b { font: 800 calc(var(--f) * 92)/1 Poppins, Montserrat, sans-serif; color: var(--acc) !important; letter-spacing: -.05em; }
+.ds-wave .lg { border-radius: calc(var(--u) * 4); }
+.ds-wave .pp .nm, .ds-wave .lgn { font-family: Poppins, Montserrat, sans-serif; }
+.ds-wave .cbtn, .ds-wave .csite { border-radius: calc(var(--u) * 4); font-family: Poppins, Montserrat, sans-serif; font-weight: 800; }
+.ds-wave .cbtn { background: var(--btn); color: var(--btnfg); box-shadow: 0 calc(var(--u) * 12) calc(var(--u) * 30) var(--shadow); }
+.ds-wave .csite { border-color: var(--fg); }
+.ds-wave .bigtag { font: 800 calc(var(--f) * 44) Poppins, Montserrat, sans-serif; color: var(--acc); }
+.ds-wave .ph-inset { left: calc(var(--u) * 80); right: calc(var(--u) * 80); top: calc(var(--u) * 170); height: calc(var(--h) * .34); border-radius: calc(var(--u) * 4); box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 40) var(--shadow); }
+.ds-wave.has-inset .s-body { top: calc(var(--u) * 196 + var(--h) * .34); }
+
+/* ═════════════ design: Glass — Manrope, colour blobs flowing across slides, frosted panel ═════════════ */
+.th-aurora { --bg: #010d58; --bgr: 1,13,88; --fg: #fff; --mut: rgba(238,241,255,.76); --line: rgba(255,255,255,.16); --card: rgba(255,255,255,.09); --panel: rgba(255,255,255,.08); --acc: #13effd; --acc2: #01fe6d; --chip: rgba(255,255,255,.14); --chipfg: #fff; --btn: #01fe6d; --btnfg: #010d58; --b1: #e81bfe; --b2: #2945d5; --b3: #13effd; --b4: #9a4cf4; --ba: 78%; }
+.th-dawn   { --bg: #eef1ff; --bgr: 238,241,255; --fg: #010d58; --mut: rgba(1,13,88,.7); --line: rgba(1,13,88,.12); --card: rgba(255,255,255,.62); --panel: rgba(255,255,255,.55); --acc: #2945d5; --acc2: #9a4cf4; --chip: rgba(255,255,255,.85); --chipfg: #010d58; --btn: #01fe6d; --btnfg: #010d58; --b1: #13effd; --b2: #2945d5; --b3: #e81bfe; --b4: #9a4cf4; --ba: 34%; }
+.ds-glass { font-family: Manrope, Montserrat, sans-serif; }
+.gl-blobs { position: absolute; z-index: -1; top: 0; height: 100%; pointer-events: none; }
+.ds-glass .s-top { justify-content: center; top: calc(var(--u) * 54); }
+.gl-pill { display: inline-flex; align-items: center; gap: calc(var(--u) * 16); padding: calc(var(--u) * 14) calc(var(--u) * 28); border-radius: 999px; background: var(--panel); border: calc(var(--u) * 2) solid var(--line); font: 800 calc(var(--u) * 24) Manrope, sans-serif; letter-spacing: .08em; }
+.ds-glass .s-top .gl-pill img { height: calc(var(--u) * 40); }
+.ds-glass .s-body { top: calc(var(--u) * 168); bottom: calc(var(--u) * 140); left: calc(var(--u) * 60); right: calc(var(--u) * 60); padding: calc(var(--u) * 58) calc(var(--u) * 56); background: var(--panel); border: calc(var(--u) * 2) solid var(--line); border-radius: calc(var(--u) * 52); box-shadow: 0 calc(var(--u) * 30) calc(var(--u) * 90) rgba(0,0,30,.22); }
+.ds-glass .t-cover, .ds-glass .t-statement, .ds-glass .t-cta { align-items: center; text-align: center; justify-content: center; }
+.ds-glass .t-cover .chips, .ds-glass .t-cta .ctarow { justify-content: center; align-self: stretch; }
+.ds-glass .t-photo { top: auto; max-height: calc(var(--h) - var(--u) * 330); }
+.ds-glass .eyebrow { align-self: flex-start; padding: calc(var(--u) * 10) calc(var(--u) * 22); border-radius: 999px; background: var(--chip); color: var(--fg); font: 700 calc(var(--f) * 21) Manrope, sans-serif; letter-spacing: .1em; }
+.ds-glass .t-cover .eyebrow, .ds-glass .t-statement .eyebrow, .ds-glass .t-cta .eyebrow { align-self: center; }
+.ds-glass .eyebrow::before { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: linear-gradient(135deg, var(--acc), var(--acc2)); }
+.ds-glass .h1 { font: 800 calc(var(--f) * 118)/1 Manrope, sans-serif; letter-spacing: -.045em; }
+.ds-glass .h2 { font: 800 calc(var(--f) * 80)/1.02 Manrope, sans-serif; letter-spacing: -.04em; }
+.ds-glass .quote { font: 700 calc(var(--f) * 66)/1.12 Manrope, sans-serif; letter-spacing: -.03em; }
+.ds-glass .acc, .ds-glass .st-i b, .ds-glass .t-day .big { background: linear-gradient(100deg, var(--acc), var(--acc2)); -webkit-background-clip: text; background-clip: text; color: transparent !important; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-glass .lead, .ds-glass .text { font-weight: 500; }
+.ds-glass .chip { border-radius: 999px; font-weight: 700; }
+.ds-glass .rows { gap: calc(var(--u) * 10); }
+.ds-glass .rw, .ds-glass .rw:last-child { border: 0; background: var(--card); border-radius: calc(var(--u) * 26); padding: calc(var(--f) * 14) calc(var(--u) * 24); grid-template-columns: calc(var(--u) * 130) 1fr; }
+.ds-glass .dbox b { font: 800 calc(var(--f) * 66)/.95 Manrope, sans-serif; }
+.ds-glass .lbl { font: 800 calc(var(--f) * 32)/1.1 Manrope, sans-serif; letter-spacing: -.02em; }
+.ds-glass .wk, .ds-glass .dbox span, .ds-glass .cd .when, .ds-glass .se .tm, .ds-glass .dayhead .meta { font-family: Manrope, sans-serif; font-weight: 800; }
+.ds-glass .t-day .big { font: 800 calc(var(--f) * 230)/.82 Manrope, sans-serif; letter-spacing: -.07em; padding-right: .06em; }
+.ds-glass .se { border-top-color: var(--line); }
+.ds-glass .cd { border-radius: calc(var(--u) * 32); }
+.ds-glass .cd .px { border-radius: 50%; width: calc(var(--u) * 20); height: calc(var(--u) * 20); top: calc(var(--u) * 26); right: calc(var(--u) * 26); }
+.ds-glass .stats { gap: calc(var(--u) * 16); }
+.ds-glass .st-i { border: 0; background: var(--card); border-radius: calc(var(--u) * 30); padding: calc(var(--f) * 24) calc(var(--u) * 26); }
+.ds-glass .st-i b { font: 800 calc(var(--f) * 92)/1 Manrope, sans-serif; letter-spacing: -.05em; }
+.ds-glass .lg { border-radius: calc(var(--u) * 28); }
+.ds-glass .cbtn, .ds-glass .csite { border-radius: 999px; }
+.ds-glass .csite { border-color: var(--line); }
+.ds-glass .ph-inset { left: calc(var(--u) * 60); right: calc(var(--u) * 60); top: calc(var(--u) * 168); height: calc(var(--h) * .36); border-radius: calc(var(--u) * 52); }
+.ds-glass.has-inset .s-body { top: calc(var(--u) * 190 + var(--h) * .36); }
+.ds-glass .s-foot { bottom: calc(var(--u) * 50); left: calc(var(--u) * 72); right: calc(var(--u) * 72); display: grid; grid-template-columns: 1fr auto 1fr; font: 600 calc(var(--u) * 21) Manrope, sans-serif; letter-spacing: .04em; }
+.ds-glass .s-foot .swipe { justify-self: end; color: var(--fg); }
+.gl-dots { display: flex; gap: calc(var(--u) * 10); align-items: center; }
+.gl-dots i { width: calc(var(--u) * 12); height: calc(var(--u) * 12); border-radius: 999px; background: var(--fg); opacity: .3; display: block; }
+.gl-dots i.on { width: calc(var(--u) * 38); opacity: 1; background: linear-gradient(90deg, var(--acc), var(--acc2)); }
+
+/* ═════════════ design: Sticker — Rubik, thick outlines, hard shadows, shapes split across the seams ═════════════ */
+.th-slime { --bg: #c6fc1f; --bgr: 198,252,31; --fg: #010d58; --mut: rgba(1,13,88,.82); --line: #010d58; --card: #fff; --acc: #010d58; --acc2: #010d58; --hl: #e81bfe; --hlfg: #fff;    --btn: #e81bfe; --btnfg: #fff;    --chip: #fff; --chipfg: #010d58; --dot: rgba(1,13,88,.14); --s1: #13effd; --s2: #e81bfe; }
+.th-spink { --bg: #e81bfe; --bgr: 232,27,254; --fg: #010d58; --mut: rgba(1,13,88,.86); --line: #010d58; --card: #fff; --acc: #010d58; --acc2: #010d58; --hl: #c6fc1f; --hlfg: #010d58; --btn: #c6fc1f; --btnfg: #010d58; --chip: #fff; --chipfg: #010d58; --dot: rgba(1,13,88,.16); --s1: #c6fc1f; --s2: #13effd; }
+.th-scyan { --bg: #13effd; --bgr: 19,239,253; --fg: #010d58; --mut: rgba(1,13,88,.82); --line: #010d58; --card: #fff; --acc: #010d58; --acc2: #010d58; --hl: #e81bfe; --hlfg: #fff;    --btn: #010d58; --btnfg: #c6fc1f; --chip: #fff; --chipfg: #010d58; --dot: rgba(1,13,88,.14); --s1: #c6fc1f; --s2: #e81bfe; }
+.ds-stick { font-family: Rubik, Montserrat, sans-serif; --ink: #010d58; --bw: calc(var(--u) * 5); --sh: calc(var(--u) * 10); --sh2: calc(var(--u) * 6); }
+.sk-dots { position: absolute; inset: 0; z-index: -2; background-image: radial-gradient(circle, var(--dot) 0 calc(var(--u) * 4), transparent calc(var(--u) * 4.6)); background-size: calc(var(--u) * 30) calc(var(--u) * 30); }
+.sk-shapes { position: absolute; z-index: -1; top: 0; height: 100%; pointer-events: none; }
+.sk-shapes > * { position: absolute; display: block; overflow: visible; }
+.sk-c { border-radius: 50%; border: var(--bw) solid var(--ink); box-shadow: var(--sh) var(--sh) 0 var(--ink); }
+.ds-stick .s-top { top: calc(var(--u) * 50); left: calc(var(--u) * 64); right: calc(var(--u) * 64); }
+.sk-logo { background: var(--ink); padding: calc(var(--u) * 14) calc(var(--u) * 24); border-radius: calc(var(--u) * 18); transform: rotate(-3deg); box-shadow: var(--sh2) var(--sh2) 0 #fff; display: flex; }
+.ds-stick .s-top .sk-logo img { height: calc(var(--u) * 46); }
+.sk-no { margin-left: auto; width: calc(var(--u) * 128); height: calc(var(--u) * 128); border-radius: 50%; background: #fff; border: var(--bw) solid var(--ink); box-shadow: var(--sh2) var(--sh2) 0 var(--ink); display: grid; place-items: center; transform: rotate(10deg); font: 900 calc(var(--u) * 34)/1 Rubik, sans-serif; color: var(--ink); text-align: center; letter-spacing: -.04em; }
+.sk-no small { display: block; font-size: .55em; font-weight: 700; margin-top: calc(var(--u) * 4); letter-spacing: 0; }
+.ds-stick .s-body { top: calc(var(--u) * 222); bottom: calc(var(--u) * 164); left: calc(var(--u) * 100); right: calc(var(--u) * 94); padding: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 14) calc(var(--u) * 8); gap: calc(var(--u) * 30); }
+.ds-stick .eyebrow { align-self: flex-start; background: #fff; color: var(--ink); border: var(--bw) solid var(--ink); border-radius: 999px; box-shadow: var(--sh2) var(--sh2) 0 var(--ink); padding: calc(var(--u) * 8) calc(var(--u) * 24); transform: rotate(-2.5deg); font: 700 calc(var(--f) * 21) Rubik, sans-serif; letter-spacing: .04em; }
+.ds-stick .eyebrow::before { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: var(--hl); border: calc(var(--u) * 3) solid var(--ink); }
+.ds-stick .h1 { font: 900 calc(var(--f) * 124)/1 Rubik, sans-serif; letter-spacing: -.035em; }
+.ds-stick .h2 { font: 900 calc(var(--f) * 84)/1.06 Rubik, sans-serif; letter-spacing: -.03em; }
+.ds-stick .quote { font: 800 calc(var(--f) * 66)/1.2 Rubik, sans-serif; letter-spacing: -.02em; }
+.ds-stick .acc { background: var(--hl); color: var(--hlfg); padding: 0 .14em; border: var(--bw) solid var(--ink); border-radius: .16em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ds-stick .alt, .ds-stick .lead, .ds-stick .text, .ds-stick .note, .ds-stick .cd p, .ds-stick .st-i .s, .ds-stick .lga, .ds-stick .pp .rl { font-family: Montserrat, sans-serif; }
+.ds-stick .alt { font-weight: 700; letter-spacing: -.01em; }
+.ds-stick .lead, .ds-stick .text { color: var(--fg); font-weight: 600; }
+.ds-stick .chips { gap: calc(var(--u) * 18); }
+.ds-stick .chip { background: var(--chip); color: var(--chipfg); border: var(--bw) solid var(--ink); border-radius: 999px; box-shadow: var(--sh2) var(--sh2) 0 var(--ink); font: 700 calc(var(--f) * 22) Rubik, sans-serif; }
+.ds-stick .chip:first-child { background: var(--hl); color: var(--hlfg); }
+.ds-stick .chip:nth-child(odd) { transform: rotate(-2deg); }
+.ds-stick .chip:nth-child(even) { transform: rotate(2deg); }
+.ds-stick .rows { gap: calc(var(--u) * 14); }
+.ds-stick .rw, .ds-stick .rw:last-child { background: var(--card); border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 24); box-shadow: var(--sh2) var(--sh2) 0 var(--ink); padding: calc(var(--f) * 12) calc(var(--u) * 24); grid-template-columns: calc(var(--u) * 130) 1fr; }
+.ds-stick .dbox b { font: 900 calc(var(--f) * 58)/1 Rubik, sans-serif; letter-spacing: -.05em; }
+.ds-stick .lbl { font: 800 calc(var(--f) * 28)/1.15 Rubik, sans-serif; letter-spacing: -.03em; }
+.ds-stick .wk, .ds-stick .dbox span, .ds-stick .cd .when, .ds-stick .se .tm, .ds-stick .dayhead .meta { font-family: Rubik, sans-serif; color: var(--ink); letter-spacing: .04em; }
+.ds-stick .t-day .big { font: 900 calc(var(--f) * 210)/.85 Rubik, sans-serif; color: #fff; -webkit-text-stroke: calc(var(--u) * 5) var(--ink); paint-order: stroke fill; text-shadow: calc(var(--u) * 12) calc(var(--u) * 12) 0 var(--ink); letter-spacing: -.06em; }
+.ds-stick .sess { background: var(--card); border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 24); box-shadow: var(--sh) var(--sh) 0 var(--ink); padding: 0 calc(var(--u) * 24); }
+.ds-stick .se { border-top: calc(var(--u) * 2) dashed var(--ink); }
+.ds-stick .se:first-child { border-top: 0; }
+.ds-stick .se .st { font: 700 calc(var(--f) * 25)/1.3 Rubik, sans-serif; letter-spacing: -.02em; }
+.ds-stick .cards { gap: calc(var(--u) * 24); }
+.ds-stick .cd { background: var(--card); border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 26); box-shadow: var(--sh) var(--sh) 0 var(--ink); }
+.ds-stick .cd:nth-child(4n+1), .ds-stick .cd:nth-child(4n) { transform: rotate(-1deg); }
+.ds-stick .cd:nth-child(4n+2), .ds-stick .cd:nth-child(4n+3) { transform: rotate(1deg); }
+.ds-stick .cd .px { border-radius: 50%; border: calc(var(--u) * 4) solid var(--ink); width: calc(var(--u) * 30); height: calc(var(--u) * 30); top: calc(var(--u) * 16); right: calc(var(--u) * 16); }
+.ds-stick .cd h3 { font: 800 calc(var(--f) * 30)/1.15 Rubik, sans-serif; letter-spacing: -.03em; padding-right: calc(var(--u) * 36); }
+.ds-stick .stats { gap: calc(var(--u) * 24); }
+.ds-stick .st-i { background: var(--card); border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 26); box-shadow: var(--sh) var(--sh) 0 var(--ink); padding: calc(var(--f) * 20) calc(var(--u) * 24); }
+.ds-stick .st-i b { font: 900 calc(var(--f) * 80)/1 Rubik, sans-serif; color: var(--ink) !important; letter-spacing: -.05em; }
+.ds-stick .st-i .l { font: 800 calc(var(--f) * 24) Rubik, sans-serif; }
+.ds-stick .lg { border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 22); box-shadow: var(--sh2) var(--sh2) 0 var(--ink); }
+.ds-stick .lgn, .ds-stick .pp .nm { font-family: Rubik, sans-serif; letter-spacing: -.02em; }
+.ds-stick .av { border: var(--bw) solid var(--ink); }
+.ds-stick .cbtn, .ds-stick .csite { border: var(--bw) solid var(--ink); border-radius: 999px; box-shadow: var(--sh) var(--sh) 0 var(--ink); font: 800 calc(var(--f) * 28) Rubik, sans-serif; }
+.ds-stick .csite { background: #fff; color: var(--ink); }
+.ds-stick .bigtag { font: 900 calc(var(--f) * 44) Rubik, sans-serif; color: var(--ink); }
+.ds-stick .ph-inset { left: calc(var(--u) * 104); right: calc(var(--u) * 104); top: calc(var(--u) * 222); height: calc(var(--h) * .36); border: var(--bw) solid var(--ink); border-radius: calc(var(--u) * 34); box-shadow: var(--sh) var(--sh) 0 var(--ink); transform: rotate(-1.5deg); }
+.ds-stick.has-inset .s-body { top: calc(var(--u) * 266 + var(--h) * .36); }
+.ds-stick .s-foot { left: calc(var(--u) * 56); right: calc(var(--u) * 56); bottom: calc(var(--u) * 48); height: calc(var(--u) * 88); padding: 0 calc(var(--u) * 36); background: var(--ink); color: #fff; border-radius: 999px; font: 600 calc(var(--u) * 20) Rubik, sans-serif; letter-spacing: .02em; }
+.ds-stick .s-foot .swipe { color: var(--bg); }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="brand"><i></i>UBBW 2026 · Carousel maker</div>
+  <div class="grp"><span>Platform</span><div class="seg" id="segPlatform"></div></div>
+  <div class="grp"><span>Format</span><span class="pill">Instagram poster · 4:5 · 1080×1350</span></div>
+  <div class="grp"><span>Language</span><div class="seg" id="segLang"></div></div>
+  <div class="grp"><span>Design</span><div class="seg" id="segDesign"></div></div>
+  <div class="grp"><span>Colours</span><div class="seg" id="segTheme"></div></div>
+  <div class="sp"></div>
+  <div class="grp">
+    <button class="btn-ui" id="bUndo" title="Undo (Ctrl+Z)">↶ Undo</button>
+    <button class="btn-ui" id="bPng">PNG · this slide</button>
+    <button class="btn-ui" id="bZip">ZIP · all slides</button>
+    <button class="btn-ui" id="bPdf">PDF</button>
+    <button class="btn-ui" id="bBoth">ZIP · EN + MN</button>
+    <button class="btn-ui go" id="bFolder" title="Writes EN + MN PNGs, a PDF and captions to scripts/carousel/out/(project)/">Save to folder</button>
+  </div>
+</div>
+<div class="warn" id="warn"></div>
+
+<div class="main">
+  <aside class="panel" id="left">
+    <h3>Start from a template</h3>
+    <div class="row-ui"><select id="preset"></select><button class="btn-ui" id="bPreset">Load</button></div>
+    <h3>Slides</h3>
+    <div class="list" id="slideList"></div>
+    <div class="row-ui" style="margin-top:8px"><select id="addType"></select><button class="btn-ui" id="bAdd">+ Add</button></div>
+    <h3>Footer</h3>
+    <div class="row-ui"><input class="inp" id="handle" placeholder="@handle"><input class="inp" id="hashtag" placeholder="#tag"></div>
+    <h3>View</h3>
+    <label class="row-ui" style="gap:8px"><input type="checkbox" id="seamless"> Show slides edge to edge (check the seams)</label>
+    <div class="row-ui" style="margin-top:8px"><span style="color:var(--ui-mut)">Zoom</span><input type="range" id="zoom" min="0.2" max="0.7" step="0.01"></div>
+    <h3>Post caption</h3>
+    <button class="btn-ui" id="bCaption" style="width:100%">Write captions from the slides</button>
+    <div class="fld" style="margin-top:8px"><label>English</label><textarea class="inp" id="capEn" rows="6"></textarea><div class="count-ui" id="cntEn"></div></div>
+    <div class="fld"><label>Монгол</label><textarea class="inp" id="capMn" rows="6"></textarea><div class="count-ui" id="cntMn"></div></div>
+    <div class="row-ui"><button class="btn-ui" id="bCopyEn">Copy EN</button><button class="btn-ui" id="bCopyMn">Copy MN</button></div>
+    <h3>Project <span class="srv" id="srvState"></span></h3>
+    <div class="row-ui"><select id="projSel"></select><button class="btn-ui" id="bNew" title="New project from the selected template">New</button></div>
+    <div class="row-ui" style="margin-top:6px"><input class="inp" id="projName" placeholder="Project name"><button class="btn-ui" id="bRename">Rename</button></div>
+    <p class="hint" style="margin-top:6px">Every change saves to <code>scripts/carousel/projects/</code> on the local server. Uploads go to <code>uploads/</code>.</p>
+    <div class="row-ui"><button class="btn-ui" id="bSave">Download .json</button><button class="btn-ui" id="bOpen">Import .json</button></div>
+    <input type="file" id="fOpen" accept=".json,application/json" hidden>
+  </aside>
+
+  <section class="stage" id="stage"><div class="strip" id="strip"></div></section>
+
+  <aside class="panel right" id="right"></aside>
+</div>
+
+<div class="busy" id="busy"></div>
+<div id="exportRoot"></div>
+
+<script>
+"use strict";
+/* ───────────────────────── constants ───────────────────────── */
+const BRAND = "../../public/brand/";
+const PLATFORMS = {
+  // one size for every network: the Instagram portrait poster (4:5), which Facebook and X also show uncropped
+  ig: { name: "Instagram", max: 20, formats: { "4:5": [1080, 1350] }, def: "4:5" },
+  fb: { name: "Facebook", max: 10, formats: { "4:5": [1080, 1350] }, def: "4:5" },
+  x: { name: "X", max: 4, formats: { "4:5": [1080, 1350] }, def: "4:5" },
+};
+const LANGS = { en: ["en"], mn: ["mn"], enmn: ["en", "mn"], mnen: ["mn", "en"] };
+const LANG_NAMES = { en: "EN", mn: "MN", enmn: "EN + MN", mnen: "MN + EN" };
+// Designs: each has its own fonts, layout, colour sets and a seamless element that runs across the swipe.
+// render(c) returns the slide chrome; the slide body (BODY below) is shared and restyled per design in CSS.
+const DESIGNS = {
+  pixel: { name: "Pixel", palettes: { navy: "Navy", night: "Night", paper: "Light", volt: "Green" }, fonts: ["Montserrat", "JetBrains Mono"], render: renderPixel },
+  bau: { name: "Bauhaus", palettes: { bnavy: "Navy", bblue: "Blue", bink: "Light" }, fonts: ["Geologica"], render: renderBau },
+  neon: { name: "Neon", palettes: { nnavy: "Navy", nviolet: "Violet" }, fonts: ["Poppins"], render: renderNeon },
+  wave: { name: "Waves", palettes: { wnavy: "Navy", wgreen: "Green", wink: "Light" }, fonts: ["Poppins"], render: renderWave },
+  glass: { name: "Glass", palettes: { aurora: "Navy", dawn: "Light" }, fonts: ["Manrope"], render: renderGlass },
+  stick: { name: "Sticker", palettes: { slime: "Lime", spink: "Pink", scyan: "Cyan" }, fonts: ["Rubik"], render: renderStick },
+};
+const DARK = { navy: true, night: true, bnavy: true, bblue: true, nnavy: true, nviolet: true, wnavy: true, wgreen: true, aurora: true };
+function fixDesign(s) {
+  s.design = { poster: "bau", term: "neon", edit: "wave" }[s.design] || s.design; // designs replaced on 2026-11-03
+  if (!DESIGNS[s.design]) s.design = "pixel";
+  const pals = DESIGNS[s.design].palettes, last = s.pal?.[s.design];
+  if (!pals[s.theme]) s.theme = pals[last] ? last : Object.keys(pals)[0];
+  return s;
+}
+const TONES = ["cyan", "green", "lime", "magenta", "violet", "blue"];
+const PIX = ["cyan", "lime", "magenta", "violet", "blue", "white", "green"];
+const SWIPE = { en: "Swipe", mn: "Гүйлгэ" };
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z"/></svg>';
+
+const nums = (n) => Array.from({ length: n }, (_, i) => String(i + 1).padStart(2, "0"));
+const PHOTOS = [
+  ...nums(15).map((n) => "2025/recap/hack/" + n),
+  ...nums(11).map((n) => "2025/recap/research/" + n),
+  ...nums(10).map((n) => "2025/recap/roundtable/" + n),
+];
+const LOGOS = {
+  "TenGer HD": "partners/tenger-hd.png", Ard: "partners/icons/ard.png", Unread: "partners/icons/unread.png",
+  CryptoRank: "partners/icons/cryptorank.svg", Binance: "partners/icons/binance.svg", Circle: "partners/icons/circle.svg", Tether: "partners/icons/tether.svg",
+};
+const imgUrl = (p, small) => (!p ? "" : p.startsWith("data:") || p.startsWith("/") ? p : BRAND + p + (p.includes(".") ? "" : (small ? "-s" : "") + ".webp"));
+
+/* ───────────────────────── slide types ─────────────────────────
+   fields: [key, label, rows, single]  — single = one value for both languages (dates, URLs, numbers) */
+const L = (en, mn = en) => ({ en, mn });
+const TYPES = {
+  cover: { name: "Cover", photo: "inset", fields: [["eyebrow", "Eyebrow"], ["title", "Title", 2], ["sub", "Subtitle", 2]],
+    items: { label: "Chips", max: 4, fields: [["t", "Chip"]], blank: () => ({ t: L("") }) } },
+  statement: { name: "Statement", photo: "dim", fields: [["eyebrow", "Eyebrow"], ["quote", "Statement", 3], ["body", "Body", 2]] },
+  days: { name: "Week at a glance", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]],
+    items: { label: "Days", max: 6, fields: [["d", "Date", 1, true], ["m", "Month"], ["w", "Weekday"], ["label", "Title"], ["note", "Note"]], blank: () => ({ d: L(""), m: L(""), w: L(""), label: L(""), note: L("") }) } },
+  day: { name: "Day schedule", fields: [["eyebrow", "Eyebrow"], ["d", "Day number", 1, true], ["w", "Weekday"], ["m", "Month"], ["title", "Day title"]],
+    items: { label: "Sessions", max: 7, fields: [["time", "Time"], ["t", "Session", 2]], blank: () => ({ time: L(""), t: L("") }) } },
+  cards: { name: "Feature cards", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]],
+    items: { label: "Cards", max: 4, fields: [["when", "Label"], ["t", "Title"], ["body", "Text", 2]], blank: () => ({ when: L(""), t: L(""), body: L("") }) } },
+  stats: { name: "Numbers", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]],
+    items: { label: "Numbers", max: 6, fields: [["n", "Number", 1, true], ["l", "Label"], ["s", "Detail"]], blank: () => ({ n: L(""), l: L(""), s: L("") }) } },
+  photo: { name: "Photo", photo: "full", fields: [["eyebrow", "Eyebrow"], ["title", "Title", 2], ["body", "Text", 2]] },
+  speakers: { name: "Speakers", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]],
+    items: { label: "Speakers", max: 6, img: "photo", fields: [["name", "Name"], ["role", "Role"]], blank: () => ({ name: L(""), role: L(""), hue: Math.floor(Math.random() * 360) }) } },
+  partners: { name: "Partners", fields: [["eyebrow", "Eyebrow"], ["title", "Heading"]],
+    items: { label: "Partners", max: 8, img: "logo", fields: [["name", "Name", 1, true], ["about", "One line"]], blank: () => ({ name: L(""), about: L(""), logo: "", light: false }) } },
+  cta: { name: "Call to action", photo: "dim", fields: [["eyebrow", "Eyebrow"], ["title", "Title", 2], ["body", "Text", 2], ["button", "Button"], ["url", "Website", 1, true], ["tag", "Hashtag", 1, true]] },
+};
+
+/* ───────────────────────── UBBW 2026 content (src/data) ───────────────────────── */
+const DATES = L("Nov 30 – Dec 5", "11.30 – 12.05");
+const CITY = L("Ulaanbaatar", "Улаанбаатар");
+const FREE = L("Free entry", "Үнэгүй");
+const URL_ = L("ubblockchainweek.net");
+const TAG = L("#UBBW2026");
+const NOV = L("Nov", "11-р сар"), DEC = L("Dec", "12-р сар");
+const WEEK = [
+  { d: L("30"), m: NOV, w: L("Mon", "Даваа"), label: L("Roundtable", "Дугуй ширээний уулзалт"), note: L("TenGer Panel 1 · AMA 1", "TenGer панел 1 · AMA 1") },
+  { d: L("1"), m: DEC, w: L("Tue", "Мягмар"), label: L("Workshop", "Воркшоп"), note: L("Workshop 1 · AMA 2", "Воркшоп 1 · AMA 2") },
+  { d: L("2"), m: DEC, w: L("Wed", "Лхагва"), label: L("Hackathon opens", "Хакатоны нээлт"), note: L("Workshop 2 · TenGer Panel 2 · AMA 3", "Воркшоп 2 · TenGer панел 2 · AMA 3") },
+  { d: L("3"), m: DEC, w: L("Thu", "Пүрэв"), label: L("Academic conference", "Эрдэм шинжилгээний хурал"), note: L("The Future of Money · Hackathon day 2", "The Future of Money · Хакатон 2-р өдөр") },
+  { d: L("4"), m: DEC, w: L("Fri", "Баасан"), label: L("Hackathon final", "Хакатоны финал"), note: L("TenGer Panel 3 · AMA 4", "TenGer панел 3 · AMA 4") },
+  { d: L("5"), m: DEC, w: L("Sat", "Бямба"), label: L("Хөрөнгө оруулагч үндэстэн"), note: L("Full-day event", "Бүтэн өдрийн арга хэмжээ") },
+];
+const REVIEW = (n) => [L("18:40"), L("UB Blockchain review: EP" + n, "UB Blockchain тойм: EP" + n)];
+const SCHED = [
+  [[L("10:30"), L("Roundtable: 1072 token", "Дугуй ширээ: 1072 токен")], [L("14:00"), L("TenGer Panel 1: When will Mongolia's crypto summer come?", "TenGer панел 1: Монголын крипто зун хэзээ ирэх вэ?")], [L("15:30"), L("AMA 1")], REVIEW(1)],
+  [[L("12:00"), L("Workshop 1", "Воркшоп 1")], [L("15:30"), L("AMA 2")], REVIEW(2)],
+  [[L("11:00"), L("Hackathon opening: build day 1", "Хакатоны нээлт: Хөгжүүлэлт 1-р өдөр")], [L("12:00"), L("Workshop 2", "Воркшоп 2")], [L("14:00"), L("TenGer Panel 2: Cyber attacks and the future of blockchain", "TenGer панел 2: Кибер халдлага ба блокчэйны ирээдүй")], [L("15:30"), L("AMA 3")], REVIEW(3)],
+  [[L("10:00"), L("Hackathon: build day 2", "Хакатон: Хөгжүүлэлт 2-р өдөр")], [L("11:00"), L("Academic conference: The Future of Money", "Эрдэм шинжилгээний хурал: The Future of Money")], [L("12:00"), L("Workshop 3", "Воркшоп 3")], REVIEW(4)],
+  [[L("11:00"), L("Hackathon: final", "Хакатон: Финал")], [L("14:00"), L("TenGer Panel 3: What's happening worldwide?", "TenGer панел 3: Олон улсад юу болж байна?")], [L("15:30"), L("AMA 4")], REVIEW(5)],
+  [[L("All day", "Бүтэн өдөр"), L("Хөрөнгө оруулагч үндэстэн")]],
+];
+const DAY_TITLES = [WEEK[0].label, WEEK[1].label, WEEK[2].label, WEEK[3].label, WEEK[4].label, L("Investor nation", "Бүтэн өдрийн арга хэмжээ")];
+const STATS_2025 = [
+  { n: L("5"), l: L("days", "өдөр"), s: L("24–28 November", "11.24 – 11.28") },
+  { n: L("₮23M"), l: L("in prizes", "шагналын сан"), s: L("Hackathon and research", "Хакатон ба судалгаа") },
+  { n: L("11"), l: L("hackathon teams", "хакатоны баг"), s: L("Web3 games, built in teams", "Багаар Web3 тоглоом бүтээв") },
+  { n: L("15"), l: L("partners", "түнш байгууллага"), s: L("Exchanges, universities, studios", "Бирж, их сургууль, студи") },
+  { n: L("2"), l: L("campus tours", "кампус аялал"), s: L("МУИС and СЭЗИС", "МУИС ба СЭЗИС") },
+  { n: L("4"), l: L("flagship events", "гол арга хэмжээ"), s: L("Hack, research, policy, campus", "Хакатон, судалгаа, бодлого, кампус") },
+];
+const TAGLINE = L("The biggest gathering of Mongolia's blockchain and crypto community.", "Блокчэйн, крипто комюнитигийн хамгийн том цугларалт.");
+
+const cover = (f, items, photo) => ({ type: "cover", f, items: items ?? [{ t: DATES }, { t: CITY }, { t: FREE }], photo: photo ?? "", photoMode: "inset" });
+const cta = (over = {}) => ({ type: "cta", photo: "", photoMode: "dim", f: {
+  eyebrow: L("Save your seat", "Суудлаа баталгаажуул"), title: L("Register\n*now*", "Одоо\n*бүртгүүл*"),
+  body: L("Free with advance registration. The hackathon and academic conference have their own application.", "Урьдчилан бүртгүүлбэл үнэгүй. Хакатон, эрдэм шинжилгээний хуралд тусдаа өргөдөл гаргана."),
+  button: L("Register now", "Бүртгүүлэх"), url: URL_, tag: TAG, ...over } });
+
+const PRESETS = {
+  announce: { name: "Event announcement", slides: () => [
+    cover({ eyebrow: L("You're invited", "Урилга"), title: L("UB Blockchain\nWeek *2026*"), sub: TAGLINE }, null, "2025/recap/roundtable/03"),
+    { type: "statement", photo: "2025/recap/hack/09", photoMode: "dim", f: { eyebrow: L("Six days", "Зургаан өдөр"),
+      quote: L("Panels, workshops, a hackathon and community nights. All *free*.", "Панел, воркшоп, хакатон, комюнити үдэш. Бүгд *үнэгүй*."),
+      body: L("For builders, researchers, students, companies and anyone curious about blockchain.", "Хөгжүүлэгч, судлаач, оюутан, компани болон блокчэйнийг сонирхсон хэн бүхэнд.") } },
+    { type: "days", f: { eyebrow: DATES, title: L("The *week*", "Долоо *хоног*") }, items: WEEK },
+    { type: "cards", f: { eyebrow: L("What's on", "Хөтөлбөр"), title: L("Four ways *in*", "Дөрвөн *чиглэл*") }, items: [
+      { when: L("Nov 30 · Dec 2 · Dec 4", "11.30 · 12.02 · 12.04"), t: L("TenGer panels", "TenGer панел"), body: L("Crypto summer, cyber security and what's happening worldwide.", "Крипто зун, кибер аюулгүй байдал, олон улсын чиг хандлага.") },
+      { when: L("Dec 2 – 4", "12.02 – 12.04"), t: L("Hackathon", "Хакатон"), body: L("Three days of building, from the opening to the final.", "Нээлтээс финал хүртэл гурван өдөр хөгжүүлнэ.") },
+      { when: L("Dec 3", "12.03"), t: L("Academic conference", "Эрдэм шинжилгээний хурал"), body: L("The Future of Money: research on blockchain and finance.", "The Future of Money: блокчэйн ба санхүүгийн судалгаа.") },
+      { when: L("All week", "Долоо хоногийн турш"), t: L("Workshops & AMAs", "Воркшоп ба AMA"), body: L("Hands-on workshops, open AMAs and the nightly UB Blockchain review.", "Практик воркшоп, нээлттэй AMA, орой бүр UB Blockchain тойм.") },
+    ] },
+    { type: "partners", f: { eyebrow: L("2026 partners", "2026 оны түншүүд"), title: L("Made *together*", "Хамтдаа *бүтээв*") }, items: [
+      { name: L("TenGer HD"), about: L("Host", "Зохион байгуулагч"), logo: LOGOS["TenGer HD"], light: false },
+      { name: L("Ard"), about: L("Partner", "Түнш"), logo: LOGOS.Ard, light: false },
+      { name: L("Unread"), about: L("Partner", "Түнш"), logo: LOGOS.Unread, light: false },
+      { name: L("CryptoRank"), about: L("Partner", "Түнш"), logo: LOGOS.CryptoRank, light: true },
+    ] },
+    cta(),
+  ] },
+  agenda: { name: "Day-by-day agenda", slides: () => [
+    cover({ eyebrow: L("Programme", "Хөтөлбөр"), title: L("Six days\nin *UB*", "*УБ*-д\nзургаан өдөр"), sub: L("Every session, day by day. Times are Ulaanbaatar time.", "Өдөр бүрийн хөтөлбөр. Цаг нь Улаанбаатарын цагаар.") }, [{ t: DATES }, { t: CITY }]),
+    ...WEEK.map((w, i) => ({ type: "day", f: { eyebrow: L("Day " + (i + 1), (i + 1) + "-р өдөр"), d: w.d, w: w.w, m: w.m, title: i === 5 ? w.label : DAY_TITLES[i] },
+      items: SCHED[i].map(([time, t]) => ({ time, t })) })),
+    cta({ title: L("Plan your\n*week*", "Долоо хоногоо\n*төлөвлө*"), body: L("Star sessions in the attendee app and get reminders.", "Оролцогчийн апп дээр сонирхсон хөтөлбөрөө тэмдэглээд сануулга аваарай.") }),
+  ] },
+  hack: { name: "Hackathon call (fits X)", slides: () => [
+    cover({ eyebrow: L("UB Hack 2026", "UB Hack 2026"), title: L("Build for\n*Mongolia*", "*Монголд*\nзориулж бүтээ"), sub: L("Three days of building, mentors on the floor and prizes for projects that matter here.", "Ментортой гурван өдрийн хакатон. Энд хэрэгтэй төслүүдэд шагнал.") },
+      [{ t: L("Dec 2 – 4", "12.02 – 12.04") }, { t: CITY }, { t: FREE }], "2025/recap/hack/07"),
+    { type: "days", f: { eyebrow: L("Timeline", "Хуваарь"), title: L("Three *days*", "Гурван *өдөр*") }, items: [
+      { d: L("2"), m: DEC, w: L("Wed", "Лхагва"), label: L("Opening · build day 1", "Нээлт · Хөгжүүлэлт 1-р өдөр"), note: L("From 11:00", "11:00-оос") },
+      { d: L("3"), m: DEC, w: L("Thu", "Пүрэв"), label: L("Build day 2", "Хөгжүүлэлт 2-р өдөр"), note: L("10:00 – 22:00") },
+      { d: L("4"), m: DEC, w: L("Fri", "Баасан"), label: L("Final", "Финал"), note: L("11:00 – 17:00") },
+    ] },
+    { type: "stats", f: { eyebrow: L("Last year", "Өнгөрсөн жил"), title: L("2025 in *numbers*", "2025 *тоогоор*") }, items: [STATS_2025[1], STATS_2025[2]] },
+    cta({ eyebrow: L("Teams of any level", "Бүх түвшний баг"), title: L("Apply\n*now*", "Одоо\n*өргөдөл гарга*"), button: L("Apply", "Өргөдөл гаргах"),
+      body: L("First-timers and veterans welcome. Bring a team or find one at the opening.", "Анх удаа оролцогч ч, туршлагатай ч хамаагүй. Багаа авчир эсвэл нээлт дээр баг олоорой.") }),
+  ] },
+  recap: { name: "2025 recap → 2026", slides: () => [
+    cover({ eyebrow: L("Report 2025", "2025 оны тайлан"), title: L("Last year\nin *UB*", "Өнгөрсөн жил\n*УБ*-д"), sub: L("What 2025 looked like, and why 2026 will be bigger.", "2025 он ямар байсан, 2026 яагаад илүү том болох вэ.") },
+      [{ t: L("24–28 Nov 2025", "2025.11.24 – 11.28") }, { t: CITY }], "2025/recap/hack/03"),
+    { type: "stats", f: { eyebrow: L("UBBW 2025", "UBBW 2025"), title: L("In *numbers*", "*Тоогоор*") }, items: STATS_2025 },
+    { type: "photo", photo: "2025/recap/hack/09", photoMode: "full", f: { eyebrow: L("Hackathon", "Хакатон"), title: L("11 teams built\n*Web3 games*", "11 баг\n*Web3 тоглоом* бүтээв"), body: L("Ultra, Pixel Nomad, POP Bros, Khan Solution and more.", "Ultra, Pixel Nomad, POP Bros, Khan Solution болон бусад.") } },
+    { type: "photo", photo: "2025/recap/research/08", photoMode: "full", f: { eyebrow: L("Research", "Судалгаа"), title: L("Research on\n*the stage*", "Судалгаа\n*тайзан дээр*"), body: L("Students and researchers presented their work to the community.", "Оюутан, судлаачид бүтээлээ комюнитид танилцуулав.") } },
+    cta({ eyebrow: DATES, title: L("See you in\n*2026*", "*2026* онд\nуулзъя"), body: TAGLINE }),
+  ] },
+  blank: { name: "Blank (cover + CTA)", slides: () => [cover({ eyebrow: L(""), title: L("Your *title*", "Таны *гарчиг*"), sub: L("") }, [{ t: DATES }, { t: CITY }]), cta()] },
+};
+
+function defaultSlide(type) {
+  const t = TYPES[type];
+  const f = {};
+  for (const [k] of t.fields) f[k] = L("");
+  const sample = {
+    cover: () => cover({ eyebrow: L("Eyebrow", "Товч гарчиг"), title: L("Big *title*", "Том *гарчиг*"), sub: L("") }),
+    statement: () => ({ f: { eyebrow: L(""), quote: L("A strong *statement*.", "Хүчтэй *мессеж*."), body: L("") } }),
+    days: () => ({ f: { eyebrow: DATES, title: L("The *week*", "Долоо *хоног*") }, items: WEEK }),
+    day: () => ({ f: { eyebrow: L("Day 1", "1-р өдөр"), d: WEEK[0].d, w: WEEK[0].w, m: WEEK[0].m, title: WEEK[0].label }, items: SCHED[0].map(([time, t]) => ({ time, t })) }),
+    cards: () => ({ items: [t.items.blank(), t.items.blank()] }),
+    stats: () => ({ f: { eyebrow: L("UBBW 2025"), title: L("In *numbers*", "*Тоогоор*") }, items: STATS_2025.slice(0, 4) }),
+    photo: () => ({ photo: "2025/recap/roundtable/05", photoMode: "full", f: { eyebrow: L(""), title: L("Photo *title*", "Зургийн *гарчиг*"), body: L("") } }),
+    speakers: () => ({ f: { eyebrow: L("Speakers", "Илтгэгчид"), title: L("Who's *speaking*", "*Илтгэгчид*") },
+      items: [0, 1, 2, 3].map((i) => ({ name: L("Speaker name", "Илтгэгчийн нэр"), role: L("Role, organisation", "Албан тушаал, байгууллага"), hue: [14, 205, 95, 340][i], photo: "" })) }),
+    partners: () => ({ f: { eyebrow: L("Partners", "Түншүүд"), title: L("Made *together*", "Хамтдаа *бүтээв*") }, items: [] }),
+    cta: () => cta(),
+  }[type]();
+  return clone({ type, f, items: [], photo: "", photoMode: t.photo || "", ...sample, f: { ...f, ...(sample.f || {}) } });
+}
+
+/* ───────────────────────── state ───────────────────────── */
+const KEY = "ubbw-carousel-v1";
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const uid = () => Math.random().toString(36).slice(2, 9);
+function fresh(preset = "announce") {
+  return { platform: "ig", format: "4:5", lang: "en", design: "pixel", theme: "navy", pal: {}, handle: "@ubbw2026", hashtag: "#UBBW2026", seamless: false, zoom: 0.4, sel: 0,
+    caption: { en: "", mn: "" }, slides: PRESETS[preset].slides().map((s) => ({ id: uid(), items: [], ...clone(s) })) };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch { S = null; }
+if (!S || !Array.isArray(S.slides) || !S.slides.length) S = fresh();
+S.slides.forEach((s) => (s.id ||= uid()));
+S.format = "4:5";
+fixDesign(S);
+const undoStack = [];
+function pushUndo() { undoStack.push(JSON.stringify(S.slides)); if (undoStack.length > 40) undoStack.shift(); }
+let saveT;
+let SERVER = false, PROJ = null;
+const JSONH = { "content-type": "application/json" };
+async function api(path, opt) {
+  const r = await fetch("/api/" + path, opt);
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || "HTTP " + r.status);
+  return d;
+}
+function srv(text, bad) { const e = document.getElementById("srvState"); if (e) { e.textContent = text; e.classList.toggle("bad", !!bad); } }
+const putProject = (name) => api("projects/" + encodeURIComponent(name), { method: "PUT", headers: JSONH, body: JSON.stringify(S) });
+function save() {
+  clearTimeout(saveT);
+  if (SERVER && PROJ) srv("Saving…");
+  saveT = setTimeout(async () => {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* quota — the server copy is the real one */ }
+    if (!SERVER || !PROJ) return;
+    try { await putProject(PROJ); srv("Saved ✓"); } catch (e) { srv("Not saved: " + e.message, true); }
+  }, 600);
+}
+
+/* ───────────────────────── text helpers ───────────────────────── */
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (s) => esc(s).replace(/\*(.+?)\*/gs, '<span class="acc">$1</span>').replace(/\n/g, "<br>");
+const val = (v, l) => (v == null ? "" : typeof v === "string" ? v : (v[l] ?? v.en ?? ""));
+const plain = (v, l) => val(v, l).replace(/\*/g, "").replace(/\s*\n\s*/g, " ").trim();
+let LANG = null; // export can force a language
+const langs = () => LANGS[LANG || S.lang];
+const has = (v) => langs().some((l) => val(v, l).trim());
+const one = (v) => fmt(val(v, langs()[0]) || val(v, langs()[1] || "en"));
+function two(v, small) {
+  const [a, b] = langs();
+  const A = val(v, a), B = b ? val(v, b) : "";
+  if (!b || !B.trim() || B === A) return fmt(A || B);
+  if (!A.trim()) return fmt(B);
+  return fmt(A) + `<span class="alt${small ? " alt-p" : ""}">${fmt(B.replace(/\s*\n\s*/g, " "))}</span>`;
+}
+function initials(n) { return n.split(/\s|-/).filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase(); }
+
+/* seeded random, so decorations don't jump between renders */
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+/* ───────────────────────── slide rendering ───────────────────────── */
+function dims() {
+  const [W, H] = PLATFORMS[S.platform].formats[S.format];
+  return { W, H, u: Math.min(W, H) / 1080, shape: W > H ? "land" : W === H ? "sq" : "port" };
+}
+let LOGO_DARK = BRAND + "logo-white.webp", LOGO_LIGHT = BRAND + "logo-white.webp";
+
+// Seam blocks: pixel clusters that sit across every slide boundary, so swiping shows one continuous design.
+function seam(i, n, W, H, u) {
+  const r = rng(97);
+  const blocks = [];
+  const s = 54 * u;
+  for (let k = 1; k < n; k++) {
+    const y = H * (0.3 + r() * 0.42);
+    const x = k * W;
+    const c = () => PIX[Math.floor(r() * PIX.length)];
+    blocks.push([x - s / 2, y, s, s, c()], [x + s / 2, y + s, s / 2, s / 2, c()], [x - s, y - s / 2, s / 2, s / 2, c()]);
+    if (r() > 0.5) blocks.push([x - s / 2, y + s, s, s / 2, c()]);
+  }
+  // a corner cluster on the first slide and the last slide's far edge
+  blocks.push([0, H * 0.12, s / 2, s, "cyan"], [s / 2, H * 0.12, s / 2, s / 2, "magenta"]);
+  blocks.push([n * W - s / 2, H * 0.82, s / 2, s, "lime"], [n * W - s, H * 0.82 + s / 2, s / 2, s / 2, "blue"]);
+  const html = blocks.filter(([x, , w]) => x + w > i * W && x < (i + 1) * W)
+    .map(([x, y, w, h, c]) => `<i style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px;background:var(--c-${c});box-shadow:0 0 ${(40 * u).toFixed(0)}px color-mix(in srgb, var(--c-${c}) 45%, transparent)"></i>`).join("");
+  return `<div class="s-seam" style="left:${-i * W}px;width:${n * W}px">${html}</div>`;
+}
+function glow(i, n, W, H) {
+  const g = [];
+  for (let k = 0; k <= n; k++) {
+    const x = k * W - W * 0.1 + (k % 2 ? W * 0.35 : 0), y = k % 2 ? H * 0.85 : H * 0.15;
+    g.push(`radial-gradient(circle at ${x.toFixed(0)}px ${y.toFixed(0)}px, var(--glow), transparent ${(Math.max(W, H) * 0.48).toFixed(0)}px)`);
+  }
+  return `<div class="s-glow" style="left:${-i * W}px;width:${n * W}px;background:${g.join(",")}"></div>`;
+}
+
+const BODY = {
+  head: (f, cls = "h2") => `${has(f.eyebrow) ? `<div class="eyebrow">${one(f.eyebrow)}</div>` : ""}${has(f.title) ? `<h2 class="${cls}">${two(f.title)}</h2>` : ""}`,
+  cover: (s) => `${has(s.f.eyebrow) ? `<div class="eyebrow">${one(s.f.eyebrow)}</div>` : ""}<h1 class="h1">${two(s.f.title)}</h1>
+    ${has(s.f.sub) ? `<p class="lead">${two(s.f.sub, true)}</p>` : ""}
+    ${s.items.length ? `<div class="chips">${s.items.filter((c) => has(c.t)).map((c) => `<span class="chip">${one(c.t)}</span>`).join("")}</div>` : ""}`,
+  statement: (s) => `${has(s.f.eyebrow) ? `<div class="eyebrow">${one(s.f.eyebrow)}</div>` : ""}<p class="quote">${two(s.f.quote)}</p>${has(s.f.body) ? `<p class="text">${two(s.f.body, true)}</p>` : ""}`,
+  days: (s) => BODY.head(s.f) + `<div class="rows">${s.items.map((it) => `<div class="rw"><div class="dbox"><b>${one(it.d)}</b><span>${one(it.m)}</span></div>
+    <div><div class="wk">${one(it.w)}</div><div class="lbl">${two(it.label, true)}</div>${has(it.note) ? `<div class="note">${one(it.note)}</div>` : ""}</div></div>`).join("")}</div>`,
+  day: (s) => `<div class="dcol">${has(s.f.eyebrow) ? `<div class="eyebrow">${one(s.f.eyebrow)}</div>` : ""}
+    <div class="dayhead"><div class="big">${one(s.f.d)}</div><div class="meta"><span>${one(s.f.w)}</span><span>${one(s.f.m)}</span></div></div>
+    ${has(s.f.title) ? `<h2 class="h2">${two(s.f.title)}</h2>` : ""}</div>
+    <div class="sess">${s.items.map((it) => `<div class="se"><span class="tm">${one(it.time)}</span><span class="st">${two(it.t, true)}</span></div>`).join("")}</div>`,
+  cards: (s) => BODY.head(s.f) + `<div class="cards">${s.items.map((it, k) => `<div class="cd"><i class="px" style="background:var(--c-${TONES[k % 6]})"></i><span class="cn">${String(k + 1).padStart(2, "0")}</span>
+    ${has(it.when) ? `<div class="when">${one(it.when)}</div>` : ""}<h3>${two(it.t, true)}</h3>${has(it.body) ? `<p>${one(it.body)}</p>` : ""}</div>`).join("")}</div>`,
+  stats: (s) => BODY.head(s.f) + `<div class="stats">${s.items.map((it, k) => `<div class="st-i" style="--tone:var(--c-${TONES[k % 6]})"><b>${one(it.n)}</b>
+    <div class="l">${two(it.l, true)}</div>${has(it.s) ? `<div class="s">${one(it.s)}</div>` : ""}</div>`).join("")}</div>`,
+  photo: (s) => `${has(s.f.eyebrow) ? `<div class="eyebrow">${one(s.f.eyebrow)}</div>` : ""}${has(s.f.title) ? `<h2 class="h2">${two(s.f.title)}</h2>` : ""}${has(s.f.body) ? `<p class="text">${two(s.f.body, true)}</p>` : ""}`,
+  speakers: (s) => BODY.head(s.f) + `<div class="people">${s.items.map((it) => `<div class="pp">
+    <div class="av" style="background:hsl(${it.hue ?? 200} 80% 62%)">${it.photo ? `<img src="${esc(imgUrl(it.photo))}" alt="">` : esc(initials(val(it.name, langs()[0]) || "?"))}</div>
+    <div><div class="nm">${one(it.name)}</div><div class="rl">${one(it.role)}</div></div></div>`).join("")}</div>`,
+  partners: (s) => BODY.head(s.f) + `<div class="logos">${s.items.map((it) => `<div><div class="lg${it.light ? " light" : ""}">
+    ${it.logo ? `<img src="${esc(imgUrl(it.logo))}" alt="">` : `<span class="ini">${esc(initials(val(it.name, "en") || "?"))}</span>`}</div>
+    <div class="lgn">${one(it.name)}</div>${has(it.about) ? `<div class="lga">${one(it.about)}</div>` : ""}</div>`).join("")}</div>`,
+  cta: (s) => `${has(s.f.eyebrow) ? `<div class="eyebrow">${one(s.f.eyebrow)}</div>` : ""}<h1 class="h1">${two(s.f.title)}</h1>
+    ${has(s.f.body) ? `<p class="text">${two(s.f.body, true)}</p>` : ""}
+    <div class="ctarow">${has(s.f.button) ? `<span class="cbtn">${one(s.f.button)} ${ARROW}</span>` : ""}${has(s.f.url) ? `<span class="csite">${GLOBE}${one(s.f.url)}</span>` : ""}</div>
+    ${has(s.f.tag) ? `<div class="bigtag">${one(s.f.tag)}</div>` : ""}`,
+};
+
+// a layer as wide as the whole carousel, shifted so slide i shows its own part: anything drawn on it continues across the swipe
+const wide = (cls, c, inner = "", style = "") => `<div class="${cls}" style="left:${-c.i * c.W}px;width:${c.n * c.W}px;${style}">${inner}</div>`;
+const LOGO_ALT = 'alt="UB Blockchain Week"';
+const range = (n, f) => Array.from({ length: n }, (_, k) => f(k)).join("");
+
+function renderPixel(c) {
+  return {
+    back: glow(c.i, c.n, c.W, c.H) + `<div class="s-grid" style="background-position:${-c.i * c.W}px 0"></div>`,
+    front: seam(c.i, c.n, c.W, c.H, c.u),
+    top: `<div class="s-top"><img src="${c.logo}" ${LOGO_ALT}><span class="yr">2026</span><span class="no"><b>${c.no}</b> / ${c.tot}</span></div>`,
+    foot: `<div class="s-foot"><span>${c.handle}</span>${c.swipe}</div>`,
+  };
+}
+// Bauhaus: a frieze of square tiles (circles, halves, quarters, triangles, stripes, dots) across the whole carousel
+function renderBau(c) {
+  const T = 220 * c.u, r = rng(71), Q = ["var(--q1)", "var(--q2)", "var(--q3)", "var(--q4)", "var(--bg)"];
+  const tiles = [];
+  for (let t = 0, x = 0; x < c.n * c.W; t++, x = t * T) {
+    const b = Math.floor(r() * 5), f = (b + 1 + Math.floor(r() * 4)) % 5, kind = Math.floor(r() * 7), rot = Math.floor(r() * 4) * 90;
+    if (x + T < c.i * c.W || x > (c.i + 1) * c.W) continue;
+    const h = T / 2, cx = x + h, fill = `style="fill:${Q[f]}"`, bgf = `style="fill:${Q[b]}"`;
+    const shape = [
+      `<circle cx="${cx}" cy="${h}" r="${h * 0.84}" ${fill}/>`,
+      `<path d="M${x} ${h}A${h} ${h} 0 0 0 ${x + T} ${h}Z" ${fill}/>`,
+      `<path d="M${x} ${T}V0A${T} ${T} 0 0 1 ${x + T} ${T}Z" ${fill}/>`,
+      `<path d="M${x} ${T}L${cx} 0L${x + T} ${T}Z" ${fill}/>`,
+      [0, 2, 4].map((k) => `<rect x="${x}" y="${(k * T) / 5}" width="${T}" height="${T / 5}" ${fill}/>`).join(""),
+      [1, 3, 5].flatMap((a) => [1, 3, 5].map((bb) => `<circle cx="${x + (a * T) / 6}" cy="${(bb * T) / 6}" r="${T / 13}" ${fill}/>`)).join(""),
+      `<circle cx="${cx}" cy="${h}" r="${h * 0.84}" ${fill}/><circle cx="${cx}" cy="${h}" r="${h * 0.4}" ${bgf}/>`,
+    ][kind];
+    tiles.push(`<rect x="${x}" y="0" width="${T + 1}" height="${T}" ${bgf}/><g transform="rotate(${rot} ${cx} ${h})">${shape}</g>`);
+  }
+  const L = c.n * c.W, seg = 360 * c.u;
+  return {
+    back: "",
+    front: wide("bh-frz", c, `<svg width="${L}" height="${T}" viewBox="0 0 ${L} ${T}">${tiles.join("")}</svg>`)
+      + wide("bh-bar", c, "", `background:repeating-linear-gradient(90deg, var(--q1) 0 ${seg}px, var(--q2) ${seg}px ${2 * seg}px, var(--q3) ${2 * seg}px ${3 * seg}px)`),
+    top: "",
+    foot: `<div class="s-foot"><img src="${c.logo}" ${LOGO_ALT}><span>${c.handle}</span><span class="swipe">${c.no} / ${c.tot}${c.last ? "" : " " + ARROW}</span></div>`,
+  };
+}
+// Neon: stars, a striped sun sitting on every other seam, and a perspective grid floor whose lines meet at the seams
+function renderNeon(c) {
+  const { W, H, u, n, i } = c, L = n * W, hz = H * 0.8, r = rng(19), id = "nn" + i + uid();
+  const lo = (i - 1) * W, hi = (i + 2) * W;
+  let stars = "";
+  for (let k = 0; k < n * 46; k++) {
+    const x = r() * L, y = r() * hz * 0.78, rad = (0.8 + r() * 2.2) * u, o = 0.2 + r() * 0.6;
+    if (x > lo && x < hi) stars += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${rad.toFixed(1)}" style="fill:#fff;opacity:${o.toFixed(2)}"/>`;
+  }
+  const R = 175 * u, suns = (n === 1 ? [W / 2] : range(n - 1, (k) => (k % 2 === 0 ? (k + 1) * W + "," : "")).split(",").filter(Boolean).map(Number))
+    .filter((x) => x > lo && x < hi);
+  const bands = range(6, (k) => `<rect x="0" y="${(hz - 14 * u - k * 26 * u).toFixed(1)}" width="${L}" height="${(10 - k * 1.4) * u}" style="fill:#000"/>`);
+  const sun = suns.map((x) => `<circle cx="${x}" cy="${hz}" r="${R}" style="fill:url(#${id}g)" mask="url(#${id}m)"/>`).join("");
+  let grid = "";
+  for (let k = 1; k <= 9; k++) { const y = hz + (H - hz) * (k / 9) ** 1.7; grid += `<line x1="${lo}" y1="${y.toFixed(1)}" x2="${hi}" y2="${y.toFixed(1)}"/>`; }
+  for (let sI = Math.max(0, i - 1); sI <= Math.min(n - 1, i + 1); sI++) {
+    const cx = (sI + 0.5) * W, a = sI * W, b = a + W;
+    for (let j = -9; j <= 9; j++) {
+      let bx = cx + (j * W) / 7, by = H;
+      if (bx < a || bx > b) { const xe = bx < a ? a : b; by = hz + ((xe - cx) / (bx - cx)) * (H - hz); bx = xe; }
+      grid += `<line x1="${cx}" y1="${hz}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/>`;
+    }
+  }
+  const svg = `<svg width="${L}" height="${H}" viewBox="0 0 ${L} ${H}"><defs>
+      <linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sun1)"/><stop offset="1" style="stop-color:var(--sun2)"/></linearGradient>
+      <linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky3);stop-opacity:.55"/><stop offset=".35" style="stop-color:var(--floor)"/><stop offset="1" style="stop-color:var(--floor)"/></linearGradient>
+      <mask id="${id}m"><rect x="0" y="0" width="${L}" height="${H}" style="fill:#fff"/>${bands}</mask></defs>
+    ${stars}${sun}<rect x="0" y="${hz}" width="${L}" height="${H - hz}" style="fill:url(#${id}f)"/>
+    <g style="stroke:var(--grid);stroke-width:${(2 * u).toFixed(1)};opacity:.75">${grid}</g></svg>`;
+  return {
+    back: wide("nn-sky", c, svg) + `<div class="nn-hz"></div>`,
+    front: "",
+    top: `<div class="s-top"><img src="${LOGO_DARK}" ${LOGO_ALT}><span class="yr">2026</span><span class="no"><b>${c.no}</b> / ${c.tot}</span></div>`,
+    foot: `<div class="s-foot"><span>${c.handle}</span>${c.swipe}</div>`,
+  };
+}
+// Waves: layered sine waves computed along the whole carousel, so every slide edge lines up
+function renderWave(c) {
+  const { W, H, u, n, i } = c, step = 18;
+  const x0 = Math.floor((i * W) / step) * step - step, x1 = (i + 1) * W + step;
+  const wave = (base, a1, l1, p1, a2, l2, p2, top) => {
+    let d = `M${x0} ${top ? 0 : H}`;
+    for (let x = x0; x <= x1; x += step) d += `L${x} ${(base + a1 * Math.sin((2 * Math.PI * x) / l1 + p1) + a2 * Math.sin((2 * Math.PI * x) / l2 + p2)).toFixed(1)}`;
+    return d + `L${x1} ${top ? 0 : H}Z`;
+  };
+  const L = n * W;
+  const svg = `<svg width="${L}" height="${H}" viewBox="0 0 ${L} ${H}">
+    <path d="${wave(96 * u, 22 * u, 1.9 * W, 0.4, 10 * u, 0.8 * W, 2.1, true)}" style="fill:var(--w0);opacity:.28"/>
+    <path d="${wave(H - 266 * u, 30 * u, 1.7 * W, 0, 14 * u, 0.75 * W, 1.3)}" style="fill:var(--w1);opacity:.55"/>
+    <path d="${wave(H - 196 * u, 26 * u, 1.3 * W, 2.2, 12 * u, 0.6 * W, 0.4)}" style="fill:var(--w2)"/>
+    <path d="${wave(H - 124 * u, 18 * u, 1.1 * W, 4.1, 9 * u, 0.5 * W, 2.8)}" style="fill:var(--w3)"/></svg>`;
+  return {
+    back: "",
+    front: wide("wv", c, svg),
+    top: `<div class="s-top"><img src="${c.logo}" ${LOGO_ALT}><span class="yr">2026</span><span class="wv-no"><b>${c.no}</b> / ${c.tot}</span></div>`,
+    foot: `<div class="s-foot"><span>${c.handle}</span>${c.swipe}</div>`,
+  };
+}
+function renderGlass(c) {
+  const r = rng(31), g = [];
+  for (let k = 0; k <= c.n; k++) for (let j = 0; j < 2; j++) {
+    const x = (k + r() * 0.9 - 0.2) * c.W, y = c.H * (j ? 0.62 + r() * 0.35 : r() * 0.4);
+    g.push(`radial-gradient(circle at ${x.toFixed(0)}px ${y.toFixed(0)}px, color-mix(in srgb, var(--b${1 + ((k * 2 + j) % 4)}) var(--ba, 78%), transparent), transparent ${(c.W * (0.42 + r() * 0.18)).toFixed(0)}px)`);
+  }
+  return {
+    back: wide("gl-blobs", c, "", `background:${g.join(",")}`),
+    front: "",
+    top: `<div class="s-top"><span class="gl-pill"><img src="${c.logo}" ${LOGO_ALT}><span>2026</span></span></div>`,
+    foot: `<div class="s-foot"><span>${c.handle}</span><span class="gl-dots">${range(c.n, (k) => `<i class="${k === c.i ? "on" : ""}"></i>`)}</span>${c.swipe}</div>`,
+  };
+}
+const STAR = (() => { const p = []; for (let t = 0; t < 24; t++) { const a = (t * Math.PI) / 12, rr = t % 2 ? 34 : 48; p.push(`${(Math.cos(a) * rr).toFixed(1)},${(Math.sin(a) * rr).toFixed(1)}`); } return p.join(" "); })();
+function renderStick(c) {
+  const r = rng(53), sh = [];
+  for (let k = 1; k < c.n; k++) {
+    const x = k * c.W, y = c.H * (0.2 + r() * 0.5), s = (150 + r() * 30) * c.u, d = 64 * c.u;
+    const box = `left:${(x - s / 2).toFixed(0)}px;top:${y.toFixed(0)}px;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px`;
+    sh.push(k % 2
+      ? `<i class="sk-c" style="${box};background:var(--s1)"></i>`
+      : `<svg style="${box}" viewBox="-52 -52 112 112"><polygon points="${STAR}" transform="translate(5 5)" fill="#010d58"/><polygon points="${STAR}" fill="var(--s2)" stroke="#010d58" stroke-width="2.6" stroke-linejoin="round"/></svg>`);
+    sh.push(`<i class="sk-c" style="left:${(x - d / 2).toFixed(0)}px;top:${(k % 2 ? y + s + 22 * c.u : y - d - 22 * c.u).toFixed(0)}px;width:${d.toFixed(0)}px;height:${d.toFixed(0)}px;background:#fff"></i>`);
+  }
+  return {
+    back: `<div class="sk-dots"></div>` + wide("sk-shapes", c, sh.join("")),
+    front: "",
+    top: `<div class="s-top"><span class="sk-logo"><img src="${LOGO_DARK}" ${LOGO_ALT}></span><span class="sk-no"><span>${c.no}<small>/ ${c.tot}</small></span></span></div>`,
+    foot: `<div class="s-foot"><span>${c.handle}</span>${c.swipe}</div>`,
+  };
+}
+
+function slideHTML(sl, i, n) {
+  const { W, H, u, shape } = dims();
+  const t = TYPES[sl.type];
+  const mode = sl.photo && t.photo ? sl.photoMode || t.photo : "";
+  const D = DESIGNS[S.design] || DESIGNS.pixel;
+  const cls = ["slide", "ds-" + S.design, "th-" + S.theme, shape, mode === "inset" ? "has-inset" : ""].join(" ");
+  const last = i >= n - 1;
+  const c = { sl, i, n, W, H, u, last, no: String(i + 1).padStart(2, "0"), tot: String(n).padStart(2, "0"),
+    logo: DARK[S.theme] ? LOGO_DARK : LOGO_LIGHT,
+    handle: esc([S.handle, S.hashtag].filter(Boolean).join("  ·  ")),
+    swipe: `<span class="swipe">${last ? "" : `${esc(SWIPE[langs()[0]])} ${ARROW}`}</span>` };
+  const p = D.render(c);
+  return `<div class="${cls}" data-i="${i}" style="--w:${W}px;--h:${H}px;--u:${u}px;--k:1">
+    ${p.back}
+    ${mode ? `<div class="ph ph-${mode}"><img src="${esc(imgUrl(sl.photo))}" alt=""></div>` : ""}
+    ${p.front}${p.top}
+    <div class="s-body t-${sl.type}">${BODY[sl.type](sl)}</div>
+    ${p.foot}
+  </div>`;
+}
+
+// shrink --k on each slide until its copy fits (long Mongolian words, bilingual mode)
+function fit(root) {
+  root.querySelectorAll(".slide").forEach((el) => {
+    const b = el.querySelector(".s-body");
+    let k = 1;
+    el.style.setProperty("--k", "1");
+    while ((b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1) && k > 0.5) {
+      k -= 0.03;
+      el.style.setProperty("--k", k.toFixed(2));
+    }
+  });
+}
+
+/* ───────────────────────── stage ───────────────────────── */
+const $ = (id) => document.getElementById(id);
+function renderStage() {
+  const { W, H } = dims();
+  const z = S.zoom;
+  const n = S.slides.length;
+  const max = PLATFORMS[S.platform].max;
+  $("stage").classList.toggle("seamless", !!S.seamless);
+  $("strip").innerHTML = S.slides.map((sl, i) => `<div class="frame${i === S.sel ? " sel" : ""}" data-i="${i}" style="width:${W * z}px;height:${H * z}px;--z:${z}">
+    ${slideHTML(sl, i, n)}
+    <div class="cap">${String(i + 1).padStart(2, "0")} · ${TYPES[sl.type].name}${i >= max ? " · over the " + PLATFORMS[S.platform].name + " limit" : ""}</div></div>`).join("");
+  fit($("strip"));
+  const w = $("warn");
+  const msgs = [];
+  if (n > max) msgs.push(`${PLATFORMS[S.platform].name} posts take up to ${max} images. Slides ${max + 1}–${n} won't fit in one post.`);
+  w.textContent = msgs.join("  ");
+  w.classList.toggle("show", msgs.length > 0);
+}
+$("strip").addEventListener("click", (e) => {
+  const f = e.target.closest(".frame");
+  if (!f) return;
+  S.sel = +f.dataset.i;
+  document.querySelectorAll(".frame").forEach((el) => el.classList.toggle("sel", el === f));
+  renderList(); renderInspector(); save();
+});
+let rT;
+function changed() { clearTimeout(rT); rT = setTimeout(() => { renderStage(); renderList(); }, 120); save(); }
+function structural(fn) { pushUndo(); fn(); S.sel = Math.max(0, Math.min(S.sel, S.slides.length - 1)); renderAll(); save(); }
+
+/* ───────────────────────── DOM helper ───────────────────────── */
+function h(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c));
+  return e;
+}
+function seg(el, opts, cur, pick) {
+  el.replaceChildren(...Object.entries(opts).map(([k, label]) => h("button", { class: k === cur ? "on" : "", onclick: () => pick(k) }, label)));
+}
+
+/* ───────────────────────── top bar ───────────────────────── */
+function renderBar() {
+  seg($("segPlatform"), Object.fromEntries(Object.entries(PLATFORMS).map(([k, p]) => [k, p.name])), S.platform, (k) => {
+    S.platform = k; if (!PLATFORMS[k].formats[S.format]) S.format = PLATFORMS[k].def; renderAll(); save();
+  });
+  seg($("segLang"), LANG_NAMES, S.lang, (k) => { S.lang = k; renderAll(); save(); });
+  seg($("segDesign"), Object.fromEntries(Object.entries(DESIGNS).map(([k, d]) => [k, d.name])), S.design, (k) => { S.design = k; fixDesign(S); renderAll(); save(); });
+  seg($("segTheme"), DESIGNS[S.design].palettes, S.theme, (k) => { S.theme = k; (S.pal ||= {})[S.design] = k; renderAll(); save(); });
+}
+
+/* ───────────────────────── left panel ───────────────────────── */
+function title(sl) {
+  const f = sl.f || {};
+  return plain(f.title || f.quote || f.d || "", "en") || plain(f.eyebrow || "", "en") || "—";
+}
+function renderList() {
+  const max = PLATFORMS[S.platform].max;
+  $("slideList").replaceChildren(...S.slides.map((sl, i) => h("div", { class: "li" + (i === S.sel ? " on" : "") + (i >= max ? " over" : ""), onclick: () => { S.sel = i; renderAll(); save(); } },
+    h("span", { class: "n" }, String(i + 1).padStart(2, "0")),
+    h("span", { class: "t" }, h("small", {}, TYPES[sl.type].name), title(sl)),
+    h("button", { class: "ic", title: "Move up", onclick: (e) => { e.stopPropagation(); if (i) structural(() => { S.slides.splice(i - 1, 0, S.slides.splice(i, 1)[0]); S.sel = i - 1; }); } }, "↑"),
+    h("button", { class: "ic", title: "Move down", onclick: (e) => { e.stopPropagation(); if (i < S.slides.length - 1) structural(() => { S.slides.splice(i + 1, 0, S.slides.splice(i, 1)[0]); S.sel = i + 1; }); } }, "↓"),
+    h("button", { class: "ic", title: "Duplicate", onclick: (e) => { e.stopPropagation(); structural(() => { S.slides.splice(i + 1, 0, { ...clone(sl), id: uid() }); S.sel = i + 1; }); } }, "⧉"),
+    h("button", { class: "ic", title: "Delete", onclick: (e) => { e.stopPropagation(); if (S.slides.length > 1) structural(() => S.slides.splice(i, 1)); } }, "✕"),
+  )));
+}
+$("preset").replaceChildren(...Object.entries(PRESETS).map(([k, p]) => h("option", { value: k }, p.name)));
+$("addType").replaceChildren(...Object.entries(TYPES).map(([k, t]) => h("option", { value: k }, t.name)));
+$("bPreset").onclick = () => structural(() => {
+  const k = $("preset").value;
+  S.slides = PRESETS[k].slides().map((s) => ({ id: uid(), items: [], ...clone(s) }));
+  S.sel = 0;
+});
+$("bAdd").onclick = () => structural(() => { S.slides.splice(S.sel + 1, 0, { id: uid(), ...defaultSlide($("addType").value) }); S.sel += 1; });
+$("handle").oninput = (e) => { S.handle = e.target.value; changed(); };
+$("hashtag").oninput = (e) => { S.hashtag = e.target.value; changed(); };
+$("seamless").onchange = (e) => { S.seamless = e.target.checked; renderStage(); save(); };
+$("zoom").oninput = (e) => { S.zoom = +e.target.value; renderStage(); save(); };
+$("bUndo").onclick = undo;
+addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "z" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); undo(); } });
+function undo() { const s = undoStack.pop(); if (!s) return; S.slides = JSON.parse(s); S.sel = Math.min(S.sel, S.slides.length - 1); renderAll(); save(); }
+
+/* ───────────────────────── inspector ───────────────────────── */
+function textField(obj, key, label, rows = 1, single = false) {
+  if (obj[key] == null || typeof obj[key] === "string") obj[key] = L(obj[key] || "");
+  const v = obj[key];
+  const mk = (l) => {
+    const inp = h(rows > 1 ? "textarea" : "input", { class: "inp", rows: rows > 1 ? rows : null, placeholder: single ? "" : l === "mn" ? "Монгол" : "English", lang: l });
+    inp.value = v[l] ?? "";
+    inp.addEventListener("input", () => { if (single) { v.en = v.mn = inp.value; } else v[l] = inp.value; changed(); });
+    return inp;
+  };
+  return h("div", { class: "fld" }, h("label", {}, label),
+    single ? mk("en") : h("div", { class: "pair" }, h("div", {}, mk("en"), h("span", { class: "tag" }, "EN")), h("div", {}, mk("mn"), h("span", { class: "tag" }, "MN"))));
+}
+// upload → downscaled JPEG/PNG data URL, so saved projects stay small
+function pickImage(maxSide, cb) {
+  const inp = h("input", { type: "file", accept: "image/*" });
+  inp.onchange = () => {
+    const file = inp.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const c = h("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      const data = c.toDataURL(/png|svg/.test(file.type) ? "image/png" : "image/jpeg", 0.9);
+      if (!SERVER) return cb(data);
+      api("upload", { method: "POST", headers: JSONH, body: JSON.stringify({ data }) }).then((r) => cb(r.path), () => cb(data));
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  };
+  inp.click();
+}
+function renderInspector() {
+  const sl = S.slides[S.sel];
+  const R = $("right");
+  if (!sl) { R.replaceChildren(); return; }
+  const t = TYPES[sl.type];
+  const kids = [h("h3", {}, `Slide ${S.sel + 1} · ${t.name}`),
+    h("div", { class: "fld" }, h("label", {}, "Layout"), (() => {
+      const s = h("select", { onchange: (e) => structural(() => { const d = defaultSlide(e.target.value); sl.type = d.type; sl.f = { ...d.f, ...sl.f }; sl.items = d.items; if (!TYPES[sl.type].photo) sl.photo = ""; sl.photoMode = TYPES[sl.type].photo || ""; }) },
+        ...Object.entries(TYPES).map(([k, x]) => h("option", { value: k, selected: k === sl.type }, x.name)));
+      return s;
+    })()),
+    h("p", { class: "hint" }, "Wrap words in *stars* for the accent colour. New line = line break. Text shrinks to fit."),
+  ];
+  for (const [k, label, rows, single] of t.fields) kids.push(textField(sl.f, k, label, rows, single));
+
+  if (t.photo) {
+    const thumbs = h("div", { class: "thumbs" }, ...PHOTOS.map((p) => h("button", { class: sl.photo === p ? "on" : "", title: p, onclick: () => { sl.photo = p; renderInspector(); changed(); } }, h("img", { src: imgUrl(p, true), loading: "lazy", alt: "" }))));
+    kids.push(h("h3", {}, "Photo"),
+      h("div", { class: "row-ui" },
+        h("select", { onchange: (e) => { sl.photoMode = e.target.value; changed(); } },
+          ...[["inset", "Framed"], ["full", "Full bleed"], ["dim", "Faint background"]].map(([v, l]) => h("option", { value: v, selected: (sl.photoMode || t.photo) === v }, l))),
+        h("button", { class: "btn-ui", onclick: () => pickImage(2000, (d) => { sl.photo = d; renderInspector(); changed(); }) }, "Upload"),
+        h("button", { class: "btn-ui", onclick: () => { sl.photo = ""; renderInspector(); changed(); } }, "None")),
+      h("details", { open: !sl.photo || !sl.photo.startsWith("data:") ? true : null }, h("summary", {}, "UBBW 2025 photos"), thumbs));
+  }
+
+  if (t.items) {
+    sl.items ||= [];
+    kids.push(h("h3", {}, `${t.items.label} (${sl.items.length}/${t.items.max})`));
+    sl.items.forEach((it, j) => {
+      const box = h("div", { class: "item" }, h("div", { class: "item-h" }, `${t.items.label.replace(/s$/, "")} ${j + 1}`,
+        h("span", {},
+          h("button", { class: "ic", title: "Up", onclick: () => j && structural(() => sl.items.splice(j - 1, 0, sl.items.splice(j, 1)[0])) }, "↑"),
+          h("button", { class: "ic", title: "Down", onclick: () => j < sl.items.length - 1 && structural(() => sl.items.splice(j + 1, 0, sl.items.splice(j, 1)[0])) }, "↓"),
+          h("button", { class: "ic", title: "Remove", onclick: () => structural(() => sl.items.splice(j, 1)) }, "✕"))));
+      for (const [k, label, rows, single] of t.items.fields) box.append(textField(it, k, label, rows, single));
+      if (t.items.img === "photo") {
+        box.append(h("div", { class: "row-ui" },
+          h("button", { class: "btn-ui", onclick: () => pickImage(600, (d) => { it.photo = d; changed(); }) }, it.photo ? "Change photo" : "Add photo"),
+          it.photo ? h("button", { class: "btn-ui", onclick: () => { it.photo = ""; renderInspector(); changed(); } }, "Remove photo") : null));
+      }
+      if (t.items.img === "logo") {
+        box.append(h("div", { class: "row-ui" },
+          h("select", { onchange: (e) => { it.logo = e.target.value; changed(); } }, h("option", { value: "" }, "No logo (initials)"),
+            ...Object.entries(LOGOS).map(([n, p]) => h("option", { value: p, selected: it.logo === p }, n)),
+            it.logo && !Object.values(LOGOS).includes(it.logo) ? h("option", { value: it.logo, selected: true }, "Uploaded") : null),
+          h("button", { class: "btn-ui", onclick: () => pickImage(800, (d) => { it.logo = d; renderInspector(); changed(); }) }, "Upload")),
+          h("label", { class: "row-ui", style: "gap:6px;margin-top:6px" }, h("input", { type: "checkbox", checked: it.light ? true : null, onchange: (e) => { it.light = e.target.checked; changed(); } }), "White tile (for dark logos)"));
+      }
+      kids.push(box);
+    });
+    if (sl.items.length < t.items.max) kids.push(h("button", { class: "btn-ui", style: "width:100%", onclick: () => structural(() => sl.items.push(t.items.blank())) }, `+ Add ${t.items.label.replace(/s$/, "").toLowerCase()}`));
+  }
+  R.replaceChildren(...kids);
+}
+
+/* ───────────────────────── captions ───────────────────────── */
+function caption(l) {
+  const c = S.slides.find((s) => s.type === "cover");
+  const a = S.slides.find((s) => s.type === "cta");
+  const lines = [];
+  if (c) {
+    lines.push(plain(c.f.title, l) + (has(c.f.eyebrow) ? " · " + plain(c.f.eyebrow, l) : ""));
+    if (plain(c.f.sub, l)) lines.push(plain(c.f.sub, l));
+    const chips = (c.items || []).map((x) => plain(x.t, l)).filter(Boolean);
+    if (chips.length) lines.push("", chips.map((x, i) => (["🗓 ", "📍 ", "🎟 ", "• "][i] || "• ") + x).join("\n"));
+  }
+  if (a) {
+    lines.push("");
+    if (plain(a.f.body, l)) lines.push(plain(a.f.body, l));
+    lines.push(`${plain(a.f.button, l) || (l === "mn" ? "Бүртгүүлэх" : "Register")} → ${plain(a.f.url, l)}`);
+  }
+  lines.push("", l === "mn" ? `${S.hashtag} #Блокчэйн #Крипто #Монгол #Улаанбаатар` : `${S.hashtag} #Blockchain #Web3 #Mongolia #Ulaanbaatar`);
+  if (S.handle) lines.push(S.handle);
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+function counters() {
+  const lim = S.platform === "x" ? 280 : S.platform === "ig" ? 2200 : 63206;
+  for (const [l, id] of [["en", "cntEn"], ["mn", "cntMn"]]) {
+    const n = [...(S.caption[l] || "")].length;
+    $(id).textContent = `${n} / ${lim}${S.platform === "x" ? " (X)" : ""}`;
+    $(id).classList.toggle("bad", n > lim);
+  }
+}
+$("bCaption").onclick = () => { S.caption = { en: caption("en"), mn: caption("mn") }; $("capEn").value = S.caption.en; $("capMn").value = S.caption.mn; counters(); save(); };
+$("capEn").oninput = (e) => { S.caption.en = e.target.value; counters(); save(); };
+$("capMn").oninput = (e) => { S.caption.mn = e.target.value; counters(); save(); };
+$("bCopyEn").onclick = () => navigator.clipboard.writeText(S.caption.en || "");
+$("bCopyMn").onclick = () => navigator.clipboard.writeText(S.caption.mn || "");
+
+/* ───────────────────────── project file ───────────────────────── */
+function download(href, name) { const a = h("a", { href, download: name }); document.body.append(a); a.click(); a.remove(); }
+$("bSave").onclick = () => {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }));
+  download(url, `ubbw2026-carousel-${new Date().toISOString().slice(0, 10)}.json`);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+};
+$("bOpen").onclick = () => $("fOpen").click();
+$("fOpen").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const d = JSON.parse(await f.text()); if (!Array.isArray(d.slides)) throw 0; pushUndo(); S = normalize(d); renderAll(); save(); }
+  catch { busy("That file isn't a carousel project", 2500); }
+  e.target.value = "";
+};
+
+function normalize(d) { const s = { ...fresh(), ...d }; s.format = "4:5"; s.slides.forEach((x) => (x.id ||= uid())); return fixDesign(s); }
+function remember() { try { localStorage.setItem(KEY + ":project", PROJ); } catch {} }
+async function refreshProjects() {
+  const list = await api("projects");
+  $("projSel").replaceChildren(...list.map((p) => h("option", { value: p.name, selected: p.name === PROJ ? true : null }, p.name)));
+  return list;
+}
+async function openProject(name) {
+  S = normalize(await api("projects/" + encodeURIComponent(name)));
+  PROJ = name; remember(); undoStack.length = 0;
+  renderAll(); srv("Saved ✓");
+}
+async function uniqueName(base) {
+  const names = new Set((await api("projects")).map((p) => p.name));
+  let n = base, k = 2;
+  while (names.has(n)) n = `${base} ${k++}`;
+  return n;
+}
+$("projSel").onchange = (e) => openProject(e.target.value).catch((err) => busy("Couldn't open: " + err.message, 3000));
+$("bNew").onclick = async () => {
+  S = { ...fresh($("preset").value), design: S.design, theme: S.theme, pal: S.pal || {} };
+  PROJ = await uniqueName(PRESETS[$("preset").value].name);
+  remember(); undoStack.length = 0;
+  await putProject(PROJ); await refreshProjects(); renderAll(); srv("Saved ✓");
+};
+$("bRename").onclick = async () => {
+  const want = $("projName").value.trim();
+  if (!want || want === PROJ) return;
+  try {
+    const name = (await putProject(await uniqueName(want))).name;
+    await api("projects/" + encodeURIComponent(PROJ), { method: "DELETE" }).catch(() => {});
+    PROJ = name; remember(); await refreshProjects(); $("projName").value = PROJ; srv("Saved ✓");
+  } catch (e) { busy("Rename failed: " + e.message, 3000); }
+};
+async function connect() {
+  try {
+    const list = await api("projects");
+    SERVER = true;
+    let want = null; try { want = localStorage.getItem(KEY + ":project"); } catch {}
+    if (want && list.some((p) => p.name === want)) await openProject(want);
+    else if (list.length) await openProject(list[0].name);
+    else { PROJ = "UBBW 2026 announcement"; remember(); await putProject(PROJ); srv("Saved ✓"); }
+    await refreshProjects();
+    $("projName").value = PROJ;
+  } catch {
+    SERVER = false;
+    srv("browser only", true);
+    busy("No local server: changes stay in this browser. Run npm run carousel to edit on the server.", 7000);
+  }
+  for (const id of ["bNew", "bRename", "projSel", "projName", "bFolder"]) $(id).disabled = !SERVER;
+}
+
+/* ───────────────────────── export ───────────────────────── */
+function busy(msg, ms) { const b = $("busy"); b.textContent = msg || ""; b.classList.toggle("show", !!msg); if (ms) setTimeout(() => b.classList.remove("show"), ms); }
+const exportBtns = ["bPng", "bZip", "bPdf", "bBoth", "bFolder"].map($);
+let fontAll = null;
+// all @font-face rules (fetched once), cut down to the current design's families so each slide image stays small
+function fontsFor(design) {
+  const fams = new Set([...DESIGNS[design].fonts, "Montserrat"]);
+  return fontAll.split("\n").filter((r) => fams.has((/font-family:\s*"?([^";]+)"?/.exec(r) || [])[1])).join("\n");
+}
+// renders the deck at full size off-screen (no preview scaling) and returns one image per slide
+async function captureAll(lang, type = "png", only = null) {
+  const { W, H } = dims();
+  LANG = lang;
+  const root = $("exportRoot");
+  const n = S.slides.length;
+  root.innerHTML = S.slides.map((sl, i) => slideHTML(sl, i, n)).join("");
+  LANG = null;
+  await document.fonts.ready;
+  await Promise.all([...root.querySelectorAll("img")].map((im) => im.decode().catch(() => {})));
+  fit(root);
+  const els = [...root.querySelectorAll(".slide")];
+  fontAll ??= await htmlToImage.getFontEmbedCSS(els[0]);
+  const fontCSS = fontsFor(S.design);
+  const out = [];
+  for (const [i, el] of els.entries()) {
+    if (only != null && i !== only) continue;
+    busy(`Rendering ${lang.toUpperCase()} ${i + 1} / ${n}…`);
+    const opt = { width: W, height: H, pixelRatio: 1, fontEmbedCSS: fontCSS, cacheBust: false };
+    out.push({ i, data: type === "jpeg" ? await htmlToImage.toJpeg(el, { ...opt, quality: 0.93, backgroundColor: "#010d58" }) : await htmlToImage.toPng(el, opt) });
+  }
+  root.innerHTML = "";
+  return out;
+}
+const fname = (lang, i) => `ubbw2026-${S.platform}-${S.format.replace(":", "x")}-${lang}${i != null ? "-" + String(i + 1).padStart(2, "0") : ""}`;
+async function run(fn) {
+  if (typeof htmlToImage === "undefined" || typeof jspdf === "undefined" || typeof JSZip === "undefined") { busy("Export tools are still loading (needs internet). Try again in a moment.", 3500); return; }
+  exportBtns.forEach((b) => (b.disabled = true));
+  try { const m = await fn(); busy(m || "Done ✓", m ? 7000 : 1500); }
+  catch (err) { console.error(err); busy("Export failed: " + (err?.message || err), 5000); }
+  finally { exportBtns.forEach((b) => (b.disabled = false)); }
+}
+async function zipOf(langList) {
+  const zip = new JSZip();
+  for (const lang of langList) {
+    const imgs = await captureAll(lang);
+    const dir = langList.length > 1 ? zip.folder(lang) : zip;
+    imgs.forEach(({ i, data }) => dir.file(fname(lang, i) + ".png", data.split(",")[1], { base64: true }));
+    const capL = LANGS[lang][0];
+    if (S.caption[capL]) dir.file("caption.txt", S.caption[capL]);
+  }
+  busy("Zipping…");
+  return zip.generateAsync({ type: "blob" });
+}
+$("bPng").onclick = () => run(async () => { const [img] = await captureAll(S.lang, "png", S.sel); download(img.data, fname(S.lang, S.sel) + ".png"); });
+$("bZip").onclick = () => run(async () => { const b = await zipOf([S.lang]); const u = URL.createObjectURL(b); download(u, fname(S.lang) + ".zip"); setTimeout(() => URL.revokeObjectURL(u), 4000); });
+$("bBoth").onclick = () => run(async () => { const b = await zipOf(["en", "mn"]); const u = URL.createObjectURL(b); download(u, `ubbw2026-${S.platform}-${S.format.replace(":", "x")}-en-mn.zip`); setTimeout(() => URL.revokeObjectURL(u), 4000); });
+function pdfOf(imgs) {
+  const { W, H } = dims();
+  const pdf = new jspdf.jsPDF({ orientation: "p", unit: "px", format: [W, H], hotfixes: ["px_scaling"], compress: true });
+  imgs.forEach(({ data }, k) => { if (k) pdf.addPage([W, H], "p"); pdf.addImage(data, "JPEG", 0, 0, W, H); });
+  return pdf;
+}
+// EN + MN PNG sets (plus the bilingual set when that's the current language), a PDF and captions, written by the server
+$("bFolder").onclick = () => run(async () => {
+  if (!SERVER) throw new Error("needs the local server (npm run carousel)");
+  const files = [];
+  const sets = ["en", "mn", ...(S.lang.length > 2 ? [S.lang] : [])];
+  for (const lang of sets) {
+    for (const { i, data } of await captureAll(lang)) files.push({ name: `${lang}/${fname(lang, i)}.png`, base64: data.split(",")[1] });
+    if (LANGS[lang].length === 1 && S.caption[lang]) files.push({ name: `${lang}/caption.txt`, text: S.caption[lang] });
+  }
+  files.push({ name: fname(S.lang) + ".pdf", base64: pdfOf(await captureAll(S.lang, "jpeg")).output("datauristring").split(",")[1] });
+  busy("Writing files…");
+  const r = await api("export/" + encodeURIComponent(PROJ), { method: "POST", headers: JSONH, body: JSON.stringify({ files }) });
+  return `Saved ${r.count} files → ${r.dir}`;
+});
+$("bPdf").onclick = () => run(async () => {
+  pdfOf(await captureAll(S.lang, "jpeg")).save(fname(S.lang) + ".pdf");
+});
+
+/* ───────────────────────── boot ───────────────────────── */
+function renderAll() {
+  renderBar(); renderList(); renderInspector(); renderStage();
+  $("handle").value = S.handle; $("hashtag").value = S.hashtag; $("seamless").checked = !!S.seamless; $("zoom").value = S.zoom;
+  $("capEn").value = S.caption?.en || ""; $("capMn").value = S.caption?.mn || ""; counters();
+}
+// navy copy of the white logo for the light themes (same-origin canvas, so it exports cleanly)
+function tintLogo() {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+        const x = c.getContext("2d"); x.drawImage(img, 0, 0); x.globalCompositeOperation = "source-in"; x.fillStyle = "#010d58"; x.fillRect(0, 0, c.width, c.height);
+        LOGO_LIGHT = c.toDataURL("image/png");
+      } catch { /* opened from file:// — keep the white logo */ }
+      res();
+    };
+    img.onerror = res;
+    img.src = LOGO_DARK;
+  });
+}
+if (location.protocol === "file:") busy("Opened from a file: preview works, but export needs the local server (node scripts/carousel/serve.mjs)", 9000);
+renderAll();
+connect();
+Promise.all([document.fonts.ready, tintLogo()]).then(renderStage);
+document.fonts.addEventListener("loadingdone", () => fit($("strip")));
+</script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js" async></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" async></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" async></script>
+</body>
+</html>

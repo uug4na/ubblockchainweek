@@ -1,27 +1,44 @@
 {
-  "name": "ubblockchainweek",
+  "name": "ub-blockchain-week-2026",
   "version": "0.1.0",
   "private": true,
+  "description": "UB Blockchain Week 2026 — event website and attendee web app",
   "scripts": {
     "dev": "next dev",
+    "dev:https": "next dev --experimental-https",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "deploy": "node scripts/deploy-pages.mjs",
+    "db:migrate": "node scripts/db-migrate.mjs",
+    "db:seed": "tsx scripts/db-seed.mts",
+    "db:test": "tsx scripts/db-test.mts",
+    "carousel": "node scripts/carousel/serve.mjs"
   },
   "dependencies": {
+    "@lucasmarkes/motes-react": "^0.3.0",
+    "@supabase/supabase-js": "^2.49.4",
     "animejs": "^4.5.0",
+    "cannon-es": "^0.20.0",
+    "jsqr": "^1.4.0",
     "lucide-react": "^1.58.0",
     "motion": "^14.4.0",
-    "next": "16.4.2",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "next": "^16.4.2",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.2",
-    "typescript": "^5"
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.11.10",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "pg": "^8.13.1",
+    "tsx": "^4.19.2",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=20.9"
   }
 }
