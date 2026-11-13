@@ -5,7 +5,7 @@ export const site = {
   name: "UB Blockchain Week 2026",
   short: "UBBW 2026",
   // Where the live site is served (Vercel since 2026-11-09; share previews + sitemap use it).
-  origin: "https://ubbw-2026.vercel.app",
+  origin: "https://www.ubblockchainweek.net",
   city: "Ulaanbaatar",
   country: "Mongolia",
   dates: "November 30 – December 5, 2026",
