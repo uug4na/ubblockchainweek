@@ -24,6 +24,12 @@ export const site = {
   },
 };
 
+// The public UB Hack page (/hackathon) is temporarily hidden. While false: it's out of the header,
+// footer and sitemap, the page itself shows a 404, and links that pointed to it go to the attendee
+// app's hackathon section instead. Set back to true to bring everything back; nothing was deleted.
+export const hackathonPublic = false;
+export const hackHref = hackathonPublic ? "/hackathon" : "/app/hack";
+
 // allDay: the label is the day's one full-day event, with no set hours, so it isn't a session (no poster or stars).
 export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string; allDay?: boolean };
 
@@ -47,7 +53,7 @@ export const pillars = [
     title: "UB Hack",
     when: "Thu–Fri",
     body: "An overnight hackathon for first-timers and veterans alike. Mentors on the floor, food that keeps coming, and prizes for projects that matter here.",
-    href: "/hackathon",
+    href: hackHref,
   },
   {
     title: "Side events",

@@ -12,12 +12,19 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion, type Variants } from "motion/react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { Logo } from "./Toono";
+import { hackathonPublic } from "@/data/site";
 
-const nav = [
+// soon: shown with a small "Soon" tag and not clickable (the page is hidden for now)
+const nav: { href: string; label: string; soon?: boolean }[] = [
   { href: "/program", label: "Program" },
-  { href: "/hackathon", label: "UB Hack" },
+  { href: "/hackathon", label: "UB Hack", soon: !hackathonPublic },
   { href: "/side-events", label: "Side events" },
 ];
+
+// a plain <a> with no href: same look as the other items, but goes nowhere
+const Soon = ({ label, className }: { label: string; className?: string }) => (
+  <a className={`is-soon ${className ?? ""}`} aria-disabled="true">{label}<span className="t-soon" aria-label="coming soon">Soon</span></a>
+);
 const more = [
   { href: "/get-involved", label: "Get involved" },
   { href: "/get-involved#partner", label: "Partner with us" },
@@ -82,7 +89,7 @@ export function SiteHeader() {
 
         <nav className="t-nav" aria-label="Main">
           <div className="t-nav-card">
-          {nav.map((n) => (
+          {nav.map((n) => n.soon ? <Soon key={n.href} label={n.label} /> : (
             <Link key={n.href} href={n.href} className={path === n.href ? "is-active" : undefined}>{n.label}</Link>
           ))}
           <div className={`t-more ${moreOpen ? "is-open" : ""}`} onMouseLeave={() => setMoreOpen(false)}>
@@ -118,7 +125,7 @@ export function SiteHeader() {
             <motion.nav className="t-sheet-card" aria-label="Main" style={{ transformOrigin: "92% 0%" }} variants={card} initial="hidden" animate="show" exit="hidden">
               {nav.map((n) => (
                 <motion.div key={n.href} variants={row}>
-                  <Link href={n.href} className={path === n.href ? "is-active" : undefined}>{n.label}</Link>
+                  {n.soon ? <Soon label={n.label} /> : <Link href={n.href} className={path === n.href ? "is-active" : undefined}>{n.label}</Link>}
                 </motion.div>
               ))}
               <motion.p variants={row} className="t-sheet-label">More</motion.p>

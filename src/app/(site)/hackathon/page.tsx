@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hackathonPublic } from "@/data/site";
 import { ComingSoon } from "@/components/ComingSoon";
 import { HackField } from "@/components/HackField";
 import { TetherRain } from "@/components/TetherRain";
@@ -15,6 +17,7 @@ export const metadata: Metadata = { title: "UB Hack" };
 // 12 Nov) in src/data/hackathon.ts; prizes and timeline updated 13 Nov. Registration and judging
 // aren't final, so the coming-soon block at the end still lists them.
 export default function HackathonPage() {
+  if (!hackathonPublic) notFound(); // temporarily hidden, see hackathonPublic in src/data/site.ts
   return (
     <>
       <section className="hack-hero">
