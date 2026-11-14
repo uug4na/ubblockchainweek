@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { withBase } from "@/lib/base";
+import { hackHref } from "@/data/site";
 import { recap, week2025, stats2025, reel2025, reel2025b, hackTeams, partners2025, binanceTour } from "@/data/recap2025";
 import { Marquee } from "@/components/report/Marquee";
 import { TeamWall } from "@/components/report/TeamWall";
@@ -103,7 +104,7 @@ export default function Report2025() {
               <h2 className="t-title">Let me show you<span>the game</span></h2>
               <p>Students and young builders made Web3 games in teams, then pitched them to a full room.</p>
               <Figures items={[{ n: "₮20M", label: "prize pool" }, { n: "11", label: "teams" }, { n: "Web3", label: "games" }]} />
-              <Link href="/hackathon" className="r-link">Build with us at UB Hack 2026 <ArrowRight size={16} /></Link>
+              <Link href={hackHref} className="r-link">Build with us at UB Hack 2026 <ArrowRight size={16} /></Link>
             </div>
             <img className="r-poster" src={src("hack/p01")} alt="Web3 Hackathon poster, 2025" loading="lazy" />
           </div>

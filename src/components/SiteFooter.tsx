@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { site } from "@/data/site";
+import { hackathonPublic, site } from "@/data/site";
 import { Logo } from "./Toono";
 import { CityLine } from "./CityLine";
 
@@ -48,7 +48,7 @@ export function SiteFooter() {
           <nav aria-label="The week">
             <h4>The week</h4>
             <Link href="/program">Program</Link>
-            <Link href="/hackathon">UB Hack</Link>
+            {hackathonPublic && <Link href="/hackathon">UB Hack</Link>}
             <Link href="/side-events">Side events</Link>
             <Link href="/reports/2025">2025 report</Link>
           </nav>

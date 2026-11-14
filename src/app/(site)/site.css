@@ -37,6 +37,11 @@
 .t-nav-card { display: contents; }
 .t-nav-card > a, .t-more > button { font-size: 14px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: #fff; background: none; border: 0; padding: 8px 0; display: inline-flex; align-items: center; gap: 4px; }
 .t-nav-card > a:hover, .t-nav-card > a.is-active, .t-more > button:hover { color: var(--green); }
+/* a nav item whose page isn't open yet: muted, not clickable, with a small green "Soon" tag */
+.t-header a.is-soon { cursor: default; color: rgba(255, 255, 255, .6); gap: 5px; align-items: flex-start; }
+.t-header a.is-soon:hover, .t-header a.is-soon:active { color: rgba(255, 255, 255, .6); background: none; }
+/* a small raised tag, like a superscript */
+.t-soon { margin-top: -5px; padding: 2px 4px; border-radius: 3px; background: var(--green); color: var(--t-navy); font-size: 8px; font-weight: 700; letter-spacing: .06em; line-height: 1; white-space: nowrap; text-transform: uppercase; }
 .t-more { position: relative; }
 .t-more-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); min-width: 200px; padding: 8px; display: none; background: var(--t-deep); border: 1px solid rgba(255, 255, 255, .12); border-radius: var(--r); box-shadow: 0 20px 40px rgba(0, 0, 0, .4); }
 .t-more.is-open .t-more-menu { display: grid; }

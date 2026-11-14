@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Ticket } from "lucide-react";
-import { site, days, faqs } from "@/data/site";
+import { site, days, faqs, hackHref } from "@/data/site";
 import { partners2026, partnerTypes } from "@/data/partners";
 import { withBase } from "@/lib/base";
 import { Carousel, type Slide } from "@/components/Carousel";
@@ -59,7 +59,7 @@ const slides: Slide[] = [
     title: "Build a ",
     accent: "Web3 game",
     body: "Students, young developers, designers and aspiring founders form teams of 2–4 to build a playable game with Web3 and a clear business model. Teams present their games to judges, industry and the community at Demo Day.",
-    cta: { label: "Join the hackathon", href: "/hackathon" },
+    cta: { label: "Join the hackathon", href: hackHref },
     photo: withBase(recap("hack/09")), inset: withBase(recap("hack/14", true)), alt: "Teams at the 2025 Web3 Hackathon",
   },
   {
