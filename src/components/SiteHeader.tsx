@@ -104,7 +104,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="t-header-actions">
-          <Link href="/app" className="t-btn t-btn-fill">Get your pass</Link>
+          <Link href="/get-involved" className="t-btn t-btn-fill">Get involved</Link>
           <button className="t-menu" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={open ? "x" : "menu"} className="t-menu-icon"
@@ -135,7 +135,7 @@ export function SiteHeader() {
                 </motion.div>
               ))}
               <motion.div variants={cta}>
-                <Link href="/app" className="t-btn t-btn-fill t-sheet-cta" onClick={() => setOpen(false)}>Get your pass</Link>
+                <Link href="/get-involved" className="t-btn t-btn-fill t-sheet-cta" onClick={() => setOpen(false)}>Get involved</Link>
               </motion.div>
             </motion.nav>
           </motion.div>
