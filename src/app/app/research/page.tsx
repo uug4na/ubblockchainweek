@@ -13,7 +13,8 @@ type Item = { id: number; title: string; school: string; degree: string; coautho
 type Data = { open: boolean; items: Item[] };
 
 const MAX_WORDS = 300;
-const MAX_MB = 10;
+const MAX_MB = 20;
+const MAX_PAPERS = 3;
 const levels = ["Bachelor's", "Master's", "PhD", "Other"];
 const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 
@@ -23,6 +24,21 @@ async function openPdf(path: string) {
   if (!data) return tab?.close();
   if (tab) tab.location.href = data.signedUrl;
   else window.location.href = data.signedUrl;
+}
+
+// the rules at a glance: four small cells (2 × 2 on phones); "Papers" counts what's already sent
+function Limits({ used }: { used: number }) {
+  const cells = [
+    { v: `${MAX_WORDS}`, l: "words max, abstract" },
+    { v: `${MAX_MB} MB`, l: "PDF only, optional" },
+    { v: `${used} / ${MAX_PAPERS}`, l: "papers sent" },
+    { v: "30 Nov", l: "closes 23:59" },
+  ];
+  return (
+    <ul className="rs-limits" aria-label="Limits">
+      {cells.map((c) => <li key={c.l}><b>{c.v}</b><span>{c.l}</span></li>)}
+    </ul>
+  );
 }
 
 function Form({ onDone, onCancel }: { onDone: (d: Data) => void; onCancel?: () => void }) {
@@ -92,7 +108,7 @@ function Form({ onDone, onCancel }: { onDone: (d: Data) => void; onCancel?: () =
         <input id="rs-co" value={f.coauthors} onChange={(e) => set({ coauthors: e.target.value })} maxLength={300} placeholder="Names, separated by commas" />
       </div>
       <div className="field">
-        <span className="rs-file-label">Paper <small>PDF, optional</small></span>
+        <span className="rs-file-label">Paper <small>PDF up to {MAX_MB} MB, optional</small></span>
         {file ? (
           <span className="rs-chip"><FileText size={16} /> {file.name}<button type="button" aria-label="Remove the PDF" onClick={() => setFile(null)}><X size={14} /></button></span>
         ) : (
@@ -132,14 +148,14 @@ export default function ResearchPage() {
         {head}
         {data.open ? (
           <>
-            <p className="rs-deadline">Send your abstract by <b>30 Nov, 23:59</b>.</p>
+            <Limits used={0} />
             <Form onDone={done} />
           </>
         ) : <div className="panel empty"><p>Registration closed on 30 November at 23:59.</p></div>}
       </>
     );
 
-  if (adding) return (<>{head}<Form onDone={done} onCancel={() => setAdding(false)} /></>);
+  if (adding) return (<>{head}<Limits used={data.items.length} /><Form onDone={done} onCancel={() => setAdding(false)} /></>);
 
   return (
     <>
@@ -160,7 +176,8 @@ export default function ResearchPage() {
           {r.file && <button type="button" className="btn btn-ghost" onClick={() => openPdf(r.file!)}><FileText size={16} /> Your PDF</button>}
         </section>
       ))}
-      {data.open && data.items.length < 3 && (
+      {data.open && <Limits used={data.items.length} />}
+      {data.open && data.items.length < MAX_PAPERS && (
         <button type="button" className="btn btn-ghost wide" style={{ marginTop: 16 }} onClick={() => setAdding(true)}>Register another paper</button>
       )}
     </>

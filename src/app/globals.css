@@ -3179,6 +3179,12 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .hk-file-open small { font-size: 13px; }
 .rs-deadline { margin: 0 0 16px; font-size: 15px; color: var(--label-2); }
 .rs-deadline b { color: var(--label); }
+.rs-limits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0 0 16px; padding: 0; list-style: none; }
+.rs-limits li { display: grid; gap: 2px; padding: 10px 12px; border-radius: var(--r); background: var(--cell-2, var(--cell)); }
+.rs-limits b { font-size: 16px; font-weight: 700; line-height: 1.2; color: var(--label); font-variant-numeric: tabular-nums; }
+.rs-limits span { font-size: 12px; line-height: 1.3; color: var(--label-2); }
+.rs-mine + .rs-limits, .rs-done + .rs-limits { margin-top: 16px; }
+@media (max-width: 560px) { .rs-limits { grid-template-columns: 1fr 1fr; } }
 .rs-levels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .rs-levels .seg { padding: 10px 4px; font-size: 13px; }
 .rs-done { display: grid; justify-items: start; gap: 6px; }
