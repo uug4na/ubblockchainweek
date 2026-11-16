@@ -12,7 +12,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion, type Variants } from "motion/react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { Logo } from "./Toono";
-import { hackathonPublic } from "@/data/site";
+import { hackathonPublic, applyForm } from "@/data/site";
 
 // soon: shown with a small "Soon" tag and not clickable (the page is hidden for now)
 const nav: { href: string; label: string; soon?: boolean }[] = [
@@ -23,7 +23,7 @@ const nav: { href: string; label: string; soon?: boolean }[] = [
 
 // a plain <a> with no href: same look as the other items, but goes nowhere
 const Soon = ({ label, className }: { label: string; className?: string }) => (
-  <a className={`is-soon ${className ?? ""}`} aria-disabled="true">{label}<span className="t-soon" aria-label="coming soon">Soon</span></a>
+  <a className={`is-soon ${className ?? ""}`} aria-disabled="true">{label}<span className="t-soon-tag" aria-label="coming soon">Soon</span></a>
 );
 const more = [
   { href: "/get-involved", label: "Get involved" },
@@ -104,7 +104,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="t-header-actions">
-          <Link href="/get-involved" className="t-btn t-btn-fill">Get involved</Link>
+          <a href={applyForm} target="_blank" rel="noopener noreferrer" className="t-btn t-btn-fill">Get involved</a>
           <button className="t-menu" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={open ? "x" : "menu"} className="t-menu-icon"
@@ -135,7 +135,7 @@ export function SiteHeader() {
                 </motion.div>
               ))}
               <motion.div variants={cta}>
-                <Link href="/get-involved" className="t-btn t-btn-fill t-sheet-cta" onClick={() => setOpen(false)}>Get involved</Link>
+                <a href={applyForm} target="_blank" rel="noopener noreferrer" className="t-btn t-btn-fill t-sheet-cta" onClick={() => setOpen(false)}>Get involved</a>
               </motion.div>
             </motion.nav>
           </motion.div>

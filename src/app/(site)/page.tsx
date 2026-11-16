@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Ticket } from "lucide-react";
-import { site, days, faqs, hackHref } from "@/data/site";
+import { site, days, faqs, hackHref, applyForm } from "@/data/site";
 import { partners2026, partnerTypes } from "@/data/partners";
 import { withBase } from "@/lib/base";
 import { Carousel, type Slide } from "@/components/Carousel";
@@ -30,12 +30,12 @@ const gallery = [
   { photo: "roundtable/03", title: "Policy roundtable", alt: "The stablecoin roundtable, 2025" },
 ];
 
-// the four calls from the 2025 posters (Get involved section)
-const involve = [
-  { poster: "call-for-partnership", title: "Partnership", body: "Help shape the program with your expertise, technology, facilities, or financial support.", cta: "Discuss a partnership", href: "/get-involved#partner" },
-  { poster: "call-for-speakers", title: "Speakers", body: "Lead a workshop, join a panel, or suggest a topic. Nominations are welcome.", cta: "Apply to speak", href: "/get-involved#speak" },
-  { poster: "call-for-exhibition", title: "Exhibition", body: "Present your project and meet potential users, contributors, and partners.", cta: "Present your project", href: "/get-involved#partner" },
-  { poster: "looking-for-volunteers", title: "Volunteers", body: "Help run the week and build new connections with the community.", cta: "Join as a volunteer", href: "/get-involved#volunteer" },
+// the four calls from the 2025 posters (Get involved section); each opens the Google Form (applyForm) unless it has its own href
+const involve: { poster: string; title: string; body: string; cta: string; href?: string }[] = [
+  { poster: "call-for-partnership", title: "Partnership", body: "Help shape the program with your expertise, technology, facilities, or financial support.", cta: "Discuss a partnership" },
+  { poster: "call-for-speakers", title: "Speakers", body: "Lead a workshop, join a panel, or suggest a topic. Nominations are welcome.", cta: "Apply to speak" },
+  { poster: "call-for-exhibition", title: "Exhibition", body: "Present your project and meet potential users, contributors, and partners.", cta: "Present your project" },
+  { poster: "looking-for-volunteers", title: "Volunteers", body: "Help run the week and build new connections with the community.", cta: "Join as a volunteer" },
 ];
 
 const stats = [
@@ -51,7 +51,7 @@ const slides: Slide[] = [
     title: "Join the ",
     accent: "community",
     body: "Builders, researchers, students, companies and policymakers meet in Ulaanbaatar for six days of learning, collaboration and discussion. Every event is free to attend with advance registration.",
-    cta: { label: "Get involved", href: "/get-involved" },
+    cta: { label: "Get involved", href: applyForm },
     photo: withBase(recap("hack/07")), inset: withBase(recap("research/08", true)), alt: "A full room at UB Blockchain Week 2025",
   },
   {
@@ -83,7 +83,7 @@ export default function Home() {
             <h1 className="t-display"><span>The blockchain</span><span>week of</span><span>Mongolia</span></h1>
             <p className="t-hero-meta">{site.dates} • {site.city}</p>
             <div className="t-hero-actions">
-              <Link href="/get-involved" className="t-btn t-btn-white">Get involved</Link>
+              <a href={applyForm} target="_blank" rel="noopener noreferrer" className="t-btn t-btn-white">Get involved</a>
               <Link href="/program" className="t-btn t-btn-line">See the program</Link>
             </div>
             <p className="t-powered">
@@ -223,7 +223,7 @@ export default function Home() {
       </section>
 
       {/* ── Get involved: the four 2025 calls, each poster whole on a card with one line and its button ── */}
-      <section className="t-band t-dark r-involve">
+      <section className="t-band t-dark r-involve" id="get-involved">
         <div className="t-wrap">
           <div className="r-involve-head" data-reveal>
             <div>
@@ -235,7 +235,7 @@ export default function Home() {
           <ul className="r-involve-cards" data-reveal="group">
             {involve.map((c, i) => (
               <li key={c.title}>
-                <Link href={c.href} className="r-involve-card">
+                <a href={c.href ?? applyForm} target="_blank" rel="noopener noreferrer" className="r-involve-card">
                   <span className="r-involve-poster"><img src={img(`2025/${c.poster}.jpg`)} alt={`${c.title} poster, 2025`} loading="lazy" /></span>
                   <span className="r-involve-body">
                     <small>{String(i + 1).padStart(2, "0")}</small>
@@ -243,7 +243,7 @@ export default function Home() {
                     <span>{c.body}</span>
                     <em className={i === 0 ? "is-fill" : undefined}>{c.cta} <ArrowRight size={16} /></em>
                   </span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

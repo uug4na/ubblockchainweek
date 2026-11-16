@@ -13,8 +13,9 @@ export function ComingSoon({ what, items, action }: { what: string; items: strin
           <h2 className="t-title t-title-sm">{what}<span>is on its way</span></h2>
           <p>The 2026 plan is still being put together with our partners. It will appear here, and in the attendee app, as soon as it is final.</p>
           <div className="t-soon-actions">
-            <Link href="/app" className="t-btn t-btn-fill">Attendee app <ArrowRight size={16} /></Link>
-            {action && <Link href={action.href} className="t-btn t-btn-line">{action.label}</Link>}
+            {action && <Link href={action.href} className="t-btn t-btn-fill">{action.label} <ArrowRight size={16} /></Link>}
+            {/* the attendee app isn't ready yet: shown, but not a link */}
+            <span className="t-btn t-btn-line is-off" aria-disabled="true">Attendee app<em>Not ready yet</em></span>
           </div>
         </div>
         <ul className="t-soon-list" aria-label="What will appear here">

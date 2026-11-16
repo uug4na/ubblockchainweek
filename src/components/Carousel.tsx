@@ -62,7 +62,9 @@ export function Carousel({ slides }: { slides: Slide[] }) {
               <p className="t-eyebrow">{s.eyebrow}</p>
               <h2 className="t-title">{s.title}<span>{s.accent}</span></h2>
               <p className="t-slide-body">{s.body}</p>
-              {s.cta.href.startsWith("#")
+              {s.cta.href.startsWith("http")
+                ? <a href={s.cta.href} target="_blank" rel="noopener noreferrer" className="t-btn t-btn-fill" tabIndex={n === i ? 0 : -1}>{s.cta.label}</a>
+                : s.cta.href.startsWith("#")
                 ? <a href={s.cta.href} className="t-btn t-btn-fill" tabIndex={n === i ? 0 : -1}>{s.cta.label}</a>
                 : <Link href={s.cta.href} className="t-btn t-btn-fill" tabIndex={n === i ? 0 : -1}>{s.cta.label}</Link>}
             </div>
