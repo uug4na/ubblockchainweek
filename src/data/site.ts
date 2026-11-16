@@ -30,6 +30,10 @@ export const site = {
 export const hackathonPublic = false;
 export const hackHref = hackathonPublic ? "/hackathon" : "/app/hack";
 
+// Google Form the team collects applications with (owner, 16 Nov 2026: easier for them to receive this way).
+// The landing's Get involved cards open it by default.
+export const applyForm = "https://docs.google.com/forms/d/e/1FAIpQLSeOBvLuWUCwRkwg5UT2qLiDrLgiy0-NO4eLcdw4FxMnm94U5w/viewform";
+
 // allDay: the label is the day's one full-day event, with no set hours, so it isn't a session (no poster or stars).
 export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string; allDay?: boolean };
 

@@ -16,11 +16,11 @@ export default function SideEventsPage() {
             Side events are hosted by the communities that make UB&apos;s scene — and by anyone who wants to bring people together.
           </p>
           <div className="hero-actions">
-            <Link href="/app/events" className="btn btn-clay btn-lg">Host a side event</Link>
+            <Link href="/#get-involved" className="btn btn-clay btn-lg">Host a side event</Link>
           </div>
         </div>
       </section>
-      <ComingSoon what="The side-event calendar" items={["Breakfasts and meetups", "Roundtables", "Evenings across the city"]} action={{ label: "Host a side event", href: "/app/events" }} />
+      <ComingSoon what="The side-event calendar" items={["Breakfasts and meetups", "Roundtables", "Evenings across the city"]} action={{ label: "Host a side event", href: "/#get-involved" }} />
     </>
   );
 }
