@@ -8,8 +8,12 @@ import { Logo } from "./Toono";
 import { OfflineBar } from "./Pwa";
 import { MeetPrompt } from "./MeetPrompt";
 import { QuizPrompt } from "./Quiz";
+import { AppTour } from "./AppTour";
 import { useMe } from "@/lib/me";
 import { site } from "@/data/site";
+
+// what the first-run guide (AppTour) points at
+const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/profile": "profile" };
 
 const side = [
   { href: "/app", label: "Home", icon: Home },
@@ -83,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
         <nav className="app-nav" aria-label="App">
           {side.map((t) => (
-            <Link key={t.href} href={t.href} className={isActive(t.href) ? "is-active" : undefined}>
+            <Link key={t.href} href={t.href} data-tour={tourKey[t.href]} className={isActive(t.href) ? "is-active" : undefined}>
               <t.icon size={18} />
               {t.label}
             </Link>
@@ -120,12 +124,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <MeetPrompt />
       <QuizPrompt />
+      <AppTour />
 
       <nav className="app-tabs" aria-label="App" style={{ ["--n" as string]: tabs.length }}>
         {tabs.map((t) => (
           <Link
             key={t.href}
             href={t.href}
+            data-tour={tourKey[t.href]}
             onClick={(e) => {
               // iOS: tapping the tab you're already on glides back to the top
               if (path === t.href && window.scrollY > 0) {
