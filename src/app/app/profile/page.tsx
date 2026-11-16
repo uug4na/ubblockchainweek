@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Check, ChevronLeft, ChevronRight, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound } from "lucide-react";
+import { BadgeCheck, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { replayTour } from "@/components/AppTour";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
 import { networks, toHandle, type Socials } from "@/lib/socials";
@@ -169,6 +170,7 @@ export default function ProfilePage() {
 
       <div className="settings-group">
         <div className="settings-row"><i className="tile t-gray"><SunMoon size={18} /></i><span>Appearance</span><ThemeSwitch /></div>
+        <button onClick={() => { window.scrollTo({ top: 0 }); replayTour(); }}><i className="tile t-gray"><Compass size={18} /></i><span>App guide</span><small>Replay</small><ChevronRight size={18} /></button>
       </div>
 
       <div className="settings-group">
