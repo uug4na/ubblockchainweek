@@ -9,7 +9,7 @@ import { withBase } from "@/lib/base";
 const src = (f: string) => withBase(`/brand/${f}`);
 
 function Mark({ p }: { p: Partner }) {
-  if (p.icon) return <span className="t-pcard-icon" style={p.iconBg ? { background: p.iconBg } : undefined}><img src={src(p.icon)} alt="" loading="lazy" /></span>;
+  if (p.icon) return <span className={`t-pcard-icon${p.wide ? " is-wide" : ""}`} style={p.iconBg ? { background: p.iconBg } : undefined}><img src={src(p.icon)} alt="" loading="lazy" /></span>;
   if (p.logo) return <span className="t-pcard-icon is-word"><img src={src(p.logo)} alt="" loading="lazy" /></span>;
   return <span className="t-pcard-icon is-letter">{p.name[0]}</span>;
 }
@@ -19,7 +19,7 @@ function Card({ p, tag }: { p: Partner; tag?: string }) {
     <>
       <span className="t-pcard-top">
         <Mark p={p} />
-        {p.href && <span className="t-pcard-more">Learn more <i><ArrowRight size={15} /></i></span>}
+        {p.href && <span className="t-pcard-more">Learn more <i><ArrowRight size={13} /></i></span>}
       </span>
       <span className="t-pcard-text">
         <b>{p.name}{tag && <em className="t-pcard-tag">{tag}</em>}</b>

@@ -79,7 +79,7 @@ export default function Home() {
       <section className="t-hero">
         <div className="t-wrap t-hero-grid">
           <div className="t-hero-copy">
-            <Link href="/app" className="t-pill"><Ticket size={15} /> Free to attend · register in the app</Link>
+            <Link href="/app" className="t-pill"><Ticket size={15} /> Free to attend · register on the web app</Link>
             <h1 className="t-display"><span>The blockchain</span><span>week of</span><span>Mongolia</span></h1>
             <p className="t-hero-meta">{site.dates} • {site.city}</p>
             <div className="t-hero-actions">
@@ -87,7 +87,7 @@ export default function Home() {
               <Link href="/program" className="t-btn t-btn-line">See the program</Link>
             </div>
             <p className="t-powered">
-              <span>Powered by</span>
+              <span>Hosted by</span>
               <img src={img("partners/tenger-hd.png")} alt="TenGer TV" width={127} height={58} />
             </p>
           </div>
