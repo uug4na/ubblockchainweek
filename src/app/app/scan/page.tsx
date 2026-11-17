@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, CircleAlert, UserPlus, Star, Handshake, Radio } from "lucide-react";
+import { CircleCheck, CircleAlert, UserPlus, Star, Handshake } from "lucide-react";
 import { getSpot } from "@/lib/geo";
 import { QrScanner } from "@/components/QrScanner";
 import { InPass } from "@/components/InPass";
@@ -108,26 +108,6 @@ export default function ScanPage() {
     try { localStorage.removeItem(PENDING); } catch {}
     handle(pending);
   }, [status, pending, handle]);
-
-  // Online events: the stream shows a 6-digit code that changes every minute.
-  const [live, setLive] = useState("");
-  async function liveCheckin(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    try {
-      const res = await api<Me & { result: { session: string; title: string; stars: number; already: boolean } }>("/api/rpc/app_live_checkin", { code: live });
-      setMe(res);
-      setLive("");
-      setResult({ kind: "checkin", title: sessionById[res.result.session]?.title ?? res.result.title, room: "Online", stars: res.result.stars, already: res.result.already });
-      if (res.result.stars > 0) haptic.reward();
-      else haptic.success();
-    } catch (err) {
-      setResult({ kind: "error", message: (err as Error).message });
-      haptic.error();
-    } finally {
-      setBusy(false);
-    }
-  }
 
   async function connect(r: Extract<Result, { kind: "meet" }>) {
     setBusy(true);
@@ -270,14 +250,6 @@ export default function ScanPage() {
           )}
         </div>
       </div>
-      <form className="stream-entry" onSubmit={liveCheckin} style={result?.kind === "entry" ? { display: "none" } : undefined}>
-        <Radio size={20} aria-hidden />
-        <label htmlFor="live-code"><b>Watching online?</b><span>Type the 6-digit code shown on the stream.</span></label>
-        <div className="stream-entry-row">
-          <input id="live-code" value={live} onChange={(e) => setLive(e.target.value.replace(/[^\d ]/g, "").slice(0, 7))} inputMode="numeric" autoComplete="one-time-code" placeholder="123 456" aria-label="Stream code" />
-          <button className="btn btn-primary" type="submit" disabled={busy || live.replace(/\D/g, "").length !== 6}>Check in</button>
-        </div>
-      </form>
     </>
   );
 }

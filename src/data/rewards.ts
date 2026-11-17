@@ -23,7 +23,7 @@ export type SocialTask = {
   title: string;
   body: string;
   stars: number;
-  platform: "Instagram" | "Facebook" | "X" | "Telegram";
+  platform: "Instagram" | "Facebook" | "X" | "Telegram" | "Live";
   href: string;
   cta: string;
   // Every task is proved with a screenshot and paid when a lead approves it ("auto" is no longer used).
