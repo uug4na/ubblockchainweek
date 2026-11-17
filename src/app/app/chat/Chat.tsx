@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
-import { ArrowUp, AtSign, Check, CheckCheck, ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Info, Trophy, UserPlus, X } from "lucide-react";
+import { ArrowUp, AtSign, Check, CheckCheck, ChevronLeft, ChevronRight, ExternalLink, Headset, ImageIcon, Info, Search, Trophy, UserPlus, X } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { HackChat } from "@/components/HackChat";
 import { SendBurst } from "@/components/SendBurst";
@@ -17,7 +17,7 @@ import { chatPhotoUrls, GIPHY_KEY, gifUrl, searchGifs, uploadChatPhoto, type Gif
 import { api, useMe } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { site } from "@/data/site";
-import type { ChatMsg, Chats, HackThread, Person } from "@/lib/types";
+import type { ChatMsg, Chats, HackThread, Person, TeamInboxRow, TeamMsg, TeamThread } from "@/lib/types";
 
 const time = (ms: number) => {
   const d = new Date(ms);
@@ -62,12 +62,14 @@ function Threads() {
       <h1 className="app-h1">Messages</h1>
       <p className="app-sub">{data ? `${data.network} in your network` : " "}</p>
       {error && <p className="form-error">{error}</p>}
+      {data?.inbox && <TeamInbox rows={data.inbox} />}
       {data && (
-        data.threads.length === 0 && !data.hack ? (
+        data.threads.length === 0 && !data.hack && !data.team ? (
           <p className="muted chat-threads-empty">Meet people to chat with them. <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></p>
         ) : (
-          // messenger-style list: no card around it, compact two-line rows; the UB Hack group is pinned first
+          // messenger-style list: no card around it, compact two-line rows; UBBW Team, then the UB Hack group, are pinned first
           <ul className="chat-threads">
+            {data.team && <TeamRow t={data.team} />}
             {data.hack && <HackRow h={data.hack} />}
             {data.threads.map((t) => (
               <li key={t.id}>
@@ -87,6 +89,182 @@ function Threads() {
           </ul>
         )
       )}
+      {data && data.team && data.threads.length === 0 && (
+        <p className="muted chat-threads-empty">Meet people to chat with them. <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></p>
+      )}
+    </div>
+  );
+}
+
+// ── UBBW Team (0046): one pinned thread per attendee; admins answer every thread from here ──
+const TEAM = "UBBW Team";
+// inbox preview: the attendee's own words bare; "You:" or the other admin's first name before team replies
+const teamPreview = (m: TeamMsg) => (m.mine ? `You: ${m.body}` : m.team ? `${m.name.split(" ")[0]}: ${m.body}` : m.body);
+
+function TeamRow({ t }: { t: TeamThread }) {
+  const l = t.last;
+  return (
+    <li>
+      <Link href="/app/chat/?t=team" className={t.unread ? "chat-thread is-unread" : "chat-thread"}>
+        <span className="chat-group-ava is-team" aria-hidden><Headset size={22} /></span>
+        <span className="chat-thread-top">
+          <b>{TEAM}</b>
+          {l ? <small className="chat-when">{time(l.at)}</small> : <ChevronRight size={16} className="person-row-chev" />}
+        </span>
+        <span className="chat-thread-bottom">
+          <small>{l ? (l.mine ? `You: ${l.body}` : l.body) : "Ask us anything"}</small>
+          {t.unread > 0 && <span className="chat-badge">{t.unread}</span>}
+        </span>
+      </Link>
+    </li>
+  );
+}
+
+// Admins: every attendee's team thread, plus a search to write to someone first.
+function TeamInbox({ rows }: { rows: TeamInboxRow[] }) {
+  const [q, setQ] = useState("");
+  const [found, setFound] = useState<Person[] | null>(null);
+  useEffect(() => {
+    const s = q.trim();
+    if (s.length < 2) { setFound(null); return; }
+    const t = setTimeout(() => api<Person[]>("/api/rpc/app_team_find", { q: s }).then(setFound).catch(() => setFound([])), 300);
+    return () => clearTimeout(t);
+  }, [q]);
+  const list: Person[] = found ?? rows;
+  return (
+    <section className="team-inbox">
+      <h2 className="team-inbox-h"><Headset size={16} /> {TEAM} inbox</h2>
+      <label className="team-find">
+        <Search size={16} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or pass code" aria-label="Find an attendee to message" />
+      </label>
+      {list.length === 0 ? (
+        <p className="muted small chat-threads-empty">{found ? "No one by that name." : "No questions yet."}</p>
+      ) : (
+        <ul className="chat-threads">
+          {list.map((p) => {
+            const r = rows.find((x) => x.id === p.id);
+            return (
+              <li key={p.id}>
+                <Link href={`/app/chat/?t=${encodeURIComponent(p.id)}`} className={r?.unread ? "chat-thread is-unread" : "chat-thread"}>
+                  <PixelAvatar seed={p.id} size={46} className="is-small" />
+                  <span className="chat-thread-top">
+                    <b>{p.name}</b>
+                    {r?.last ? <small className="chat-when">{time(r.last.at)}</small> : <ChevronRight size={16} className="person-row-chev" />}
+                  </span>
+                  <span className="chat-thread-bottom">
+                    <small>{r?.last ? teamPreview(r.last) : p.id}</small>
+                    {!!r?.unread && <span className="chat-badge">{r.unread}</span>}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+// One team thread. pass = null: your own (attendee). A pass: that attendee's thread (admins).
+function TeamChat({ pass }: { pass: string | null }) {
+  const router = useRouter();
+  const [person, setPerson] = useState<Person | null>(null);
+  const [msgs, setMsgs] = useState<TeamMsg[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const lastId = useRef(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const add = useCallback((more: TeamMsg[]) => {
+    if (!more.length) return;
+    setMsgs((cur) => {
+      const have = new Set(cur.map((m) => m.id));
+      const next = [...cur, ...more.filter((m) => !have.has(m.id))].sort((x, y) => x.id - y.id);
+      lastId.current = Math.max(lastId.current, ...next.map((m) => m.id));
+      return next;
+    });
+  }, []);
+  const load = useCallback(
+    () =>
+      api<{ messages: TeamMsg[]; person: Person | null }>("/api/rpc/app_team_chat", { pass: pass ?? undefined, after: lastId.current })
+        .then((r) => { setPerson(r.person); add(r.messages); setLoaded(true); setError(""); })
+        .catch((e) => setError(e.message)),
+    [pass, add],
+  );
+  useEffect(() => {
+    load();
+    const t = setInterval(() => document.visibilityState === "visible" && load(), 3000);
+    return () => clearInterval(t);
+  }, [load]);
+  useLayoutEffect(() => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" });
+  }, [msgs.length]);
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    const body = text.trim();
+    if (!body || busy) return;
+    inputRef.current?.focus();
+    setBusy(true);
+    try {
+      add([await api<TeamMsg>("/api/rpc/app_team_send", { body, pass: pass ?? undefined })]);
+      setText("");
+      setError("");
+      haptic.success();
+    } catch (err) {
+      setError((err as Error).message);
+      haptic.error();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const stamp = (m: TeamMsg, i: number) => {
+    const next = msgs[i + 1];
+    return next && next.mine === m.mine && next.at - m.at <= 300_000 ? null : <small>{time(m.at)}</small>;
+  };
+  return (
+    <div className="chat page-in">
+      <header className="chat-head">
+        <button className="chat-back" aria-label="Back to messages" onClick={() => router.push("/app/chat")}><ChevronLeft size={26} /></button>
+        {pass ? (
+          person && (
+            <span className="chat-who">
+              <PixelAvatar seed={person.id} size={36} className="is-small" />
+              <span><b>{person.name}</b><small>{TEAM} · {person.id}</small></span>
+            </span>
+          )
+        ) : (
+          <span className="chat-who">
+            <span className="chat-group-ava is-small is-team" aria-hidden><Headset size={18} /></span>
+            <span><b>{TEAM}</b><small>Ask us anything</small></span>
+          </span>
+        )}
+      </header>
+      <div className="chat-log" role="log" aria-live="polite">
+        {loaded && msgs.length === 0 && (
+          <p className="chat-empty muted small">{pass ? `Write to ${person?.name.split(" ")[0] ?? "them"} as the ${TEAM}.` : "Questions about your pass, the venue or the schedule? Write here."}</p>
+        )}
+        {msgs.map((m, i) => (
+          <div key={m.id} className={`bubble ${m.mine ? "is-mine" : ""}`} title={time(m.at)}>
+            {/* admins: show which admin answered when it wasn't you */}
+            {pass && m.team && !m.mine && (i === 0 || msgs[i - 1].name !== m.name) && <small className="team-by">{m.name}</small>}
+            {m.body}
+            {stamp(m, i)}
+          </div>
+        ))}
+      </div>
+      <form className="chat-compose" onSubmit={send}>
+        {error && <p className="chat-note is-bad">{error}</p>}
+        <div className="chat-compose-row">
+          <input ref={inputRef} value={text} onChange={(e) => setText(e.target.value)} placeholder="Message" maxLength={1000} aria-label="Message" enterKeyHint="send" disabled={!loaded} />
+          <button type="submit" className="chat-send" aria-label="Send" disabled={busy || !text.trim() || !loaded} onPointerDown={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>
+            <span className="chat-send-clip"><span className="chat-send-ico"><ArrowUp size={18} strokeWidth={2.5} /></span></span>
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -540,5 +718,7 @@ export function Chat() {
   if (status === "loading") return null;
   if (status === "out" || !me) return <AuthPanel title="Messages" lead="Make a pass to chat with the people you meet." />;
   if (q.get("g") === "hack") return <HackGroup />;
+  const team = q.get("t");
+  if (team) return <TeamChat key={team} pass={team === "team" ? null : team} />;
   return pass ? <Thread key={pass} pass={pass} /> : <Threads />;
 }
