@@ -219,7 +219,7 @@ export default function MeetPage() {
   }, [status, load]);
 
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Proof of Meet" lead="Make a pass to start connecting with people at the week." />;
+  if (status === "out" || !me) return <AuthPanel title="Proof of Meet" lead="Get your Passport to start connecting with people at the week." />;
 
   const ready = !!me.user.verifiedAt;
   const list = conns?.connections ?? [];

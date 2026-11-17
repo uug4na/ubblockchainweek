@@ -7,8 +7,6 @@ import { BadgeCheck, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, Me
 import { AuthPanel } from "@/components/AuthPanel";
 import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
-import { replayTour } from "@/components/AppTour";
-import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
 import { networks, toHandle, type Socials } from "@/lib/socials";
@@ -17,8 +15,10 @@ import { ShareStory } from "@/components/PassStory";
 import { PixelAvatar, ProfileCover } from "@/components/ProfileArt";
 import { usePolling } from "@/lib/usePolling";
 import type { Chats } from "@/lib/types";
+import { HACK_SECTION_OPEN } from "@/data/hackathon";
+import { replayTour } from "@/components/AppTour";
+import { interestOptions } from "@/data/interests";
 
-const interestOptions = ["Building", "Investing", "Research", "Design", "Policy", "Art", "Payments", "Infra", "Learning", "Hiring", "Looking for a team"];
 
 function ProfileForm({ me, onSaved }: { me: Me; onSaved: () => void }) {
   const u = me.user;
@@ -120,7 +120,7 @@ export default function ProfilePage() {
     return (
       <div className="page-in">
         {back}
-        <h1 className="app-h1">My pass</h1>
+        <h1 className="app-h1 passport-h1">Your UB Blockchain Passport</h1>
         <p className="app-sub">One QR for the desk, merch and your contact.</p>
         <BusinessCard person={u} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />
         <ShareStory person={u} />
@@ -167,7 +167,7 @@ export default function ProfilePage() {
       </div>
 
       <nav className="settings-group">
-        <button onClick={() => setView("pass")}><i className="tile t-klein"><QrCodeIcon size={18} /></i><span>My pass</span><small>{u.id}</small><ChevronRight size={18} /></button>
+        <button onClick={() => setView("pass")}><i className="tile t-klein"><QrCodeIcon size={18} /></i><span>UB Blockchain Passport</span><small>{u.id}</small><ChevronRight size={18} /></button>
         <button onClick={() => router.push("/app/chat")}><i className="tile t-klein"><MessageCircle size={18} /></i><span>Messages</span>{net && msgUnread(net) > 0 ? <span className="chat-badge">{msgUnread(net)}</span> : <small>{net?.network ?? ""}</small>}<ChevronRight size={18} /></button>
         <button onClick={() => setView("edit")}><i className="tile t-fushia"><UserRound size={18} /></i><span>Edit profile</span><ChevronRight size={18} /></button>
       </nav>

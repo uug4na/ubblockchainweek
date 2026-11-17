@@ -3,12 +3,14 @@
 // First-run guide: right after someone signs in to the attendee app for the first time (on this phone),
 // a spotlight walks them through the five main places — Home, Agenda, Scan, Stars, Profile — one at a time.
 // It points at whichever nav is on screen (bottom tabs on phones, the side list on wide screens) through
-// their data-tour attributes. Seen once per pass code per device; Profile → "App guide" plays it again.
+// their data-tour attributes. Seen once per Passport code per device; Profile → "App guide" plays it again.
+// It waits until the Passport is filled in (PassportSetup), which starts it after its explainer.
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Home, ScanLine, Sparkles, Star, UserRound, X } from "lucide-react";
+import { CalendarDays, Home, QrCode, ScanLine, Sparkles, Star, X } from "lucide-react";
 import { useMe } from "@/lib/me";
+import { passportIntroPending, passportReady } from "./PassportSetup";
 
 const SEEN = (id: string) => `ubbw.tour.${id}`;
 const REPLAY = "ubbw:tour";
@@ -19,11 +21,11 @@ export const replayTour = () => window.dispatchEvent(new Event(REPLAY));
 type Step = { target?: string; icon: typeof Home; title: string; body: string };
 const steps: Step[] = [
   { icon: Sparkles, title: "Welcome to UBBW 2026", body: "A quick look at the attendee app. Five places, about 20 seconds." },
-  { target: "home", icon: Home, title: "Home", body: "Your day at a glance: what's happening now, news, and the Hackathon and Research tracks." },
+  { target: "home", icon: Home, title: "Home", body: "Your day at a glance: what's on now and what's next on the agenda." },
   { target: "agenda", icon: CalendarDays, title: "Agenda", body: "The whole week, day by day: time, title and place for every session." },
-  { target: "scan", icon: ScanLine, title: "Scan", body: "Point it at the entrance, session posters, reward stands and other attendees' passes to check in, connect and earn stars." },
-  { target: "stars", icon: Star, title: "Stars", body: "Earn stars from tasks and friends you bring, play games with them, then spend them on merch." },
-  { target: "profile", icon: UserRound, title: "Profile & pass", body: "Your pass QR for the desk and merch, your messages and your card. You can replay this guide here." },
+  { target: "scan", icon: ScanLine, title: "Scan", body: "Point it at the entrance, session posters, reward stands and other attendees' Passports to check in, connect and earn stars." },
+  { target: "stars", icon: Star, title: "Stars", body: "Earn stars, play games and swap them for merch. Opening closer to the week." },
+  { target: "profile", icon: QrCode, title: "Your UB Blockchain Passport", body: "It lives here. Open Profile and show the QR at the door and the merch desk. Your messages and this guide are here too." },
 ];
 
 const seen = (id: string) => { try { return localStorage.getItem(SEEN(id)) === "1"; } catch { return false; } };
@@ -46,6 +48,7 @@ export function AppTour() {
   const { status, me } = useMe();
   const path = usePathname();
   const id = me?.user.id;
+  const ready = !!me && passportReady(me.user);
   const [i, setI] = useState<number | null>(null);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [cardH, setCardH] = useState(0);
@@ -53,10 +56,10 @@ export function AppTour() {
 
   // first sign-in on this device: start once the app has drawn. Not over a game or the scanner.
   useEffect(() => {
-    if (status !== "in" || !id || seen(id) || path.includes("/games/") || path.includes("/scan")) return;
+    if (status !== "in" || !id || !ready || passportIntroPending(id) || seen(id) || path.includes("/games/") || path.includes("/scan")) return;
     const t = setTimeout(() => setI(0), 700);
     return () => clearTimeout(t);
-  }, [status, id, path]);
+  }, [status, id, ready, path]);
 
   useEffect(() => {
     const play = () => setI(0);

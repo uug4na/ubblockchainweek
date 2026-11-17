@@ -48,7 +48,7 @@ export default function ScanPage() {
           return;
         }
         if (scanned.kind === "user") {
-          if (scanned.id === me?.user.id) throw new Error("That's your own pass.");
+          if (scanned.id === me?.user.id) throw new Error("That's your own Passport.");
           const person = await api<Person>(`/api/people/${scanned.id}`);
           setResult({ kind: "person", person });
           haptic.success();
@@ -130,7 +130,7 @@ export default function ScanPage() {
     return (
       <AuthPanel
         title={pending ? "Sign in to collect your stars" : "Sign in to check in"}
-        lead={pending ? "You scanned a UBBW code. Sign in and we'll check you in straight away." : "Scanning session posters earns stars. You'll need a pass first."}
+        lead={pending ? "You scanned a UBBW code. Sign in and we'll check you in straight away." : "Scanning session posters earns stars. You'll need a Passport first."}
       />
     );
 
