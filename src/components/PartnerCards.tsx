@@ -37,7 +37,7 @@ function Card({ p, tag }: { p: Partner; tag?: string }) {
 export function PartnerCards({ types, partners }: { types: { id: PartnerType; label: string }[]; partners: Partner[] }) {
   // in the order of `types` (host first), then as listed
   const list = types.flatMap((t) => partners.filter((p) => p.type === t.id));
-  const tag = (p: Partner) => (p.type === "partner" ? undefined : types.find((t) => t.id === p.type)?.label);
+  const tag = (p: Partner) => p.tag ?? (p.type === "partner" ? undefined : types.find((t) => t.id === p.type)?.label);
 
   return (
     <ul className="t-pgrid">

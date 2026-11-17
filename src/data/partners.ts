@@ -3,7 +3,7 @@
 // No icon → their wordmark ("logo") sits white on a navy tile; neither → their initial.
 // about: one line, in the partner's own words where they have them.
 export type PartnerType = "partner" | "media" | "host" | "sponsor" | "supporter" | "collaboration";
-export type Partner = { name: string; type: PartnerType; about?: string; icon?: string; iconBg?: string; wide?: boolean; logo?: string; href?: string };
+export type Partner = { name: string; type: PartnerType; about?: string; icon?: string; iconBg?: string; wide?: boolean; tag?: string; logo?: string; href?: string };
 
 // tabs on the landing, left to right; the first is open by default, types with nobody yet are hidden
 export const partnerTypes: { id: PartnerType; label: string }[] = [
@@ -20,6 +20,8 @@ export const partners2026: Partner[] = [
   { name: "TenGer HD", type: "host", about: "Host of UB Blockchain Week 2026.", logo: "partners/tenger-hd.png" },
   // Ard (Ard Financial Group, ard.mn) removed 16 Nov 2026: old brand, replaced by AI Group and Ardcoin below
   { name: "Unread", type: "partner", about: "Hybrid media company telling stories for the next generation.", icon: "partners/icons/unread.png", href: "https://unread.today" },
+  // 17 Nov 2026: second in line, tagged "Powered by" (owner's call)
+  { name: "Global MPC", type: "partner", tag: "Powered by", about: "Verification, registry and issuance infrastructure for mining real-world assets.", icon: "partners/icons/globalmpc.svg", href: "https://globalmpc.tech" },
   // held back by the owner, 22 Oct — uncomment to announce
   // { name: "Binance", type: "partner", about: "The world's largest crypto exchange by trading volume.", icon: "partners/icons/binance.svg", iconBg: "#181a20", href: "https://www.binance.com" },
   // { name: "Circle", type: "partner", about: "The company behind USDC and the Arc network.", icon: "partners/icons/circle.svg", href: "https://www.circle.com" },
@@ -29,7 +31,6 @@ export const partners2026: Partner[] = [
   // 16 Nov: full "aigroup" wordmark instead of the "ai" mark; links to the same site as Ardcoin (owner's call)
   { name: "AI Group", type: "partner", about: "Formerly Ard Financial Group.", icon: "partners/aigroup.png", wide: true, href: "https://ardcoin.com" },
   { name: "Ardcoin", type: "partner", about: "Decentralized loyalty.", icon: "partners/icons/ardcoin.png", href: "https://ardcoin.com" },
-  { name: "Global MPC", type: "partner", about: "Verification, registry and issuance infrastructure for mining real-world assets.", icon: "partners/icons/globalmpc.svg", href: "https://globalmpc.tech" },
   { name: "CryptoRank", type: "partner", about: "Crypto market data, token stats and research.", icon: "partners/icons/cryptorank.svg", href: "https://cryptorank.io" },
   { name: "UFE", type: "partner", about: "University of Finance and Economics, Ulaanbaatar.", icon: "partners/icons/ufe.svg", href: "https://ufe.edu.mn" },
   { name: "Paradise Capital", type: "media" }, // TODO: icon, one line and link
