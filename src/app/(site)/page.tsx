@@ -42,7 +42,7 @@ const stats = [
   { n: "6", label: "days" },
   { n: "30–5", label: "Nov–Dec" },
   { n: "Free", label: "entry" },
-  { n: "Soon", label: "agenda" },
+  { n: "Agenda", label: "out now", href: "/program" },
 ];
 
 const slides: Slide[] = [
@@ -89,6 +89,12 @@ export default function Home() {
             <p className="t-powered">
               <span>Hosted by</span>
               <img src={img("partners/tenger-hd.png")} alt="TenGer TV" width={127} height={58} />
+              <i className="t-powered-sep" aria-hidden="true" />
+              <span>Powered by</span>
+              <a href="https://globalmpc.tech" target="_blank" rel="noopener noreferrer" className="t-powered-mpc">
+                <img src={img("partners/icons/globalmpc.svg")} alt="" width={22} height={22} />
+                Global MPC
+              </a>
             </p>
           </div>
           <div className="t-hero-art">
@@ -97,7 +103,9 @@ export default function Home() {
         </div>
         <div className="t-wrap">
           <ul className="t-stats" aria-label="The week in numbers">
-            {stats.map((s) => <li key={s.label}><b>{s.n}</b><span>{s.label}</span></li>)}
+            {stats.map((s: { n: string; label: string; href?: string }) => (
+              <li key={s.label}>{s.href ? <Link href={s.href} className="t-stat-link"><b>{s.n}</b><span>{s.label}</span></Link> : <><b>{s.n}</b><span>{s.label}</span></>}</li>
+            ))}
           </ul>
         </div>
       </section>

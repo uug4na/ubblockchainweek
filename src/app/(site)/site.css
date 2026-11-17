@@ -97,6 +97,8 @@
 .t-stats li { display: flex; align-items: baseline; gap: 10px; }
 .t-stats b { font-size: clamp(28px, 3.4vw, 42px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
 .t-stats span { font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
+.t-stat-link { display: flex; align-items: baseline; gap: 10px; color: inherit; text-decoration: none; }
+.t-stat-link:hover span { color: #fff; }
 @media (max-width: 900px) {
   .t-hero { min-height: 0; }
   .t-hero-grid { grid-template-columns: 1fr; padding-top: calc(var(--hh) + 8px); gap: 8px; }
@@ -582,6 +584,10 @@
 /* ── powered by ── */
 .t-powered { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .6); }
 .t-powered img { height: 34px; width: auto; filter: brightness(0) invert(1); }
+.t-powered { flex-wrap: wrap; row-gap: 8px; }
+.t-powered-sep { width: 1px; height: 18px; background: rgba(255, 255, 255, .25); margin: 0 4px; }
+.t-powered-mpc { display: inline-flex; align-items: center; gap: 7px; color: #fff; text-decoration: none; letter-spacing: .04em; font-size: 13px; text-transform: none; }
+.t-powered .t-powered-mpc img { height: 22px; width: 22px; filter: none; border-radius: 5px; }
 
 /* ── mini isometric objects (each animates itself; nothing floats) ── */
 .has-minis { position: relative; isolation: isolate; }
@@ -713,6 +719,9 @@
   /* "powered by" rides with the date line, small and inline */
   .t-hero-copy > .t-powered { order: 4; align-self: flex-start; gap: 8px; margin: 10px 0 0; font-size: 10px; }
   .t-hero-copy > .t-powered img { height: 20px; }
+  .t-hero-copy > .t-powered .t-powered-mpc img { height: 18px; width: 18px; border-radius: 4px; }
+  .t-powered-mpc { font-size: 11px; gap: 6px; }
+  .t-powered-sep { height: 14px; margin: 0 2px; }
   .t-hero-art { order: 5; min-width: 0; margin: 28px -6% 24px; }
   .t-hero-copy > .t-hero-actions { order: 6; display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
   .t-hero-actions .t-btn { height: 50px; }
