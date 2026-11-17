@@ -1,7 +1,7 @@
 "use client";
 
 // Your own badges (Profile → Achievements and your Passport). Until migration 0052 is applied the database
-// doesn't know app_badges yet: then only "5+ events" is worked out, from the sessions the app already has.
+// doesn't know app_badges yet, and until 0053 it doesn't send the newer fields: those come from what the app already has.
 import { useEffect, useState } from "react";
 import { api } from "@/lib/me";
 import type { Me } from "@/lib/types";
@@ -11,13 +11,19 @@ export function useBadges(me: Me | null | undefined): Badges | null {
   const [b, setB] = useState<Badges | null>(null);
   const id = me?.user.id;
   const attended = me?.attended.length ?? 0;
+  const checkedAt = me?.user.verifiedAt ?? undefined;
+  const checkedIn = !!checkedAt;
+  const joined = me?.user.createdAt;
+  const invited = me?.invitedVerified ?? 0;
   useEffect(() => {
     if (!id) return;
     let live = true;
+    // what the app already knows; the database's answer fills in (and wins) where it has the field
+    const own: Badges = { speaker: false, crew: false, hack: null, research: false, events: attended, checkedIn, joined, invited };
     api<Badges>("/api/rpc/app_badges", {})
-      .then((r) => live && setB(r))
-      .catch(() => live && setB({ speaker: false, crew: false, hack: null, research: false, events: attended }));
+      .then((r) => live && setB({ ...own, ...r, at: { ...(checkedAt ? { checkedIn: checkedAt } : {}), ...r.at } }))
+      .catch(() => live && setB(own));
     return () => { live = false; };
-  }, [id, attended]);
+  }, [id, attended, checkedIn, checkedAt, joined, invited]);
   return b;
 }

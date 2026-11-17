@@ -31,8 +31,10 @@ export function PlaceSheet({ title, when, place, onClose }: { title: string; whe
       L.marker(place, { icon: brandPin(L), keyboard: false, interactive: false }).addTo(m);
       map.current = m;
       setTimeout(() => m.invalidateSize(), 50);
-      // already allowed → show where you are and how far, without asking
-      navigator.permissions?.query({ name: "geolocation" as PermissionName }).then((p) => { if (p.state === "granted" && !gone) locate(); }).catch(() => {});
+      // opening the map asks for location straight away (the phone shows its prompt); if it was blocked before,
+      // don't nag: the "How far am I?" button stays for a retry.
+      const perm = await navigator.permissions?.query({ name: "geolocation" as PermissionName }).catch(() => null);
+      if (!gone && perm?.state !== "denied") locate();
     })();
     return () => {
       gone = true;
