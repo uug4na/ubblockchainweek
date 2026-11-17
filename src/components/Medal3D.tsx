@@ -8,6 +8,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { innerRadius, outline, radiusAt, type Look, type Shape } from "@/lib/medalShapes";
 
 const S = 1024, C = S / 2, TAU = Math.PI * 2;
 const R = 1, T = 0.16;
@@ -37,30 +38,39 @@ function arc(g: CanvasRenderingContext2D, text: string, r: number, size: number,
 }
 
 // one face, in one "ink", so colour / height / roughness-metalness maps line up
-function face(g: CanvasRenderingContext2D, ink: Ink, f: { top: string; bottom: string; icon?: HTMLImageElement | null; lines?: string[] }) {
+// The face in the medal's own shape: rim and band follow the outline, the beads trace it, and the lettering,
+// inner rim and enamel field sit inside its narrowest point (k), so every shape keeps the same layout.
+function face(g: CanvasRenderingContext2D, ink: Ink, shape: Shape, f: { top: string; bottom: string; icon?: HTMLImageElement | null; lines?: string[] }) {
   const mono = css("--font-mono", "monospace"), display = css("--font-display", "sans-serif");
   const disc = (r: number, fill: string) => { g.beginPath(); g.arc(C, C, r, 0, TAU); g.fillStyle = fill; g.fill(); };
+  const cut = (r: number, fill: string) => {
+    g.beginPath();
+    outline(shape).forEach(([x, y], i) => (i ? g.lineTo(C + x * r, C + y * r) : g.moveTo(C + x * r, C + y * r)));
+    g.closePath(); g.fillStyle = fill; g.fill();
+  };
+  const k = innerRadius(shape);
   g.clearRect(0, 0, S, S);
-  disc(512, ink.rim);
-  disc(468, ink.band);
+  cut(512, ink.rim);
+  cut(468, ink.band);
   g.fillStyle = ink.rim;
-  for (let i = 0; i < 64; i++) {
-    const a = (i / 64) * TAU;
-    g.beginPath(); g.arc(C + Math.cos(a) * 446, C + Math.sin(a) * 446, 7, 0, TAU); g.fill();
+  for (let i = 0; i < 72; i++) {
+    const a = (i / 72) * TAU, r = radiusAt(shape, a) * 446;
+    g.beginPath(); g.arc(C + Math.cos(a) * r, C + Math.sin(a) * r, 7, 0, TAU); g.fill();
   }
   g.fillStyle = ink.letters;
-  arc(g, f.top, 395, 38, mono, false);
-  arc(g, f.bottom, 395, 38, mono, true);
-  disc(352, ink.rim);
-  disc(336, ink.field);
+  arc(g, f.top, 395 * k - 6, 36, mono, false);
+  arc(g, f.bottom, 395 * k - 6, 36, mono, true);
+  disc(352 * k - 8, ink.rim);
+  disc(336 * k - 8, ink.field);
   if (f.icon) {
     // the icon in relief: drawn in the relief ink through its own shape
-    const c2 = document.createElement("canvas"); c2.width = c2.height = 400;
+    const w = Math.round(400 * k);
+    const c2 = document.createElement("canvas"); c2.width = c2.height = w;
     const h = c2.getContext("2d")!;
-    h.drawImage(f.icon, 0, 0, 400, 400);
+    h.drawImage(f.icon, 0, 0, w, w);
     h.globalCompositeOperation = "source-in";
-    h.fillStyle = ink.relief; h.fillRect(0, 0, 400, 400);
-    g.drawImage(c2, C - 200, C - 200);
+    h.fillStyle = ink.relief; h.fillRect(0, 0, w, w);
+    g.drawImage(c2, C - w / 2, C - w / 2);
   }
   if (f.lines) {
     g.fillStyle = ink.relief;
@@ -70,17 +80,18 @@ function face(g: CanvasRenderingContext2D, ink: Ink, f: { top: string; bottom: s
       let size = i === 0 ? 60 : 36;
       const set = () => (g.font = `${i === 0 ? 700 : 600} ${size}px ${i === 0 ? display : mono}`);
       set();
-      while (i === 0 && size > 38 && g.measureText(l).width > 560) { size -= 2; set(); }
+      const room = 560 * k;
+      while (i === 0 && size > 34 && g.measureText(l).width > room) { size -= 2; set(); }
       let s = l;
-      while (g.measureText(s).width > 560 && s.length > 4) s = s.slice(0, -2) + "…";
+      while (g.measureText(s).width > room && s.length > 4) s = s.slice(0, -2) + "…";
       g.fillText(s, C, C + (i - (f.lines!.length - 1) / 2) * 78);
     });
   }
 }
 
-export type MedalProps = { label: string; icon: string; done: boolean; holder: string; when: string; size?: number };
+export type MedalProps = { label: string; icon: string; done: boolean; holder: string; when: string; look: Look; size?: number };
 
-export function Medal3D({ label, icon, done, holder, when, size = 240 }: MedalProps) {
+export function Medal3D({ label, icon, done, holder, when, look, size = 240 }: MedalProps) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = host.current;
@@ -100,19 +111,17 @@ export function Medal3D({ label, icon, done, holder, when, size = 240 }: MedalPr
     const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2, 3, 4); scene.add(key);
 
     const metal = done ? { rim: "#e2b85c", band: "#c99a43", letters: "#7d5a1c" } : { rim: "#7c8494", band: "#646b7a", letters: "#3c414c" };
-    const color: Ink = { ...metal, field: done ? css("--green", "#01fe6d") : "#2a2f3a", relief: done ? "#0a1446" : "#8a909c" };
+    const color: Ink = { ...metal, field: done ? look.enamel : "#2a2f3a", relief: done ? look.relief : "#8a909c" };
     const height: Ink = { rim: "#fff", band: "#9a9a9a", letters: "#6a6a6a", field: "#3a3a3a", relief: "#d8d8d8" };
     // G = roughness, B = metalness: metal parts shiny metal, the enamel field glossy non-metal
     const mr: Ink = { rim: "rgb(0,70,255)", band: "rgb(0,110,255)", letters: "rgb(0,150,255)", field: "rgb(0,150,0)", relief: done ? "rgb(0,80,40)" : "rgb(0,90,255)" };
 
-    const maps = (f: Parameters<typeof face>[2]) => {
+    const maps = (f: Parameters<typeof face>[3]) => {
       const mk = (ink: Ink) => {
         const c = document.createElement("canvas"); c.width = c.height = S;
-        face(c.getContext("2d")!, ink, f);
+        face(c.getContext("2d")!, ink, look.shape, f);
         const t = new THREE.CanvasTexture(c);
         t.anisotropy = 8;
-        t.center.set(0.5, 0.5);
-        t.rotation = Math.PI / 2; // the cylinder's caps map the canvas a quarter-turn off: stand the artwork upright
         return t;
       };
       const map = mk(color); map.colorSpace = THREE.SRGBColorSpace;
@@ -124,8 +133,26 @@ export function Medal3D({ label, icon, done, holder, when, size = 240 }: MedalPr
     const front = maps({ top, bottom: label.toUpperCase() });
     const back = maps({ top, bottom: done ? "YOURS TO KEEP" : "NOT EARNED YET", lines: [holder, when] });
     const edge = new THREE.MeshStandardMaterial({ color: done ? 0xd1a650 : 0x6f7685, metalness: 1, roughness: 0.32 });
-    const geo = new THREE.CylinderGeometry(R, R, T, 128, 1);
-    geo.rotateX(Math.PI / 2); // caps face the camera
+    // the body: the outline extruded with a soft bevel. ExtrudeGeometry puts both lids in group 0 (back lid first,
+    // then front) and the walls in group 1; split the lids so front and back get their own artwork, and map each
+    // lid's UVs straight from x/y (the back mirrored, so it reads the right way round when the medal turns).
+    const BV = 0.03;
+    const body = new THREE.Shape(outline(look.shape).map(([x, y]) => new THREE.Vector2(x * (R - BV), -y * (R - BV))));
+    const geo = new THREE.ExtrudeGeometry(body, { depth: T, bevelEnabled: true, bevelThickness: BV, bevelSize: BV, bevelSegments: 4, curveSegments: 64 });
+    geo.translate(0, 0, -T / 2);
+    const [lids, walls] = geo.groups;
+    const pos = geo.getAttribute("position"), uv = geo.getAttribute("uv");
+    const half = lids.count / 2;
+    const firstIsBack = pos.getZ(lids.start) < 0;
+    for (let i = lids.start; i < lids.start + lids.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), isBack = pos.getZ(i) < 0;
+      uv.setXY(i, isBack ? 0.5 - x / (2 * R) : 0.5 + x / (2 * R), 0.5 + y / (2 * R));
+    }
+    uv.needsUpdate = true;
+    geo.clearGroups();
+    geo.addGroup(lids.start, half, firstIsBack ? 2 : 1);
+    geo.addGroup(lids.start + half, half, firstIsBack ? 1 : 2);
+    geo.addGroup(walls.start, walls.count, 0);
     const medal = new THREE.Mesh(geo, [edge, front, back]);
     const pivot = new THREE.Group();
     pivot.add(medal);
@@ -141,7 +168,7 @@ export function Medal3D({ label, icon, done, holder, when, size = 240 }: MedalPr
       old.dispose();
     };
     const svg = icon
-      .replace(/\s(width|height|class)="[^"]*"/g, "")
+      .replace(/<svg[^>]*>/, (tag) => tag.replace(/\s(width|height|class)="[^"]*"/g, "")) // only the outer tag: shapes inside keep their own size
       .replace(/currentColor/g, "#000")
       .replace("<svg", '<svg width="400" height="400"' + (icon.includes("xmlns=") ? "" : ' xmlns="http://www.w3.org/2000/svg"'));
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
@@ -197,7 +224,7 @@ export function Medal3D({ label, icon, done, holder, when, size = 240 }: MedalPr
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [label, icon, done, holder, when, size]);
+  }, [label, icon, done, holder, when, look, size]);
 
   return <div ref={host} className="medal3d" style={{ width: size, height: size }} aria-label={`${label} medal`} role="img" />;
 }

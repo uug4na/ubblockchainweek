@@ -12,7 +12,7 @@ import { cardQr } from "@/lib/codes";
 import { addToAppleWallet, canUseWallet } from "@/lib/wallet";
 import { WALLET_OPEN } from "@/data/open";
 import { useBadges } from "@/lib/badges";
-import { Achievements } from "@/components/Achievements";
+import { AchievementsSection, AchievementsStrip } from "@/components/Achievements";
 import { networks, toHandle, type Socials } from "@/lib/socials";
 import { BusinessCard } from "@/components/BusinessCard";
 import { ShareStory } from "@/components/PassStory";
@@ -91,7 +91,7 @@ function ProfileForm({ me, onSaved }: { me: Me; onSaved: () => void }) {
   );
 }
 
-type View = "main" | "pass" | "edit";
+type View = "main" | "pass" | "edit" | "achievements";
 
 // The UB Hack group's unread count is part of the server total; leave it out while the section is hidden.
 const msgUnread = (c: Chats) => c.unread - (HACK_SECTION_OPEN ? 0 : c.hack?.unread ?? 0);
@@ -163,6 +163,14 @@ export default function ProfilePage() {
         </div>
       </div>
     );
+  if (view === "achievements")
+    return (
+      <div className="page-in">
+        {back}
+        <h1 className="app-h1">Achievements</h1>
+        {badges ? <AchievementsSection b={badges} holder={u.name} /> : null}
+      </div>
+    );
   if (view === "edit")
     return (
       <div className="page-in">
@@ -203,7 +211,7 @@ export default function ProfilePage() {
         <Link href="/app/stars"><b>{tasksDone}</b><span>Tasks</span></Link>
         <Link href="/app/merch"><b>{me.claims.filter((c) => c.status !== "cancelled" && c.source !== "seat").length}</b><span>Merch</span></Link>
       </div>
-      {badges && <Achievements b={badges} holder={u.name} />}
+      {badges && <AchievementsStrip b={badges} onOpen={() => { setView("achievements"); window.scrollTo({ top: 0 }); }} />}
       </div>
 
       <div className="desk-rail">
