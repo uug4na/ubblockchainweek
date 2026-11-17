@@ -32,92 +32,8 @@ export type SocialTask = {
   proofPlaceholder: string;
 };
 
-export const socialTasks: SocialTask[] = [
-  {
-    id: "follow-ig",
-    title: `Follow ${site.handle} on Instagram`,
-    body: "Event updates, photos from the week and where the good food is.",
-    stars: 30,
-    platform: "Instagram",
-    href: site.social.instagram,
-    cta: "Open Instagram",
-    verify: "review",
-    proofLabel: "Your Instagram handle",
-    proofPlaceholder: "@you",
-  },
-  {
-    id: "follow-fb",
-    title: "Follow our Facebook event page",
-    body: "Tap Going or Interested so friends can see you'll be there.",
-    stars: 20,
-    platform: "Facebook",
-    href: site.social.facebook,
-    cta: "Open Facebook",
-    verify: "review",
-    proofLabel: "Your name on Facebook",
-    proofPlaceholder: "Bat-Erdene D.",
-  },
-  {
-    id: "join-tg",
-    title: "Join the Telegram community",
-    body: "Room changes, last-minute news and the people you'll meet.",
-    stars: 20,
-    platform: "Telegram",
-    href: site.social.telegram,
-    cta: "Open Telegram",
-    verify: "review",
-    proofLabel: "Your Telegram username",
-    proofPlaceholder: "@you",
-  },
-  {
-    id: "follow-x",
-    title: `Follow ${site.handle} on X`,
-    body: "Speaker news and live posts from the main stage.",
-    stars: 20,
-    platform: "X",
-    href: site.social.x,
-    cta: "Open X",
-    verify: "review",
-    proofLabel: "Your X handle",
-    proofPlaceholder: "@you",
-  },
-  {
-    id: "ig-story",
-    title: "Post an Instagram story from the venue",
-    body: `Share a moment from the week and tag ${site.handle}. Keep your account public until it's checked.`,
-    stars: 60,
-    platform: "Instagram",
-    href: site.social.instagram,
-    cta: "Open Instagram",
-    verify: "review",
-    proofLabel: "The Instagram handle you posted from",
-    proofPlaceholder: "@you",
-  },
-  {
-    id: "tag-friends",
-    title: "Tag 3 friends on our event post",
-    body: "Comment on the pinned post and tag three people who should come.",
-    stars: 40,
-    platform: "Instagram",
-    href: site.social.instagram,
-    cta: "Open the post",
-    verify: "review",
-    proofLabel: "Link to your comment, or your handle",
-    proofPlaceholder: "https://instagram.com/p/…",
-  },
-  {
-    id: "x-post",
-    title: `Post about the week with ${site.hashtag}`,
-    body: "A talk you liked, someone you met, a photo of the shared table.",
-    stars: 40,
-    platform: "X",
-    href: site.social.x,
-    cta: "Open X",
-    verify: "review",
-    proofLabel: "Link to your post",
-    proofPlaceholder: "https://x.com/you/status/…",
-  },
-];
+// Placeholder social tasks were removed 2026-11-17; crew add real ones in the staff app. Backup: .data/backup-2026-11-17-merch-and-social-tasks.json
+export const socialTasks: SocialTask[] = [];
 
 export const taskById = Object.fromEntries(socialTasks.map((t) => [t.id, t]));
 
@@ -138,24 +54,8 @@ export type MerchItem = {
 export const OWN = "UBBW";
 export const MERCH_COST = 500; // every item costs the same
 
-export const merch: MerchItem[] = [
-  { id: "hoodie", name: "Toono hoodie", by: OWN, blurb: "Heavyweight, clay red, the ger crown on the back. Made for −20 °C.", cost: MERCH_COST, stock: 40, hue: 14, glyph: "shirt" },
-  { id: "beanie", name: "Wool-blend beanie", by: OWN, blurb: "Knitted in Ulaanbaatar. You'll need it outside.", cost: MERCH_COST, stock: 50, hue: 36, glyph: "hat", photo: { src: "/merch/beanie.jpg" } },
-  { id: "tote", name: "Khee meander tote", by: OWN, blurb: "Canvas tote with the khee border. Fits a laptop.", cost: MERCH_COST, stock: 120, hue: 28, glyph: "bag" },
-  { id: "keychain", name: "Felt ger keychain", by: OWN, blurb: "Handmade by a felt co-op in Töv aimag.", cost: MERCH_COST, stock: 200, hue: 42, glyph: "key" },
-  { id: "pin", name: "Enamel toono pin", by: OWN, blurb: "Small, gold, goes on everything.", cost: MERCH_COST, stock: 300, hue: 45, glyph: "pin" },
-  { id: "tee", name: "UBBW tee", by: OWN, blurb: "Heavy cotton, Klein Blue print.", cost: MERCH_COST, stock: 100, hue: 255, glyph: "shirt", photo: { src: "/merch/tee.jpg" } },
-  { id: "bottle", name: "Steel bottle", by: OWN, blurb: "Keeps tea hot all day.", cost: MERCH_COST, stock: 80, hue: 190, glyph: "bottle", photo: { src: "/merch/bottle.jpg", fit: true } },
-  { id: "socks", name: "Felt wool socks", by: OWN, blurb: "Ger-felt warm.", cost: MERCH_COST, stock: 90, hue: 320, glyph: "socks", photo: { src: "/merch/socks.jpg", fit: true } },
-  // SAMPLE PARTNERS — fictional names until partner merch is confirmed.
-  { id: "hw-wallet", name: "Hardware wallet", by: "Steppe Wallet", blurb: "A cold wallet for your keys. Very few of these.", cost: MERCH_COST, stock: 5, hue: 205, glyph: "wallet", photo: { src: "/merch/hw-wallet.jpg", focus: "50% 57%" } },
-  { id: "notebook", name: "Builder notebook set", by: "Altai Labs", blurb: "Dot-grid notebook and pen for hackathon sketches.", cost: MERCH_COST, stock: 60, hue: 120, glyph: "book", photo: { src: "/merch/notebook.jpg", fit: true } },
-  { id: "coffee", name: "Coffee for two", by: "Ger Coffee Co.", blurb: "Voucher for two drinks at their Sükhbaatar Square café.", cost: MERCH_COST, stock: 80, hue: 24, glyph: "coffee" },
-  { id: "stickers", name: "Sticker pack", by: "Khan Node", blurb: "Twelve stickers for the laptop lid.", cost: MERCH_COST, stock: 400, hue: 330, glyph: "sticker", photo: { src: "/merch/stickers.jpg" } },
-  { id: "backpack", name: "Laptop backpack", by: "Altai Labs", blurb: "Fits a 16-inch laptop.", cost: MERCH_COST, stock: 10, hue: 230, glyph: "backpack", photo: { src: "/merch/backpack.jpg", fit: true } },
-  { id: "powerbank", name: "Power bank", by: "Steppe Wallet", blurb: "10,000 mAh for long days.", cost: MERCH_COST, stock: 25, hue: 75, glyph: "battery" },
-  { id: "earbuds", name: "Wireless earbuds", by: "Nomad Audio", blurb: "For the flight home.", cost: MERCH_COST, stock: 8, hue: 280, glyph: "headphones" },
-];
+// Placeholder merch was removed 2026-11-17; crew add real items in staff Merch → Add item (loaded by merchCatalog). Backup: .data/backup-2026-11-17-merch-and-social-tasks.json
+export const merch: MerchItem[] = [];
 
 export const merchById = Object.fromEntries(merch.map((m) => [m.id, m]));
 // One merch swap per person, in total — limited stock reaches more people.

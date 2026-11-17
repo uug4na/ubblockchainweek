@@ -207,21 +207,21 @@ function StarsLive() {
         )}
       </section>
 
-      <section className="tasks-section">
+      {quick.length > 0 && <section className="tasks-section">
         <div className="section-mini-head">
           <h2>Follow us</h2>
           <span>Screenshot · crew checks</span>
         </div>
         <div className="tasks">{quick.map((t) => <TaskCard key={t.id} task={t} status={me.tasks[t.id]} />)}</div>
-      </section>
+      </section>}
 
-      <section className="tasks-section">
+      {review.length > 0 && <section className="tasks-section">
         <div className="section-mini-head">
           <h2>Share the week</h2>
           <span>Screenshot · crew checks</span>
         </div>
         <div className="tasks">{review.map((t) => <TaskCard key={t.id} task={t} status={me.tasks[t.id]} />)}</div>
-      </section>
+      </section>}
 
       <Invite me={me} />
 
