@@ -1881,6 +1881,14 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 .socials-fields label { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: center; gap: 10px; }
 .socials-fields label > span { font-size: 15px; color: var(--label-2); }
 .bc { border-radius: var(--r); overflow: hidden; background: var(--blue); color: #fff; }
+/* Add to Apple Wallet: black, as Apple's own badge (swap in the official badge artwork if Apple review asks) */
+.wallet-btn { margin-top: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #000; color: #fff; border: .5px solid rgba(255, 255, 255, .28); }
+.wallet-btn + .form-error { margin-top: 8px; }
+/* Passport view on PC: the card keeps its phone size, Share / Edit sit beside it */
+@media (min-width: 1100px) {
+  .passport-view { display: grid; grid-template-columns: 400px minmax(0, 300px); gap: 24px; align-items: start; }
+  .passport-actions > :first-child { margin-top: 0 !important; } /* Share's button carries an inline 16px top margin */
+}
 /* ticket shape: round notches where the stub tears off and a scalloped bottom edge, cut with a mask so the page shows through */
 .bc.has-stub {
   --stub: 200px;
