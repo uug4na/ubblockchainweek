@@ -90,7 +90,7 @@ export default function AppHome() {
 
   return (
     <>
-      <h1 className="app-h1">Welcome to UB Blockchain Week{firstName ? `, ${firstName}` : ""}.</h1>
+      <h1 className="app-h1 home-h1">Welcome to UB Blockchain Week{firstName ? `, ${firstName}` : ""}.</h1>
       <InstallPrompt app="attendee" />
 
       <section className="countdown">
