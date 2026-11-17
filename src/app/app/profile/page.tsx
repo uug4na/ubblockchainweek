@@ -11,6 +11,8 @@ import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
 import { addToAppleWallet, canUseWallet } from "@/lib/wallet";
 import { WALLET_OPEN } from "@/data/open";
+import { useBadges } from "@/lib/badges";
+import { Achievements } from "@/components/Achievements";
 import { networks, toHandle, type Socials } from "@/lib/socials";
 import { BusinessCard } from "@/components/BusinessCard";
 import { ShareStory } from "@/components/PassStory";
@@ -128,6 +130,7 @@ function WalletButton() {
 export default function ProfilePage() {
   const { status, me } = useMe();
   const net = useNetwork(status === "in");
+  const badges = useBadges(status === "in" ? me : null);
   const router = useRouter();
   const [view, setView] = useState<View>("main");
   const [notice, setNotice] = useState("");
@@ -151,7 +154,7 @@ export default function ProfilePage() {
         <p className="app-sub">One QR for the desk, merch and your contact.</p>
         {/* PC: the card at its phone size, the actions beside it (it used to stretch across the whole column) */}
         <div className="passport-view">
-          <BusinessCard person={u} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />
+          <BusinessCard person={{ ...u, badges }} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />
           <div className="passport-actions">
             <WalletButton />
             <ShareStory person={u} />
@@ -200,6 +203,7 @@ export default function ProfilePage() {
         <Link href="/app/stars"><b>{tasksDone}</b><span>Tasks</span></Link>
         <Link href="/app/merch"><b>{me.claims.filter((c) => c.status !== "cancelled" && c.source !== "seat").length}</b><span>Merch</span></Link>
       </div>
+      {badges && <Achievements b={badges} holder={u.name} />}
       </div>
 
       <div className="desk-rail">
