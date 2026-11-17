@@ -17,6 +17,7 @@ import { chatPhotoUrls, GIPHY_KEY, gifUrl, searchGifs, uploadChatPhoto, type Gif
 import { api, useMe } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { site } from "@/data/site";
+import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import type { ChatMsg, Chats, HackThread, Person, TeamInboxRow, TeamMsg, TeamThread } from "@/lib/types";
 
 const time = (ms: number) => {
@@ -64,13 +65,13 @@ function Threads() {
       {error && <p className="form-error">{error}</p>}
       {data?.inbox && <TeamInbox rows={data.inbox} />}
       {data && (
-        data.threads.length === 0 && !data.hack && !data.team ? (
+        data.threads.length === 0 && !(HACK_SECTION_OPEN && data.hack) && !data.team ? (
           <p className="muted chat-threads-empty">Meet people to chat with them. <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></p>
         ) : (
           // messenger-style list: no card around it, compact two-line rows; UBBW Team, then the UB Hack group, are pinned first
           <ul className="chat-threads">
             {data.team && <TeamRow t={data.team} />}
-            {data.hack && <HackRow h={data.hack} />}
+            {HACK_SECTION_OPEN && data.hack && <HackRow h={data.hack} />}
             {data.threads.map((t) => (
               <li key={t.id}>
                 <Link href={`/app/chat/?p=${encodeURIComponent(t.id)}`} className={t.unread ? "chat-thread is-unread" : "chat-thread"}>
@@ -717,7 +718,7 @@ export function Chat() {
   const pass = q.get("p");
   if (status === "loading") return null;
   if (status === "out" || !me) return <AuthPanel title="Messages" lead="Make a pass to chat with the people you meet." />;
-  if (q.get("g") === "hack") return <HackGroup />;
+  if (q.get("g") === "hack" && HACK_SECTION_OPEN) return <HackGroup />;
   const team = q.get("t");
   if (team) return <TeamChat key={team} pass={team === "team" ? null : team} />;
   return pass ? <Thread key={pass} pass={pass} /> : <Threads />;

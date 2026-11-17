@@ -9,6 +9,7 @@ import { merch, DESK_STARS, starsFor } from "@/data/rewards";
 import { StarChip } from "@/components/AppShell";
 import { InstallPrompt } from "@/components/Pwa";
 import { InPass } from "@/components/InPass";
+import { HACK_DETAILS_PUBLIC, HACK_SECTION_OPEN } from "@/data/hackathon";
 import { useMerchCatalog } from "@/lib/merchCatalog";
 import { useNow } from "@/lib/time";
 import { IsoArt } from "@/components/iso/IsoArt";
@@ -89,7 +90,7 @@ export default function AppHome() {
 
   return (
     <>
-      <h1 className="app-h1">Hello{firstName ? `, ${firstName}` : ""}.</h1>
+      <h1 className="app-h1">Welcome to UB Blockchain Week{firstName ? `, ${firstName}` : ""}.</h1>
       <InstallPrompt app="attendee" />
 
       <section className="countdown">
@@ -137,7 +138,7 @@ export default function AppHome() {
 
       {/* The two competitions, each its own section */}
       <nav className="settings-group home-compete" aria-label="Compete">
-        <Link href="/app/hack"><i className="tile t-klein"><Trophy size={18} /></i><span>Hackathon<small>UB Hack · ₮15.5M</small></span><ChevronRight size={18} /></Link>
+        {HACK_SECTION_OPEN && <Link href="/app/hack"><i className="tile t-klein"><Trophy size={18} /></i><span>Hackathon<small>{HACK_DETAILS_PUBLIC ? "UB Hack · ₮15.5M" : "UB Hack"}</small></span><ChevronRight size={18} /></Link>}
         <Link href="/app/research"><i className="tile t-fushia"><GraduationCap size={18} /></i><span>Research conference<small>The Future of Money · ₮3M</small></span><ChevronRight size={18} /></Link>
       </nav>
 

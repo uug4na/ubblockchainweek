@@ -12,6 +12,7 @@ import { site } from "@/data/site";
 import { page } from "@/lib/base";
 import { haptic } from "@/lib/haptics";
 import { uploadShot } from "@/lib/shots";
+import { STARS_OPEN } from "@/data/open";
 
 const when = (ms: number) =>
   new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
@@ -134,8 +135,7 @@ function Invite({ me }: { me: Me }) {
   );
 }
 
-// Owner, 2026-11-13: the Stars section shows "Coming soon" for now. Flip STARS_OPEN to bring the full page back.
-const STARS_OPEN = false;
+// Owner, 2026-11-13: the Stars section shows "Coming soon" for now. Flip STARS_OPEN (src/data/open.ts) to bring the full page back.
 
 export default function StarsPage() {
   return STARS_OPEN ? <StarsLive /> : <StarsSoon />;

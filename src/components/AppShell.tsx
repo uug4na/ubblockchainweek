@@ -11,18 +11,20 @@ import { QuizPrompt } from "./Quiz";
 import { AppTour } from "./AppTour";
 import { useMe } from "@/lib/me";
 import { site } from "@/data/site";
+import { HACK_SECTION_OPEN } from "@/data/hackathon";
+import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 
 // what the first-run guide (AppTour) points at
-const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/profile": "profile" };
+const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/games": "stars", "/app/profile": "profile" };
 
 const side = [
   { href: "/app", label: "Home", icon: Home },
   { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/app/scan", label: "Scan", icon: ScanLine },
-  { href: "/app/stars", label: "Earn stars", icon: Star },
+  ...(STARS_OPEN ? [{ href: "/app/stars", label: "Earn stars", icon: Star }] : []),
   { href: "/app/games", label: "Games", icon: Dices },
-  { href: "/app/merch", label: "Spend stars", icon: Gift },
-  { href: "/app/hack", label: "Hackathon", icon: Trophy },
+  ...(MERCH_OPEN ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
+  ...(HACK_SECTION_OPEN ? [{ href: "/app/hack", label: "Hackathon", icon: Trophy }] : []),
   { href: "/app/research", label: "Research", icon: GraduationCap },
   { href: "/app/profile", label: "Profile & pass", icon: UserRound },
 ];
@@ -31,7 +33,7 @@ const tabs = [
   { href: "/app", label: "Home", icon: Home, also: ["/app/hack", "/app/research"] },
   { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/app/scan", label: "Scan", icon: ScanLine },
-  { href: "/app/stars", label: "Stars", icon: Star, also: ["/app/merch", "/app/games"] },
+  { href: STARS_OPEN ? "/app/stars" : "/app/games", label: "Stars", icon: Star, also: ["/app/stars", "/app/merch", "/app/games"] },
   { href: "/app/profile", label: "Profile", icon: UserRound, also: ["/app/chat"] },
 ];
 
