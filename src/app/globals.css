@@ -3567,3 +3567,93 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
   .desk { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 28px; }
   .agenda-days { columns: 3; }
 }
+
+/* ── Event check-in v2: place lock + online stream code (2026-11-17) ── */
+.poster-cell { display: grid; gap: 10px; align-content: start; }
+.poster.is-online { background: var(--fill-2); color: var(--label); }
+.poster.is-online .poster-top, .poster.is-online .poster-when { color: var(--label-2); }
+.ev-ctl { display: grid; gap: 10px; }
+.ev-modes { width: 100%; }
+.ev-place { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px 10px; padding: 12px 14px; border-radius: var(--r); background: var(--fill-2); }
+.ev-place > span { display: grid; gap: 2px; }
+.ev-place b { font-size: 14px; }
+.ev-place small { font-size: 12px; color: var(--label-2); line-height: 1.35; }
+.ev-place .btn { grid-column: 1 / -1; margin-top: 6px; }
+.ev-place.is-todo > svg { color: var(--saffron); }
+.ev-actions { display: flex; flex-wrap: wrap; gap: 16px; }
+.ev-actions .link-btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--label-2); font-weight: 600; }
+.ev-todo { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-size: 14px; font-weight: 600; color: var(--saffron); }
+
+.stream-entry { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: start; margin-top: 20px; padding: 16px; border-radius: var(--r); background: var(--fill-2); }
+.stream-entry > svg { margin-top: 2px; color: var(--label-2); }
+.stream-entry label { display: grid; gap: 2px; }
+.stream-entry label span { font-size: 14px; color: var(--label-2); }
+.stream-entry-row { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 8px; }
+.stream-entry-row input { min-width: 0; font-size: 20px; font-family: var(--font-mono); letter-spacing: .12em; text-align: center; }
+
+.stream-show { display: grid; gap: 16px; justify-items: center; }
+.stream-show .back-link { justify-self: start; }
+.stream-card { width: min(100%, 560px); display: grid; gap: 14px; padding: 28px; border-radius: var(--r); background: var(--clay); color: #fff; text-align: center; }
+.stream-card .poster-top { color: rgba(255,255,255,.82); }
+.stream-card .poster-top span { display: inline-flex; align-items: center; gap: 6px; }
+.stream-card h2 { font-size: 24px; line-height: 1.2; }
+.stream-how { color: rgba(255,255,255,.82); font-size: 15px; }
+.stream-code { font-family: var(--font-mono); font-size: clamp(56px, 14vw, 104px); line-height: 1; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.stream-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); overflow: hidden; }
+.stream-bar i { display: block; height: 100%; background: #fff; transition: width 1s linear; }
+.stream-left { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,.72); }
+
+/* Admin: set an event's place on a map (staff Posters) */
+.place-sheet { max-width: 640px; display: grid; gap: 12px; padding: 20px 20px calc(16px + env(safe-area-inset-bottom)); }
+.place-head { display: grid; gap: 2px; padding-right: 40px; }
+.place-head h2 { font-size: 20px; line-height: 1.2; }
+.place-search { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 4px 4px 4px 12px; border-radius: var(--r); background: var(--fill-2); }
+.place-search > svg { color: var(--label-2); }
+.place-search input { min-width: 0; height: 40px; border: 0; background: transparent; color: var(--label); font-size: 16px; outline: none; }
+.place-hits { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 180px; overflow: auto; }
+.place-hits button { width: 100%; text-align: left; padding: 10px 12px; border: 0; border-radius: var(--r); background: transparent; color: var(--label); font-size: 14px; line-height: 1.3; }
+.place-hits button:hover, .place-hits button:focus-visible { background: var(--fill-2); }
+.place-map { height: min(52dvh, 420px); border-radius: var(--r); overflow: hidden; background: var(--fill-2); z-index: 0; }
+.place-hint { font-size: 13px; color: var(--label-2); }
+.place-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ev-place .btn + .btn { margin-top: 0; }
+.ev-place .btn svg { vertical-align: -3px; margin-right: 4px; }
+
+/* UBBW map (components/map/brandMap.ts): dark tiles tinted to the app navy */
+.brand-map.leaflet-container { background: #b9b9bb; font: inherit; }
+/* monochrome soft grey: street map without colour, low contrast, slightly dimmed */
+.brand-map .leaflet-tile-pane { filter: grayscale(1) contrast(.72) brightness(.86); }
+.brand-map .leaflet-control-zoom { border: 0; border-radius: var(--r); overflow: hidden; box-shadow: none; margin: 0 10px 10px 0; }
+.brand-map .leaflet-control-zoom a { width: 36px; height: 36px; line-height: 36px; border: 0; background: rgba(255, 255, 255, .82); color: #2a2a2e; font-size: 18px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.brand-map .leaflet-control-zoom a + a { border-top: 1px solid rgba(0,0,0,.08); }
+.brand-map .leaflet-control-zoom a:hover { background: #fff; }
+.brand-map .leaflet-control-zoom a.leaflet-disabled { color: rgba(0,0,0,.25); background: rgba(255, 255, 255, .82); }
+.brand-map.leaflet-container .leaflet-control-attribution { margin: 0 0 6px 8px; padding: 0; background: none; color: rgba(0,0,0,.45); font-size: 10px; }
+.brand-map.leaflet-container .leaflet-control-attribution a { color: inherit; }
+.bm-pin { width: 24px; height: 24px; border-radius: 50%; background: var(--clay); border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.5); cursor: grab; }
+.bm-pin.is-labelled { width: auto !important; height: auto !important; display: inline-flex; align-items: center; gap: 8px; padding: 0; background: none; border: 0; box-shadow: none; cursor: pointer; }
+.bm-pin.is-labelled i { width: 24px; height: 24px; flex: none; border-radius: 50%; background: var(--clay); border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+.bm-pin.is-labelled span { padding: 4px 10px; border-radius: var(--r); background: rgba(10, 16, 64, .88); color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; }
+
+/* Agenda: where each event is → map sheet with directions */
+.mini-place { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin-top: 6px; padding: 6px 10px 6px 8px; border: 0; border-radius: var(--r); background: var(--fill-2); color: var(--label); font: inherit; font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; }
+.mini-place > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-place svg { flex: none; color: var(--label-2); }
+.mini-place em { font-style: normal; font-weight: 400; color: var(--label-2); white-space: nowrap; }
+.mini-place:hover { background: color-mix(in srgb, var(--fill-2) 100%, #fff 6%); }
+.mini-place.is-static { background: none; padding: 0; cursor: default; font-weight: 400; color: var(--label-2); }
+.mini > div > .mini-place { display: flex; width: fit-content; }
+.where-sheet { max-width: 560px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+.where-sheet .sheet-x { z-index: 1000; background: rgba(255,255,255,.92); color: #1c1c1e; }
+.where-map { height: min(46dvh, 340px); border-radius: var(--r) var(--r) 0 0; }
+.where-body { display: grid; gap: 6px; padding: 18px 20px 0; }
+.where-body h2 { font-size: 22px; line-height: 1.2; }
+.where-for { font-size: 14px; color: var(--label-2); }
+.where-far { font-size: 15px; color: var(--label-2); }
+.where-far b { color: var(--label); }
+.where-locate { display: inline-flex; align-items: center; gap: 6px; justify-self: start; text-decoration: none; color: var(--label); font-weight: 600; font-size: 15px; }
+.where-actions { display: grid; gap: 8px; margin-top: 10px; }
+.where-actions.is-two { grid-template-columns: 1fr 1fr; }
+.where-actions .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.bm-me { width: 16px; height: 16px; border-radius: 50%; background: #1c1c1e; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.mini .mini-place > span { color: var(--label); }
