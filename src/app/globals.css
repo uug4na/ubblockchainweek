@@ -655,6 +655,47 @@ em { font-style: normal; color: var(--clay-deep); }
 .pstats a { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 10px; text-align: center; }
 .pstats b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1; color: var(--clay-deep); }
 .pstats span { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+/* Profile → Achievements: each a medal. Earned: brass ring round brand green. Locked: grey with a small lock.
+   Tap one for the 3D medal and its details. */
+.ach { margin: 0 0 16px; }
+.ach h2 { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 10px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--label-2); }
+.ach h2 small { font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: none; }
+.ach ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ach li { display: contents; }
+.ach li > button { position: relative; display: grid; justify-items: center; align-content: start; gap: 3px; width: 100%; padding: 16px 8px 14px; border: 0; border-radius: var(--r); background: var(--cell); box-shadow: inset 0 0 0 .5px var(--cell-edge); color: inherit; font: inherit; text-align: center; cursor: pointer; overflow: hidden; transition: transform .2s var(--ease-out); }
+.ach li > button:active { transform: scale(.97); }
+.ach-medal { position: relative; display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 8px; border-radius: 50%; background: var(--cell-2); color: var(--label-2); box-shadow: inset 0 0 0 3px #6f7685, inset 0 0 0 6px var(--cell-2), inset 0 0 0 7px rgba(255, 255, 255, .08); }
+.is-done > .ach-medal { background: var(--green); color: #0a1446; box-shadow: inset 0 0 0 3px #e2b85c, inset 0 0 0 5px #a77b2c; }
+.ach-lock { position: absolute; right: -2px; bottom: -2px; padding: 3px; width: 19px; height: 19px; border-radius: 50%; background: var(--cell); color: var(--label-2); box-shadow: 0 0 0 .5px var(--cell-edge); }
+.ach li b { font-size: 14px; font-weight: 700; line-height: 1.15; }
+.ach li small { font-size: 12px; color: var(--label-2); line-height: 1.25; }
+.ach li > button:not(.is-done) b { color: var(--label-2); }
+.ach-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p) * 100%); background: var(--green); }
+@media (max-width: 560px) {
+  .ach ul { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ach li > button { padding: 14px 4px 12px; }
+  .ach-medal { width: 46px; height: 46px; }
+  .ach li b { font-size: 13px; }
+  .ach li small { font-size: 11px; }
+}
+
+/* the medal sheet */
+.ach-sheet { max-width: 440px; }
+.ach-stage { display: grid; justify-items: center; gap: 2px; padding: 34px 0 6px; background: var(--cell-2); }
+.ach-stage small { font-size: 11px; color: var(--label-2); letter-spacing: .04em; }
+.medal3d { touch-action: pan-y; cursor: grab; }
+.medal3d:active { cursor: grabbing; }
+.ach-body { padding: 18px 20px 4px; }
+.ach-state { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: var(--r); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: var(--cell-2); color: var(--label-2); }
+.ach-state.is-done { background: var(--green); color: var(--navy); }
+.ach-body h2 { margin: 12px 0 6px; font-family: var(--font-display); font-size: 26px; line-height: 1.1; text-transform: none; letter-spacing: -.01em; }
+.ach-body > p { margin: 0 0 14px; color: var(--label-2); font-size: 15px; line-height: 1.45; }
+.ach-progress { height: 6px; margin: 0 0 16px; border-radius: 3px; background: var(--cell-2); overflow: hidden; }
+.ach-progress span { display: block; height: 100%; width: calc(var(--p) * 100%); background: var(--green); }
+.ach-body dl { margin: 0 0 16px; display: grid; gap: 12px; }
+.ach-body dl > div { padding-top: 12px; border-top: .5px solid var(--sep); }
+.ach-body dt { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--label-2); margin-bottom: 3px; }
+.ach-body dd { margin: 0; font-size: 14px; line-height: 1.45; }
 .account { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .account b { display: block; }
 .account span { font-size: 14px; }
@@ -1909,6 +1950,12 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 .bc-tags { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .bc-tags li { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px 5px 7px; border-radius: var(--r); font-size: 13px; font-weight: 600; background: rgba(1, 13, 88, .38); }
 .bc-tags li::before { content: ""; width: 10px; height: 10px; background: var(--c); }
+/* who they are, under the pixel field: the main badge in brand green, the rest in white */
+.bc-kind { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 18px 0 0; padding: 0; list-style: none; }
+.bc-kind li { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .86); }
+.bc-kind li:first-child { color: var(--green); }
+.bc-kind + .bc-name, .app-main .bc-kind + .bc-name { margin-top: 8px; }
+.setup-pass .bc-kind { display: none; }
 .bc-links { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
 .bc-links a { display: grid; gap: 1px; min-width: 0; text-decoration: none; color: #fff; }
 .bc-links small { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .6); }
@@ -3415,7 +3462,10 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
   .app-tabs::before { top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--n, 5)); }
   .app-tabs a { gap: 2px; padding: 4px 0; font-size: 10px; }
   .app-tabs a svg { width: 20px; height: 20px; }
-  .app-tabs .tab-scan .tab-icon { width: 44px; height: 44px; margin-top: -18px; }
+  /* Scan: was a 44 px circle raised 18 px out of the bar, with its label below the others. Now a 30 px circle inside
+     the bar, centred on the same line as the other icons (-5 px top and bottom so it takes a 20 px icon's room). */
+  .app-tabs .tab-scan .tab-icon { width: 30px; height: 30px; margin: -5px 0; }
+  .app-tabs .tab-scan .tab-icon svg { width: 18px; height: 18px; }
 }
 /* the bar is 60 px + 10 px off the bottom now: end the page 16 px above it (chat keeps its own fit) */
 @media (max-width: 860px) {
@@ -3581,6 +3631,9 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
   .desk.is-profile .profile-head > :first-child { margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); max-width: none; border-radius: 0; }
   .desk.is-profile .pstats { margin: 0 20px; }
   .desk.is-profile .pstats a { background: var(--cell-2); }
+  .desk.is-profile .ach { margin: 16px 20px 0; }
+  .desk.is-profile .ach li > button { background: var(--cell-2); }
+  .desk.is-profile .ach li > button:not(.is-done) .ach-medal { background: var(--cell); box-shadow: inset 0 0 0 3px #6f7685, inset 0 0 0 6px var(--cell); }
   .desk-rail .row-passport small { display: none; }
   .desk.is-profile .desk-rail .row-passport small { display: block; }
 

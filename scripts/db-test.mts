@@ -143,11 +143,18 @@ try {
   const fm = await rpc(U, "app_chat_send", { pass: fc.user.id, body: "Hi crew" });
   ok("attendee messages featured crew without meeting", fm.data?.body === "Hi crew", fm.error);
   const fcv = (await rpc(FC, "app_chats")).data;
-  const row = fcv?.threads?.find((t: any) => t.id === me.user.id);
-  ok("featured crew sees the attendee's thread, unread", row?.unread === 1 && row?.last?.body === "Hi crew");
+  const frow = fcv?.threads?.find((t: any) => t.id === me.user.id);
+  ok("featured crew sees the attendee's thread, unread", frow?.unread === 1 && frow?.last?.body === "Hi crew");
   ok("featured crew can reply", !(await rpc(FC, "app_chat_send", { pass: me.user.id, body: "Hello!" })).error);
   ok("it isn't a connection (network unchanged)", (await rpc(U, "app_chats")).data.network === net0);
   ok("two attendees who haven't met still need Proof of Meet", (await rpc(F, "app_chat_send", { pass: me.user.id, body: "x" })).error?.includes("Proof of Meet") ?? false);
+  // 0052: badges on the Passport and achievements on Profile
+  console.log("badges");
+  const bd = (await rpc(U, "app_badges")).data;
+  ok("own badges: all five facts", bd && typeof bd.speaker === "boolean" && typeof bd.crew === "boolean" && typeof bd.research === "boolean" && typeof bd.events === "number" && "hack" in bd, bd);
+  ok("featured crew shows as Crew", (await rpc(FC, "app_badges")).data?.crew === (await db.query("select 1 from ubbw.crew where email = $1 and active", [fc.user.email])).rowCount! > 0);
+  const pub = (await F.rpc("card_view", { pass_code: me.user.id })).data as any;
+  ok("public card carries badges, without dates, events capped at 5", !!pub?.badges && !("at" in pub.badges) && pub.badges.events <= 5, pub?.badges);
 
   ok("volunteer can't award", (await rpc(V, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 50, reason: "x" } })).error?.includes("lead") ?? false);
   ok("lead capped at ±100", (await rpc(L, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 200, reason: "x" } })).error?.includes("100") ?? false);

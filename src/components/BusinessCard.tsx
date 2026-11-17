@@ -10,8 +10,11 @@ import { QrCode } from "@/components/QrCode";
 import { Logo } from "@/components/Toono";
 import { networks, type Socials } from "@/lib/socials";
 import { days, site } from "@/data/site";
+import { earned, type Badges } from "@/data/badges";
 
-export type CardPerson = { id: string; name: string; about: string; interests: string[]; socials?: Socials };
+// badges: what kind of participant they are (speaker, crew, hacker, researcher, 5+ events; otherwise Attendee).
+// Left out where the card is shown without them (e.g. a contact in Messages).
+export type CardPerson = { id: string; name: string; about: string; interests: string[]; socials?: Socials; badges?: Badges | null };
 
 // "30 Nov – 5 Dec 2026", for the ticket stub
 const first = days[0], last = days[days.length - 1];
@@ -65,6 +68,11 @@ export function BusinessCard({ person: u, qr, checkedIn }: { person: CardPerson;
               style={{ fill: p.c < 0 ? "rgba(255, 255, 255, .14)" : COLORS[p.c] }} />
           ))}
         </svg>
+        {u.badges && (
+          <ul className="bc-kind" aria-label="Participant">
+            {earned(u.badges).map((b) => <li key={b.id}><b.icon size={13} strokeWidth={2.4} aria-hidden="true" />{b.label}</li>)}
+          </ul>
+        )}
         <h2 className="bc-name">{u.name}</h2>
         {u.about && <p className="bc-about">{u.about}</p>}
         {tags.length > 0 && (
