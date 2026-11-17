@@ -39,8 +39,8 @@ function QuizCard({ onSoon }: { onSoon?: () => void }) {
       <Link href="/app/games/quiz" className="quiz-card" onClick={(e) => { e.preventDefault(); onSoon(); }}>
         <span className="quiz-card-icon"><Zap size={24} fill="currentColor" /></span>
         <span className="game-text">
-          <b>Quiz Rush</b>
-          <span>Coming soon</span>
+          <b>Quiz Rush<span className="soon-tag">Coming soon</span></b>
+          <span className="is-desc">Answer fast, win stars</span>
         </span>
         <ChevronRight size={20} className="game-go" />
       </Link>

@@ -25,7 +25,7 @@ export function SoonSheet({ title, tone, onClose }: { title: string; tone: strin
     <div className="sheet-wrap" onClick={onClose}>
       <div className="sheet games-soon" role="dialog" aria-label={`${title}: coming soon`} onClick={(e) => e.stopPropagation()}>
         <button className="icon-btn sheet-x" aria-label="Close" onClick={onClose}><X size={16} /></button>
-        <span className="stars-soon-ico" style={{ background: tone }} aria-hidden><Dices size={26} /></span>
+        <span className="stars-soon-ico" style={{ ["--face" as string]: tone }} aria-hidden><Dices size={26} /></span>
         <small>{title}</small>
         <h2>Coming soon</h2>
         <p className="muted">{LINE}</p>

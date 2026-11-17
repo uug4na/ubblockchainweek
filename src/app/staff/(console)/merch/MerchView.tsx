@@ -240,7 +240,7 @@ export function MerchView() {
 
       <Link href={`/staff/scan?station=${tab === "seats" ? "seats" : "merch"}`} className="scan-cta">
         <ScanLine size={26} />
-        <span>Scan a pass<small>{tab === "seats" ? `${sum(seatItems, data?.waiting)} booked · ${sum(seatItems, data?.collected)} in` : `${sum(merchItems, data?.waiting)} waiting · ${sum(merchItems, data?.collected)} handed out`}</small></span>
+        <span>Scan a Passport<small>{tab === "seats" ? `${sum(seatItems, data?.waiting)} booked · ${sum(seatItems, data?.collected)} in` : `${sum(merchItems, data?.waiting)} waiting · ${sum(merchItems, data?.collected)} handed out`}</small></span>
       </Link>
 
       {added && (

@@ -3379,3 +3379,191 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
   .setup-intro { gap: 10px; }
   .setup-intro .setup-uses span { font-size: 14px; }
 }
+
+/* Home: Research conference is its own block, not stuck to the Agenda panel below it */
+.home-compete { margin-bottom: 16px; }
+
+/* Phone tab bar, compact: 69 → about 56 px tall, smaller Scan button */
+@media (max-width: 860px) {
+  .app-tabs { padding: 4px; }
+  .app-tabs::before { top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--n, 5)); }
+  .app-tabs a { gap: 2px; padding: 4px 0; font-size: 10px; }
+  .app-tabs a svg { width: 20px; height: 20px; }
+  .app-tabs .tab-scan .tab-icon { width: 44px; height: 44px; margin-top: -18px; }
+}
+/* the bar is 60 px + 10 px off the bottom now: end the page 16 px above it (chat keeps its own fit) */
+@media (max-width: 860px) {
+  .app-main:not(:has(.chat-compose)):not(:has(.auth-stage)) { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+}
+
+/* ── Header star balance (AppShell TopStars): 8-bit lime star on a frosted pill, mono number ── */
+.top-stars { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 4px; border-radius: var(--r); color: #fff; text-decoration: none;
+  background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .18);
+  -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%); transition: transform .35s var(--spring); }
+.top-stars:active { transform: scale(.94); }
+.top-stars b { font-family: var(--font-mono); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; line-height: 1; font-variant-numeric: tabular-nums; }
+.top-stars-star { width: 34px; height: 34px; margin: -1px -2px 0 0; }
+.top-stars .pixel-spark { display: none; }
+.top-stars.is-bump .top-stars-star { animation: top-star-pop .6s var(--spring); }
+@keyframes top-star-pop { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.35) rotate(-14deg); } 100% { transform: scale(1) rotate(0); } }
+[data-theme="light"] .top-stars { color: var(--label); background: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12); }
+@media (prefers-reduced-motion: reduce) { .top-stars.is-bump .top-stars-star { animation: none; } }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .top-stars { color: var(--label); background: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12); } }
+/* the sliding glass selection: smooth ease-out, no overshoot, so a long move (Home → Profile) never leaves the bar */
+@media (max-width: 860px) { .app-tabs::before { transition: transform .42s var(--ease-out), opacity .2s; } }
+
+/* ── Audit fixes (2026-11-17) ── */
+/* every sliding selection eases out with no overshoot, so none leaves its bar on a long move */
+.side-pick::before, .station-pick::before, .seg-ctl::before { transition: transform .38s var(--ease-out); }
+.rewards-switch::before { transition: transform .42s var(--ease-out); }
+@media (max-width: 860px) { .staff-tabs::before { transition: transform .42s var(--ease-out), opacity .2s; } }
+@media (prefers-reduced-motion: reduce) { .app-tabs::before, .staff-tabs::before, .side-pick::before, .station-pick::before, .seg-ctl::before, .rewards-switch::before { transition: none; } }
+/* Passport row: the code doesn't fit next to the name on phones (it's on the Passport itself) */
+@media (max-width: 430px) { .row-passport small { display: none; } }
+/* lime camera icon on a white scanner card was 1.2:1; neutral in light mode */
+[data-theme="light"] .scan-idle > svg { color: var(--label-2); }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .scan-idle > svg { color: var(--label-2); } }
+/* staff notice edit / clear links: readable */
+.notice .link-btn { color: var(--label-2); font-size: 14px; font-weight: 500; }
+/* Quiz Rush while closed: its description reads like the other games' (not the live countdown's mono caps) */
+.quiz-card .game-text > .is-desc { font-family: var(--font-body); text-transform: none; letter-spacing: 0; }
+
+
+/* ── Icon boxes: brand pixel blocks (2026-11-17) ──
+   Every coloured icon box (settings rows .tile, Home shortcuts, staff More .more-tile, Coming soon icons)
+   is one solid block: a flat brand-colour face and a hard 3px depth step in a darker shade of the same
+   colour, like the voxel star. No glow, no sheen, no outline. Square-ended strokes to match the pixels.
+   Pressing pushes the block down into its depth. */
+.tile, .more-tile, .quick a svg, .stars-soon-ico { --face: var(--klein); --glyph: #fff; }
+.t-klein, .more-tile.t-blue { --face: #2945d5; }
+.t-fushia, .more-tile.t-magenta { --face: #d415ea; }
+.t-aqua, .more-tile.t-cyan { --face: #13effd; --glyph: #010d58; }
+.t-citric, .more-tile.t-lime { --face: #c6fc1f; --glyph: #010d58; }
+.more-tile.t-green { --face: #01fe6d; --glyph: #010d58; }
+.more-tile.t-violet { --face: #9a4cf4; }
+.more-tile.t-orange, .t-red { --face: #ff4d3d; }
+.t-gray, .more-tile.t-gray { --face: #5b6190; }
+.quick a:nth-child(1) svg { --face: #2945d5; }
+.quick a:nth-child(2) svg { --face: #c6fc1f; --glyph: #010d58; }
+.quick a:nth-child(3) svg { --face: #d415ea; }
+.quick a:nth-child(4) svg { --face: #9a4cf4; }
+.tile, .more-tile, .quick a svg, .stars-soon-ico {
+  background: var(--face); color: var(--glyph); border-radius: 3px;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--face) 48%, #000);
+  transition: transform .12s var(--ease-out), box-shadow .12s var(--ease-out);
+}
+.quick a:nth-child(n) svg { background: var(--face); color: var(--glyph); }
+.tile svg, .more-tile svg, .stars-soon-ico svg, .quick a svg { stroke-width: 2.3; stroke-linecap: square; stroke-linejoin: miter; }
+.stars-soon-ico { border-radius: 4px; }
+.games-soon .stars-soon-ico { color: var(--glyph); }
+/* press: the block sinks into its depth */
+:is(a, button):active > :is(.tile, .more-tile, .stars-soon-ico), .quick a:active svg, :is(a, button):active .more-tile {
+  transform: translate(3px, 3px); box-shadow: 0 0 0 color-mix(in srgb, var(--face) 48%, #000);
+}
+@media (prefers-reduced-motion: reduce) { .tile, .more-tile, .quick a svg, .stars-soon-ico { transition: none; } }
+/* the older .more-tile.t-* rules set background directly; the block face wins */
+.more-tile.more-tile { background: var(--face); color: var(--glyph); }
+
+
+/* ── Desktop for PC users (2026-11-17, v2): hackathon and research participants work on laptops ──
+   Sidebar grouped by task with the person at the bottom; pages get a main column + right rail from 1100px.
+   Below 1100px the .desk wrappers are display: contents, so phones and tablets lay out exactly as before. */
+.desk, .desk-main, .desk-rail { display: contents; }
+@media (max-width: 1099px) {
+  .desk-rail + .desk-main > .panel:first-child, .desk-main + .desk-rail > .panel:first-child { margin-top: 16px; }
+  .desk-rail.is-low > .rs-limits:first-child { margin-top: 16px; }
+}
+
+/* Sidebar (it only exists from 861px) */
+@media (min-width: 861px) {
+  .app-shell { grid-template-columns: 256px minmax(0, 1fr); }
+  .app-side { padding: 20px 12px 14px; gap: 22px; overflow-y: auto; }
+  .side-logo { padding: 2px 10px 0; }
+  .app-nav { gap: 20px; }
+  .side-group { display: grid; gap: 2px; }
+  .side-group-label { padding: 0 12px 6px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label-3); }
+  .app-nav a { gap: 12px; padding: 9px 12px; font-size: 15px; font-weight: 500; color: var(--label-2); transition: background-color .15s, color .15s; }
+  .app-nav a:hover { background: var(--fill-2, var(--fill)); color: var(--label); }
+  .app-nav a.is-active { background: var(--fill); color: var(--label); font-weight: 600; }
+  .app-nav a.is-active svg { color: var(--accent); }
+  .app-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .app-side-foot { margin-top: auto; display: grid; gap: 6px; font-size: 13px; }
+  .side-me { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px; border-radius: var(--r); background: var(--fill-2, var(--fill)); color: var(--label); transition: background-color .15s; }
+  .side-me:hover { background: var(--fill); }
+  .side-me .avatar, .side-me canvas, .side-me > :first-child { width: 36px; height: 36px; }
+  .side-me > span:not(.side-me-stars) { display: grid; min-width: 0; }
+  .side-me b { overflow: hidden; font-size: 14px; font-weight: 600; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis; }
+  .side-me small { font-family: var(--font-mono); font-size: 11.5px; color: var(--label-2); }
+  .side-me-stars { display: inline-flex; align-items: center; gap: 2px; }
+  .side-me-stars .top-stars-star { width: 26px; height: 26px; margin: 0 -2px 0 0; }
+  .app-side-foot .side-me, .app-side-foot .side-me b { color: var(--label); }
+  .app-side-foot .side-me-stars b { color: var(--star-text); }
+  .side-me-stars .pixel-spark { display: none; }
+  .side-me-stars b { font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .side-site { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; color: var(--label-2); font-weight: 500; }
+  .side-site:hover { color: var(--label); }
+}
+
+@media (min-width: 1100px) {
+  .app-main { padding: 36px 44px 96px; }
+  .app-inner { max-width: 1180px; margin: 0 auto; }
+  /* page head: laptop scale, not poster scale */
+  .app-main .app-h1 { font-size: 38px; margin: 0 0 6px; }
+  .app-main .app-sub { margin-bottom: 24px; }
+  .app-main .home-h1 { margin-bottom: 20px; }
+
+  .desk { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: auto 1fr; column-gap: 24px; align-items: start; }
+  .desk-main, .desk-rail { display: block; min-width: 0; }
+  .desk-main { grid-column: 1; grid-row: 1 / span 2; }
+  .desk-rail { grid-column: 2; grid-row: 1; }
+  .desk-rail.is-low { grid-row: 2; margin-top: 16px; }
+  .desk-rail.is-sticky { position: sticky; top: 24px; }
+  .desk-main > :first-child, .desk-rail > :first-child { margin-top: 0; }
+
+  /* Home: countdown full width; check-in + agenda left; shortcuts list + competitions right */
+  .desk.is-home { margin-top: 16px; }
+  .desk.is-home > .desk-main { grid-row: 1; }
+  .desk.is-home > .desk-main.is-low { grid-row: 2; margin-top: 16px; }
+  .desk.is-home > .desk-rail { grid-row: 1 / span 2; }
+  .desk-rail .quick { grid-template-columns: 1fr; gap: 8px; margin: 0 0 16px; }
+  .desk-rail .quick a { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px; padding: 12px 14px; }
+  .desk-rail .home-compete { margin-top: 0; }
+
+  /* Forms on PC: one card, fields paired where they belong together */
+  .desk-main .hk-form { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 20px; padding: 28px; border-radius: var(--r); background: var(--cell); }
+  .desk-main .hk-form > * { grid-column: 1 / -1; min-width: 0; }
+  .rs-form > :is(:nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6)) { grid-column: auto; }
+  .hk-pform > :is(:nth-child(1), :nth-child(2), :nth-child(5), :nth-child(6)) { grid-column: auto; }
+  .desk-main .hk-form .rs-levels { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .desk-main .hk-form > .btn { justify-self: start; width: auto; min-width: 220px; }
+  .desk-main .hk-form textarea { min-height: 180px; }
+
+  /* Research rail: the limits as a 2 × 2 */
+  .desk-rail .rs-limits { grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+  .desk-rail .rs-limits li { gap: 4px; padding: 16px; background: var(--cell); }
+  .desk-rail .rs-limits b { font-size: 22px; }
+  .desk-rail .rs-limits span { font-size: 13px; }
+
+  /* Hackathon: the files list lives in the rail */
+  .desk-rail .hk-sec { margin-top: 0; }
+
+  /* Profile: one identity card left, settings right */
+  .desk.is-profile { grid-template-columns: 380px minmax(0, 1fr); }
+  .desk.is-profile > .desk-main { grid-column: 1; position: sticky; top: 24px; padding-bottom: 20px; overflow: hidden; border-radius: var(--r); background: var(--cell); }
+  .desk.is-profile > .desk-rail { grid-column: 2; grid-row: 1 / span 2; }
+  .desk.is-profile .profile-head { margin: 0 0 16px; padding: 0 20px; }
+  .desk.is-profile .profile-head > :first-child { margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); max-width: none; border-radius: 0; }
+  .desk.is-profile .pstats { margin: 0 20px; }
+  .desk.is-profile .pstats a { background: var(--cell-2); }
+  .desk-rail .row-passport small { display: none; }
+  .desk.is-profile .desk-rail .row-passport small { display: block; }
+
+  /* Agenda: day cards flow in columns, no holes */
+  .agenda-days { columns: 2; column-gap: 16px; }
+  .agenda-days > .panel { break-inside: avoid; margin: 0 0 16px; }
+}
+@media (min-width: 1500px) {
+  .app-inner { max-width: 1280px; }
+  .desk { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 28px; }
+  .agenda-days { columns: 3; }
+}

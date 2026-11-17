@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, CalendarDays, ScanLine, Star, Gift, UserRound, Dices, Trophy, GraduationCap } from "lucide-react";
+import { Home, CalendarDays, ScanLine, Star, Gift, UserRound, Dices, Trophy, GraduationCap, MessageCircle, ArrowUpRight } from "lucide-react";
+import { PixelAvatar } from "./ProfileArt";
 import { Logo } from "./Toono";
+import { PixelStar } from "./PixelStar";
 import { OfflineBar } from "./Pwa";
 import { MeetPrompt } from "./MeetPrompt";
 import { QuizPrompt } from "./Quiz";
 import { useMe } from "@/lib/me";
-import { site } from "@/data/site";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import { AppTour } from "./AppTour";
 import { PassportSetup } from "./PassportSetup";
@@ -18,16 +19,26 @@ import { PassportSetup } from "./PassportSetup";
 const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/games": "stars", "/app/profile": "profile" };
 import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 
+// PC sidebar, grouped by what people come to do (hackathon and research participants work on laptops)
 const side = [
-  { href: "/app", label: "Home", icon: Home },
-  { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/app/scan", label: "Scan", icon: ScanLine },
-  ...(STARS_OPEN ? [{ href: "/app/stars", label: "Earn stars", icon: Star }] : []),
-  { href: "/app/games", label: "Games", icon: Dices },
-  ...(MERCH_OPEN ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
-  ...(HACK_SECTION_OPEN ? [{ href: "/app/hack", label: "Hackathon", icon: Trophy }] : []),
-  { href: "/app/research", label: "Research", icon: GraduationCap },
-  { href: "/app/profile", label: "Profile & Passport", icon: UserRound },
+  { group: "The week", items: [
+    { href: "/app", label: "Home", icon: Home },
+    { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
+    { href: "/app/scan", label: "Scan", icon: ScanLine },
+  ] },
+  { group: "Compete", items: [
+    ...(HACK_SECTION_OPEN ? [{ href: "/app/hack", label: "Hackathon", icon: Trophy }] : []),
+    { href: "/app/research", label: "Research", icon: GraduationCap },
+  ] },
+  { group: "Stars", items: [
+    ...(STARS_OPEN ? [{ href: "/app/stars", label: "Earn stars", icon: Star }] : []),
+    { href: "/app/games", label: "Games", icon: Dices },
+    ...(MERCH_OPEN ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
+  ] },
+  { group: "You", items: [
+    { href: "/app/chat", label: "Messages", icon: MessageCircle },
+    { href: "/app/profile", label: "Profile & Passport", icon: UserRound },
+  ] },
 ];
 
 const tabs = [
@@ -61,6 +72,23 @@ function useScrolled(px = 36) {
   return on;
 }
 
+// The header's star balance: the app's 8-bit star on a frosted pill, number in mono.
+// It pops once when the balance goes up; otherwise it stays still.
+function TopStars({ n, href }: { n: number; href: string }) {
+  const last = useRef(n);
+  const [bump, setBump] = useState(false);
+  useEffect(() => {
+    if (n > last.current) setBump(true);
+    last.current = n;
+  }, [n]);
+  return (
+    <Link href={href} className={`top-stars ${bump ? "is-bump" : ""}`} aria-label={`${n} stars`} onAnimationEnd={() => setBump(false)}>
+      <PixelStar className="top-stars-star" />
+      <b>{n.toLocaleString()}</b>
+    </Link>
+  );
+}
+
 export function StarChip({ n }: { n: number }) {
   return (
     <span className="star-chip" aria-label={`${n} stars`}>
@@ -81,25 +109,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className={`app-shell ${game ? "is-game" : ""}`}>
       <aside className="app-side">
-        <Link href="/app"><Logo /></Link>
-        {me && (
-          <Link href="/app/stars" className="side-balance">
-            <span>Your stars</span>
-            <StarChip n={me.balance} />
-          </Link>
-        )}
+        <Link href="/app" className="side-logo"><Logo /></Link>
         <nav className="app-nav" aria-label="App">
-          {side.map((t) => (
-            <Link key={t.href} href={t.href} data-tour={tourKey[t.href]} className={isActive(t.href) ? "is-active" : undefined}>
-              <t.icon size={18} />
-              {t.label}
-            </Link>
+          {side.filter((g) => g.items.length).map((g) => (
+            <div className="side-group" key={g.group}>
+              <span className="side-group-label">{g.group}</span>
+              {g.items.map((t) => (
+                <Link key={t.href} href={t.href} data-tour={tourKey[t.href]} className={isActive(t.href) ? "is-active" : undefined} aria-current={isActive(t.href) ? "page" : undefined}>
+                  <t.icon size={18} />
+                  {t.label}
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="app-side-foot">
-          <span>{site.dates}</span>
-          <span>{site.city}, {site.country}</span>
-          <Link href="/">← Back to the website</Link>
+          {me && (
+            <Link href="/app/profile" className="side-me">
+              <PixelAvatar seed={me.user.id} size={36} className="is-small" />
+              <span><b>{me.user.name || "Your profile"}</b><small>{me.user.id}</small></span>
+              <span className="side-me-stars" aria-label={`${me.balance} stars`}><PixelStar className="top-stars-star" /><b>{me.balance.toLocaleString()}</b></span>
+            </Link>
+          )}
+          <Link href="/" className="side-site">UB Blockchain Week site <ArrowUpRight size={14} /></Link>
         </div>
       </aside>
 
@@ -109,7 +141,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="app-top-end">
           {me ? (
             <>
-              <Link href="/app/stars"><StarChip n={me.balance} /></Link>
+              <TopStars n={me.balance} href={STARS_OPEN ? "/app/stars" : "/app/games"} />
             </>
           ) : (
             <Link href="/" className="back">Website</Link>

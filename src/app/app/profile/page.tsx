@@ -149,6 +149,8 @@ export default function ProfilePage() {
       {notice && <p className="float-note" role="status"><Check size={16} /> {notice}</p>}
       {me.inToday && <InPass name={u.name} pass={u.id} since={me.inToday} />}
 
+      <div className="desk is-profile">
+      <div className="desk-main">
       <header className="profile-head has-cover">
         <ProfileCover seed={u.id} />
         <PixelAvatar seed={u.id} size={92} />
@@ -165,9 +167,11 @@ export default function ProfilePage() {
         <Link href="/app/stars"><b>{tasksDone}</b><span>Tasks</span></Link>
         <Link href="/app/merch"><b>{me.claims.filter((c) => c.status !== "cancelled" && c.source !== "seat").length}</b><span>Merch</span></Link>
       </div>
+      </div>
 
+      <div className="desk-rail">
       <nav className="settings-group">
-        <button onClick={() => setView("pass")}><i className="tile t-klein"><QrCodeIcon size={18} /></i><span>UB Blockchain Passport</span><small>{u.id}</small><ChevronRight size={18} /></button>
+        <button className="row-passport" onClick={() => setView("pass")}><i className="tile t-klein"><QrCodeIcon size={18} /></i><span>UB Blockchain Passport</span><small>{u.id}</small><ChevronRight size={18} /></button>
         <button onClick={() => router.push("/app/chat")}><i className="tile t-klein"><MessageCircle size={18} /></i><span>Messages</span>{net && msgUnread(net) > 0 ? <span className="chat-badge">{msgUnread(net)}</span> : <small>{net?.network ?? ""}</small>}<ChevronRight size={18} /></button>
         <button onClick={() => setView("edit")}><i className="tile t-fushia"><UserRound size={18} /></i><span>Edit profile</span><ChevronRight size={18} /></button>
       </nav>
@@ -188,6 +192,8 @@ export default function ProfilePage() {
         >
           <i className="tile t-red"><LogOut size={18} /></i><span>Sign out</span>
         </button>
+      </div>
+      </div>
       </div>
     </>
   );

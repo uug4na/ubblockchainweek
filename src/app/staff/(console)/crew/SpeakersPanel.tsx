@@ -70,7 +70,7 @@ export function SpeakersPanel() {
             ) : (
               <div className="cw-head is-static">
                 <span className="att-avatar cw-av" style={{ ["--h" as string]: 280 }}><Mic size={16} /></span>
-                <span className="cw-who"><b>{s.name}</b><small>{s.email}</small><small>{s.joined ? "Has a pass" : "No pass yet"}</small></span>
+                <span className="cw-who"><b>{s.name}</b><small>{s.email}</small><small>{s.joined ? "Has a Passport" : "No Passport yet"}</small></span>
                 <button className="btn btn-ghost cw-remove cw-x" onClick={() => setRemoving(s.email)}>Remove</button>
               </div>
             )}
