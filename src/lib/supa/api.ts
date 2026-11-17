@@ -83,7 +83,9 @@ export async function callApi(input: string, init: RequestInit = {}): Promise<Re
     if (s.kind === "entry") return rpc("app_enter", { day: s.day, sig: s.sig });
     if (s.kind === "door") return rpc("app_enter_live", { w: s.w, sig: s.sig });
     if (s.kind === "meet") return err("That's a live connect code — open it from Scan to connect.");
-    return rpc("app_checkin", { session_id: s.sessionId, sig: s.sig });
+    // posters are locked to the event's place: the scan page sends where the phone is
+    const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+    return rpc("app_checkin", { session_id: s.sessionId, sig: s.sig, lat: num(b.lat), lng: num(b.lng), acc: num(b.acc) });
   }
   if (method === "POST" && path === "me/tasks") return rpc("app_task", { task_id: b.taskId, proof: b.proof ?? "", shot: b.shot });
   if (method === "POST" && path === "me/redeem") return rpc("app_redeem", { item_id: b.itemId });
