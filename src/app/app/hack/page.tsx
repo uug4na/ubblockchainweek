@@ -8,6 +8,7 @@ import { api, useMe } from "@/lib/me";
 import { supabase } from "@/lib/supa/client";
 import { ProjectsView, type Projects } from "./Projects";
 import { InfoTabs, Learn, Prizes, Timeline, type InfoTab } from "./HackInfo";
+import { HACK_DETAILS_PUBLIC } from "@/data/hackathon";
 import { HACK_BUCKET, stepOf, steps, tracks, trackNames, type Hack, type Team, type Track } from "@/lib/hack";
 
 // Attendee app › Hackathon (UB Hack). One overview screen; each part opens on its own screen, like Profile:
@@ -349,7 +350,7 @@ export default function HackPage() {
 
   // Tabs on the Hackathon home: My team | Timeline | Prizes | Learn. The last three need no sign-in.
   const tabs = <InfoTabs tab={tab} onTab={(x) => { setTab(x); window.scrollTo({ top: 0 }); }} />;
-  const info = tab === "timeline" ? <Timeline /> : tab === "prizes" ? <Prizes /> : tab === "learn" ? <Learn /> : null;
+  const info = tab === "timeline" ? <Timeline /> : !HACK_DETAILS_PUBLIC ? null : tab === "prizes" ? <Prizes /> : tab === "learn" ? <Learn /> : null;
   if (view === "home" && info) return (<><h1 className="app-h1">Hackathon.</h1>{tabs}{info}</>);
 
   if (status === "loading") return null;
@@ -370,7 +371,7 @@ export default function HackPage() {
       <>
         <h1 className="app-h1">Hackathon.</h1>
         {tabs}
-        <p className="app-sub">UB Hack · Stablecoin &amp; DeFi · ₮15.5M prize pool</p>
+        <p className="app-sub">{HACK_DETAILS_PUBLIC ? <>UB Hack · Stablecoin &amp; DeFi · ₮15.5M prize pool</> : "UB Hack"}</p>
         <section className="panel hk-start">
           <Steps stage="registered" />
           <p>Solo or as a team, any size. One person creates the team, the others join with its code.</p>

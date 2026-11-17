@@ -5,8 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PixelStar } from "@/components/PixelStar";
 import { IsoArt } from "@/components/iso/IsoArt";
+import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 import coinsArt from "@/components/iso/figures/minis/coins";
 import giftArt from "@/components/iso/figures/minis/gift";
+
+// A closed section in the switch: can't be tapped, says "Soon" (src/data/open.ts).
+function Locked({ label }: { label: string }) {
+  return <span className="is-locked" aria-disabled="true">{label}<em className="soon-tag">Soon</em></span>;
+}
 
 // Balance card + Earn / Games / Merch switch, shared by both rewards screens.
 const tabs = ["/app/stars", "/app/games", "/app/merch"];
@@ -44,9 +50,9 @@ export function RewardsHead({ balance }: { balance: number }) {
         )}
       </section>
       <nav className="rewards-switch" aria-label="Rewards" style={{ ["--i" as string]: i }}>
-        <Link href="/app/stars" className={path.startsWith("/app/stars") ? "is-on" : undefined}>Earn</Link>
+        {STARS_OPEN ? <Link href="/app/stars" className={path.startsWith("/app/stars") ? "is-on" : undefined}>Earn</Link> : <Locked label="Earn" />}
         <Link href="/app/games" className={path.startsWith("/app/games") ? "is-on" : undefined}>Games</Link>
-        <Link href="/app/merch" className={path.startsWith("/app/merch") ? "is-on" : undefined}>Spend</Link>
+        {MERCH_OPEN ? <Link href="/app/merch" className={path.startsWith("/app/merch") ? "is-on" : undefined}>Spend</Link> : <Locked label="Spend" />}
       </nav>
     </>
   );

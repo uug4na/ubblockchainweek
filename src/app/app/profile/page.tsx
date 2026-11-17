@@ -8,6 +8,7 @@ import { AuthPanel } from "@/components/AuthPanel";
 import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { replayTour } from "@/components/AppTour";
+import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
 import { networks, toHandle, type Socials } from "@/lib/socials";
@@ -88,6 +89,9 @@ function ProfileForm({ me, onSaved }: { me: Me; onSaved: () => void }) {
 
 type View = "main" | "pass" | "edit";
 
+// The UB Hack group's unread count is part of the server total; leave it out while the section is hidden.
+const msgUnread = (c: Chats) => c.unread - (HACK_SECTION_OPEN ? 0 : c.hack?.unread ?? 0);
+
 // Network size + unread messages, only fetched once signed in.
 function useNetwork(on: boolean) {
   const { data } = usePolling<Chats>(on ? "/api/rpc/app_chats" : "", 15_000);
@@ -164,7 +168,7 @@ export default function ProfilePage() {
 
       <nav className="settings-group">
         <button onClick={() => setView("pass")}><i className="tile t-klein"><QrCodeIcon size={18} /></i><span>My pass</span><small>{u.id}</small><ChevronRight size={18} /></button>
-        <button onClick={() => router.push("/app/chat")}><i className="tile t-klein"><MessageCircle size={18} /></i><span>Messages</span>{net && net.unread > 0 ? <span className="chat-badge">{net.unread}</span> : <small>{net?.network ?? ""}</small>}<ChevronRight size={18} /></button>
+        <button onClick={() => router.push("/app/chat")}><i className="tile t-klein"><MessageCircle size={18} /></i><span>Messages</span>{net && msgUnread(net) > 0 ? <span className="chat-badge">{msgUnread(net)}</span> : <small>{net?.network ?? ""}</small>}<ChevronRight size={18} /></button>
         <button onClick={() => setView("edit")}><i className="tile t-fushia"><UserRound size={18} /></i><span>Edit profile</span><ChevronRight size={18} /></button>
       </nav>
 

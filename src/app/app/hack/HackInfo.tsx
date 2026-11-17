@@ -1,17 +1,17 @@
 "use client";
 
 import { StablecoinPrimer } from "@/components/StablecoinPrimer";
-import { hackAwards, hackDays, hackPool, hackPrizes } from "@/data/hackathon";
+import { HACK_DETAILS_PUBLIC, hackAwards, hackDays, hackPool, hackPrizes } from "@/data/hackathon";
 import "./learn.css";
 
 // App › Hackathon tabs next to the team space: Timeline, Prizes, Learn (Stablecoin 101).
 // Same content as /hackathon (src/data/hackathon.ts, stablecoinPrimer.ts), laid out for the app.
 export type InfoTab = "team" | "timeline" | "prizes" | "learn";
+
 export const infoTabs: { id: InfoTab; label: string }[] = [
   { id: "team", label: "My team" },
   { id: "timeline", label: "Timeline" },
-  { id: "prizes", label: "Prizes" },
-  { id: "learn", label: "Learn" },
+  ...(HACK_DETAILS_PUBLIC ? [{ id: "prizes" as const, label: "Prizes" }, { id: "learn" as const, label: "Learn" }] : []),
 ];
 
 export function InfoTabs({ tab, onTab }: { tab: InfoTab; onTab: (t: InfoTab) => void }) {

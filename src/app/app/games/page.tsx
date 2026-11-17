@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Handshake, TrendingUp, Ticket, Coins, ChevronRight, Zap } from "lucide-react";
 import type { SVGProps } from "react";
@@ -9,6 +9,7 @@ import { RewardsHead } from "@/components/RewardsHead";
 import { useTick } from "@/components/Quiz";
 import { useMe } from "@/lib/me";
 import { clock, isPlayer, serverNow, startQuiz, useQuiz } from "@/lib/quiz";
+import { gameOpen, SoonSheet } from "./soon";
 
 // A shagai (ankle bone) seen from its side: pinched in the middle, rounded knuckles at the ends,
 // the hollow on its face. Drawn on lucide's 24px grid so it sits with the other icons.
@@ -32,7 +33,23 @@ const games = [
 ];
 
 // The global quiz sits above the other games: live now, or counting down to the next drop.
-function QuizCard() {
+function QuizCard({ onSoon }: { onSoon?: () => void }) {
+  if (onSoon) {
+    return (
+      <Link href="/app/games/quiz" className="quiz-card" onClick={(e) => { e.preventDefault(); onSoon(); }}>
+        <span className="quiz-card-icon"><Zap size={24} fill="currentColor" /></span>
+        <span className="game-text">
+          <b>Quiz Rush</b>
+          <span>Coming soon</span>
+        </span>
+        <ChevronRight size={20} className="game-go" />
+      </Link>
+    );
+  }
+  return <LiveQuizCard />;
+}
+
+function LiveQuizCard() {
   const q = useQuiz();
   useEffect(() => startQuiz(), []);
   const player = isPlayer(q);
@@ -53,27 +70,36 @@ function QuizCard() {
 
 export default function GamesPage() {
   const { status, me } = useMe();
+  const [soon, setSoon] = useState<{ title: string; tone: string } | null>(null);
   if (status === "loading") return null;
   if (status === "out" || !me) return <AuthPanel title="Games for stars" lead="Sign in to play." />;
+  const close = () => setSoon(null);
   return (
     <>
       <span className="eyebrow">Games</span>
       <h1 className="app-h1">Play for stars.</h1>
       <RewardsHead balance={me.balance} />
-      <QuizCard />
+      <QuizCard onSoon={gameOpen("/app/games/quiz") ? undefined : () => setSoon({ title: "Quiz Rush", tone: "var(--klein)" })} />
       <div className="game-list game-list-art">
         {games.map((g) => (
-          <Link key={g.href} href={g.href} className="game-card" style={{ ["--tone" as string]: g.tone }}>
+          <Link
+            key={g.href}
+            href={g.href}
+            className="game-card"
+            style={{ ["--tone" as string]: g.tone }}
+            onClick={gameOpen(g.href) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
+          >
             <g.icon className="game-art" aria-hidden strokeWidth={1.5} />
             <span className="game-text">
               <span className="game-tag">{g.tag}</span>
-              <b>{g.title}</b>
+              <b>{g.title}{!gameOpen(g.href) && <span className="soon-tag">Coming soon</span>}</b>
               <span>{g.body}</span>
             </span>
             <ChevronRight size={20} className="game-go" />
           </Link>
         ))}
       </div>
+      {soon && <SoonSheet title={soon.title} tone={soon.tone} onClose={close} />}
     </>
   );
 }

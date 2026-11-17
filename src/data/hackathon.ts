@@ -1,3 +1,13 @@
+// Owner, 2026-11-17: the prize changed (₮10M) and the concept may change too, so the attendee app hides
+// prize money and the concept (Prizes + Learn tabs, "Stablecoin & DeFi", amounts) for now.
+// Set to true to show them again once the details below are updated.
+export const HACK_DETAILS_PUBLIC = false;
+
+// Owner, 2026-11-17: hide the whole Hackathon section in the attendee app while the details are reworked.
+// Nothing is deleted: teams, files and the group chat stay in the database, and the crew console still
+// runs the hackathon. Set to true to bring the section back (Home row, sidebar, Messages group, /app/hack).
+export const HACK_SECTION_OPEN = false;
+
 // UB Hackathon 2026, from the owner's brief "UB Hackathon 2026.pdf", pages 1–6 (12 Nov 2026).
 // Copy is the brief's own wording; only typography (dashes, quotes) is cleaned up.
 

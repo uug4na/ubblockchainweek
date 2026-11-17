@@ -3316,3 +3316,15 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .tour-dots i.is-on { width: 18px; background: var(--accent); }
 @keyframes tour-in { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .tour-dim, .tour-card { animation: none; } .tour-spot, .tour-dots i { transition: none; } }
+
+/* Games closed for now (games/soon.tsx): the "Coming soon" sheet when a game is tapped */
+.games-soon { display: grid; justify-items: center; gap: 8px; padding: 36px 20px calc(20px + env(safe-area-inset-bottom)); text-align: center; }
+.games-soon h2 { margin: 0; }
+.games-soon p { margin: 0 0 8px; max-width: 30ch; }
+.games-soon small { font-size: 13px; font-weight: 600; color: var(--label-2); }
+.games-soon .stars-soon-ico { color: #fff; }
+
+/* Closed sections: "Coming soon" tag on game cards, locked Earn / Spend in the switch (src/data/open.ts) */
+.soon-tag { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 6px; background: var(--fill-2, rgba(255,255,255,.12)); color: var(--label-2, currentColor); font: 600 11px/1.3 var(--font-mono); letter-spacing: .04em; text-transform: uppercase; font-style: normal; vertical-align: middle; opacity: .85; }
+.rewards-switch .is-locked { display: flex; align-items: center; justify-content: center; gap: 0; padding: 7px 0; border-radius: var(--r); font-weight: 600; font-size: 15px; color: var(--label); opacity: .45; cursor: not-allowed; user-select: none; }
+.rewards-switch .is-locked .soon-tag { margin-left: 6px; font-size: 9px; padding: 1px 5px; }
