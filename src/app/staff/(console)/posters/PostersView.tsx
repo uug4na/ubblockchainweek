@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { Map as MapIcon, MapPin, MapPinOff, Radio, RefreshCw, Star } from "lucide-react";
+import { ExternalLink, Map as MapIcon, MapPin, MapPinOff, Radio, RefreshCw, Star } from "lucide-react";
 import { api } from "@/lib/me";
 import { withBase, page } from "@/lib/base";
 import { getSpot } from "@/lib/geo";
@@ -17,7 +16,7 @@ import { IsoArt } from "@/components/iso/IsoArt";
 import printerArt from "@/components/iso/figures/minis/printer";
 
 type Mode = "in_person" | "online" | "both";
-type Poster = { sessionId: string; code: string; mode: Mode; pinned: boolean; acc: number | null; lat: number | null; lng: number | null; placeName: string | null; placedAt: number | null; placedBy: string | null };
+type Poster = { sessionId: string; code: string; mode: Mode; pinned: boolean; acc: number | null; lat: number | null; lng: number | null; placeName: string | null; placedAt: number | null; placedBy: string | null; liveUrl: string | null };
 type Res = { day: string; entrance: string; radius: number; posters: Poster[] };
 
 const modes: { id: Mode; label: string }[] = [
@@ -55,6 +54,11 @@ function EventControls({ p, title, radius, onData }: { p: Poster; title: string;
     }
   };
   const inRoom = p.mode !== "online";
+  // the live link: saving it turns into a "Watch live" task in the attendee app
+  const [liveOpen, setLiveOpen] = useState(false);
+  const [url, setUrl] = useState(p.liveUrl ?? "");
+  useEffect(() => setUrl(p.liveUrl ?? ""), [p.liveUrl]);
+  const showLive = p.mode !== "in_person" || !!p.liveUrl || liveOpen;
 
   return (
     <div className="ev-ctl no-print">
@@ -82,14 +86,28 @@ function EventControls({ p, title, radius, onData }: { p: Poster; title: string;
         </div>
       )}
 
+      {showLive && (
+        <form className={`ev-place ev-live ${p.liveUrl ? "is-set" : "is-todo"}`} onSubmit={(e) => { e.preventDefault(); act("live", { url }); }}>
+          <Radio size={18} />
+          <span>
+            <b>{p.liveUrl ? <a href={p.liveUrl} target="_blank" rel="noreferrer">Live link set <ExternalLink size={13} /></a> : "Live link"}</b>
+            <small>{p.liveUrl ? "Online viewers see a Watch live task. A screenshot you approve in Reviews counts as attending." : "Paste the YouTube or Facebook live link. It becomes a Watch live task in the app."}</small>
+            <input type="url" inputMode="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://youtube.com/live/…" aria-label={`Live link for ${title}`} disabled={!!busy} />
+          </span>
+          <button type="submit" className={`btn ${p.liveUrl ? "btn-ghost" : "btn-primary"}`} disabled={!!busy || url.trim() === (p.liveUrl ?? "")}>
+            {busy === "live" ? "Saving…" : url.trim() ? "Save" : "Remove"}
+          </button>
+        </form>
+      )}
+
       <div className="ev-actions">
         {inRoom && (
           <button type="button" className="link-btn" disabled={!!busy} onClick={() => (sure === "reset" ? act("reset") : ask("reset"))}>
             <RefreshCw size={14} /> {sure === "reset" ? "Tap again: old QR stops working" : "New QR"}
           </button>
         )}
-        {p.mode !== "in_person" && (
-          <Link className="link-btn" href={`/staff/live/?s=${encodeURIComponent(p.sessionId)}`}><Radio size={14} /> Stream code</Link>
+        {!showLive && (
+          <button type="button" className="link-btn" onClick={() => setLiveOpen(true)}><Radio size={14} /> Add live link</button>
         )}
       </div>
       {error && <p className="form-error" role="alert">{error}</p>}
@@ -129,7 +147,7 @@ export function PostersView() {
         <div>
           <span className="eyebrow">Session posters</span>
           <h1 className="app-h1">Posters</h1>
-          <p className="muted">Each poster only works at its event&apos;s place. Pin it standing there. Online events use a stream code instead.</p>
+          <p className="muted">Each poster only works at its event&apos;s place. Pin it standing there. Online events: paste the live link and it becomes a Watch live task.</p>
         </div>
         <PrintButton />
       </div>
@@ -170,7 +188,7 @@ export function PostersView() {
                     <div className="poster-top"><span>{site.short}</span><span>Online</span></div>
                     <h2>{s.title}</h2>
                     <p className="poster-when">{when}</p>
-                    <p className="poster-cta"><Radio size={18} /> No poster: viewers type the code shown on the stream</p>
+                    <p className="poster-cta"><Radio size={18} /> No poster: viewers get a Watch live task in the app</p>
                   </article>
                 ) : (
                   <article className="poster">

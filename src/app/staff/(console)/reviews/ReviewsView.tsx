@@ -9,7 +9,7 @@ import { site } from "@/data/site";
 import { shotUrls } from "@/lib/shots";
 
 type Queue = {
-  pending: { id: string; userId: string; name: string; taskId: string; proof: string; shot: string | null; at: number }[];
+  pending: { id: string; userId: string; name: string; taskId: string; title?: string; stars?: number; live?: boolean; proof: string; shot: string | null; at: number }[];
   reviewedToday: number;
 };
 
@@ -75,14 +75,16 @@ export function ReviewsView() {
         <div className="review-cards">
           {data?.pending.map((p) => {
             const task = taskById[p.taskId];
-            const link = proofLink(p.proof, task?.platform);
+            // watch tasks (online events) come from the database, not from the app's task list
+            const platform = p.live ? "Live" : task?.platform;
+            const link = p.live ? null : proofLink(p.proof, task?.platform);
             return (
               <article className="review-card" key={p.id}>
                 <div className="task-top">
-                  <span className={`platform p-${task?.platform.toLowerCase()}`}>{task?.platform}</span>
+                  <span className={`platform p-${platform?.toLowerCase()}`}>{platform}</span>
                   <span className="muted small">{ago(p.at)}</span>
                 </div>
-                <h3>{task?.title ?? p.taskId}</h3>
+                <h3>{p.title ?? task?.title ?? p.taskId}</h3>
                 <p><b>{p.name}</b> <code className="muted">{p.userId}</code></p>
                 {p.shot && urls[p.shot] ? (
                   <a className="review-shot" href={urls[p.shot]} target="_blank" rel="noreferrer" aria-label="Open the screenshot full size">
@@ -94,13 +96,13 @@ export function ReviewsView() {
                 )}
                 {p.proof && (
                   <div className="proof-box">
-                    <span>{task?.proofLabel ?? "Proof"}</span>
+                    <span>{p.live ? "Note" : task?.proofLabel ?? "Proof"}</span>
                     {link ? <a href={link} target="_blank" rel="noreferrer">{p.proof} <ExternalLink size={13} /></a> : <b>{p.proof}</b>}
                   </div>
                 )}
                 <div className="decide">
                   <button className="btn btn-lg reject" disabled={working === p.id} onClick={() => decide(p.id, false)}><X size={18} /> Reject</button>
-                  <button className="btn btn-lg approve" disabled={working === p.id} onClick={() => decide(p.id, true)}><Check size={18} /> Approve +{task?.stars}</button>
+                  <button className="btn btn-lg approve" disabled={working === p.id} onClick={() => decide(p.id, true)}><Check size={18} /> {p.live ? "Approve: attended" : "Approve"} +{p.stars ?? task?.stars}</button>
                 </div>
               </article>
             );

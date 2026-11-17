@@ -97,6 +97,39 @@ try {
   ok("lead approval pays stars", (await rpc(U, "app_me")).data.balance === before + tstars);
   await admin.storage.from("task-proofs").remove([shot]);
 
+  // Online events (0050): the live link crew paste becomes a "Watch live" task; an approved screenshot = attended.
+  console.log("online watch task");
+  const LIVE = "db-test-live";
+  await db.query(
+    `insert into ubbw.sessions (id, title, room, kind, starts_at, ends_at, stars) values ($1, 'Test live', 'Online', 'Talk', now() - interval '10 minutes', now() + interval '50 minutes', 20)
+     on conflict (id) do update set starts_at = excluded.starts_at, ends_at = excluded.ends_at, live_url = null, mode = 'in_person'`, [LIVE]);
+  ok("bad live link refused", (await rpc(L, "staff_event_set", { session_id: LIVE, action: "live", payload: { url: "youtube" } })).error?.includes("https") ?? false);
+  ok("volunteer can't set a live link", !!(await rpc(V, "staff_event_set", { session_id: LIVE, action: "live", payload: { url: "https://youtube.com/live/x" } })).error);
+  const lv = await rpc(L, "staff_event_set", { session_id: LIVE, action: "live", payload: { url: "https://youtube.com/live/test" } });
+  const lp = lv.data?.posters?.find((x: any) => x.sessionId === LIVE);
+  ok("lead sets the live link; in-person event becomes Both", lp?.liveUrl === "https://youtube.com/live/test" && lp?.mode === "both", lv.error);
+  const wt = ((await rpc(U, "app_watch_tasks")).data ?? []).find((x: any) => x.sessionId === LIVE);
+  ok("attendee sees the Watch live task, open now", wt?.id === `watch-${LIVE}` && wt.open && wt.url === "https://youtube.com/live/test" && wt.stars === 20);
+  const shot2 = `${uid}/db-test-live.png`;
+  await U.storage.from("task-proofs").upload(shot2, png, { contentType: "image/png", upsert: true });
+  const w1 = await rpc(U, "app_task", { task_id: `watch-${LIVE}`, proof: "", shot: shot2 });
+  ok("watch screenshot waits for review", w1.data?.tasks?.[`watch-${LIVE}`] === "pending", w1.error);
+  const wq = (await rpc(L, "staff_reviews")).data.pending.find((x: any) => x.taskId === `watch-${LIVE}` && x.userId === me.user.id);
+  ok("review queue shows it as a live task with title and stars", wq?.live === true && wq?.title === "Watch “Test live” live" && wq?.stars === 20);
+  const wb = (await rpc(U, "app_me")).data.balance;
+  await rpc(L, "staff_review", { id: wq.id, approve: true });
+  const wm = (await rpc(U, "app_me")).data;
+  ok("approval marks attended and pays the event's stars", wm.attended.includes(LIVE) && wm.balance === wb + 20);
+  const fuid = (await db.query("select id from ubbw.profiles where pass_code = $1", [fr.user.id])).rows[0].id as string;
+  await db.query(`insert into ubbw.ledger (user_id, amount, kind, reason, ref) values ($1, 20, 'event', 'Test live', $2)`, [fuid, LIVE]);
+  const fshot = `${fuid}/db-test-live.png`;
+  await F.storage.from("task-proofs").upload(fshot, png, { contentType: "image/png", upsert: true });
+  ok("already checked in at the event: watch task refused", (await rpc(F, "app_task", { task_id: `watch-${LIVE}`, proof: "", shot: fshot })).error?.includes("already checked in") ?? false);
+  ok("stream code retired", (await rpc(U, "app_live_checkin", { code: "123456" })).error?.includes("no longer used") ?? false);
+  await rpc(L, "staff_event_set", { session_id: LIVE, action: "mode", payload: { mode: "in_person" } });
+  ok("back to In person: the watch task disappears", !((await rpc(U, "app_watch_tasks")).data ?? []).some((x: any) => x.sessionId === LIVE));
+  await admin.storage.from("task-proofs").remove([shot2, fshot]);
+
   ok("volunteer can't award", (await rpc(V, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 50, reason: "x" } })).error?.includes("lead") ?? false);
   ok("lead capped at ±100", (await rpc(L, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 200, reason: "x" } })).error?.includes("100") ?? false);
   await rpc(A, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 500, reason: "test" } });
@@ -397,6 +430,9 @@ try {
   ok("reviewer can't open the hackathon console", !!(await rpc(R, "staff_hack")).error);
   ok("volunteer can't read abstracts", !!(await rpc(V, "staff_research")).error);
 } finally {
+  await db.query(`delete from ubbw.submissions where task_id = 'watch-db-test-live'`);
+  await db.query(`delete from ubbw.ledger where ref = 'db-test-live'`);
+  await db.query(`delete from ubbw.sessions where id = 'db-test-live'`);
   // Clean up: test users (profiles, ledger, claims cascade), test crew, their audit lines, stock.
   const { data } = await admin.auth.admin.listUsers({ perPage: 1000 });
   for (const u of data?.users ?? []) if (u.email?.endsWith("@" + DOMAIN)) await admin.auth.admin.deleteUser(u.id);

@@ -17,6 +17,33 @@ import { STARS_OPEN } from "@/data/open";
 const when = (ms: number) =>
   new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
 
+// Online events: crew paste the live link in staff Posters and it shows up here as a task.
+// A screenshot of the live, checked by a lead, counts as attending the event.
+type WatchTask = { id: string; sessionId: string; title: string; stars: number; url: string; startsAt: number; endsAt: number; open: boolean };
+const hm = (ms: number) => new Date(ms).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: site.tz });
+const asTask = (w: WatchTask): SocialTask => ({
+  id: w.id,
+  title: w.title,
+  body: `${when(w.startsAt)}–${hm(w.endsAt)} · Watch the live and send a screenshot of it. Counts as attending.`,
+  stars: w.stars,
+  platform: "Live",
+  href: w.url,
+  cta: "Open live",
+  verify: "review",
+  proofLabel: "Note",
+  proofPlaceholder: "Anything the crew should know",
+});
+
+function useWatchTasks() {
+  const [list, setList] = useState<WatchTask[]>([]);
+  useEffect(() => {
+    let on = true;
+    api<WatchTask[]>("/api/rpc/app_watch_tasks").then((d) => on && setList(Array.isArray(d) ? d : [])).catch(() => {});
+    return () => { on = false; };
+  }, []);
+  return list;
+}
+
 function TaskCard({ task, status }: { task: SocialTask; status?: "pending" | "approved" | "rejected" }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
@@ -157,10 +184,13 @@ function StarsSoon() {
 
 function StarsLive() {
   const { status, me } = useMe();
+  const watchTasks = useWatchTasks();
   if (status === "loading") return null;
   if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead="Get your Passport, scan the entrance QR, and every session and social task adds up." />;
 
   const verified = !!me.user.verifiedAt;
+  // events already attended (in person or approved online) drop out of the list
+  const watch = watchTasks.filter((w) => w.open && !me.attended.includes(w.sessionId));
   // follows first, then the posts that share the week
   const quick = socialTasks.filter((t) => t.id.startsWith("follow-") || t.id.startsWith("join-"));
   const review = socialTasks.filter((t) => !quick.includes(t));
@@ -206,6 +236,14 @@ function StarsLive() {
           </div>
         )}
       </section>
+
+      {watch.length > 0 && <section className="tasks-section">
+        <div className="section-mini-head">
+          <h2>Watch online</h2>
+          <span>Screenshot · crew checks</span>
+        </div>
+        <div className="tasks">{watch.map((w) => <TaskCard key={w.id} task={asTask(w)} status={me.tasks[w.id]} />)}</div>
+      </section>}
 
       {quick.length > 0 && <section className="tasks-section">
         <div className="section-mini-head">
