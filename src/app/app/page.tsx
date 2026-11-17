@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Gift, GraduationCap, Megaphone, ScanLine, Star, Trophy } from "lucide-react";
+import { ChevronRight, Gift, GraduationCap, ScanLine, Star, Trophy } from "lucide-react";
 import { site } from "@/data/site";
 import { sessions, sessionTime } from "@/data/schedule";
 import { useMe, type Me } from "@/lib/me";
@@ -18,11 +18,8 @@ import stopwatchArt from "@/components/iso/figures/minis/stopwatch";
 const start = new Date(site.startISO).getTime();
 const end = new Date(site.endISO).getTime();
 
-const announcements = [
-  { when: "Oct 18", text: "Stars are live: check in, do tasks, swap for merch." },
-  { when: "Oct 16", text: "The app is live." },
-  { when: "Oct 02", text: "Student travel grants open with registration." },
-];
+// "Mon 30 Nov" for a session's day, in Ulaanbaatar time.
+const dayLabel = (d: string) => new Date(`${d}T12:00:00+08:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: site.tz });
 
 function PassStatus({ me }: { me: Me }) {
   useMerchCatalog();
@@ -87,6 +84,8 @@ export default function AppHome() {
   const live = now == null ? [] : sessions.filter((s) => { const t = sessionTime(s); return t.start <= now && now < t.end; });
 
   const firstName = me?.user.name.trim().split(" ")[0];
+  // Home › Agenda: the next four sessions that haven't ended yet.
+  const next = sessions.filter((s) => now == null || sessionTime(s).end > now).sort((a, b) => sessionTime(a).start - sessionTime(b).start).slice(0, 4);
 
   return (
     <>
@@ -123,10 +122,10 @@ export default function AppHome() {
         <section className="pass-strip is-todo">
           <Star size={26} />
           <div>
-            <b>Get your pass</b>
+            <b>Get your UB Blockchain Passport</b>
             <span>Your door QR and stars</span>
           </div>
-          <Link href="/app/profile" className="btn btn-clay">Get pass</Link>
+          <Link href="/app/profile" className="btn btn-clay">Get Passport</Link>
         </section>
       ) : null}
 
@@ -163,16 +162,16 @@ export default function AppHome() {
       )}
 
       <section className="panel">
-        <div className="panel-head"><h2>News</h2></div>
+        <div className="panel-head"><h2>Agenda</h2><Link href="/app/agenda" className="inline-link">See all</Link></div>
         <div className="mini-list">
-          {announcements.map((a) => (
-            <div className="mini" key={a.text}>
-              <time>{a.when}</time>
-              <div style={{ display: "flex", gap: 10 }}>
-                <Megaphone size={16} style={{ flex: "none", marginTop: 3, color: "var(--clay)" }} />
-                <span style={{ fontSize: 15, color: "var(--ink-2)" }}>{a.text}</span>
+          {next.map((s) => (
+            <Link href="/app/agenda" className="mini" key={s.id}>
+              <time>{s.start}</time>
+              <div>
+                <b>{s.title}</b>
+                <span>{dayLabel(s.day)}{s.room ? ` · ${s.room}` : ""}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

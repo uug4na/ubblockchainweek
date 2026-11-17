@@ -9,7 +9,7 @@ import lockArt from "@/components/iso/figures/minis/lock";
 const REF_KEY = "ubbw.ref";
 
 // Shown in place of any attendee screen that needs a pass.
-export function AuthPanel({ title = "Get your pass", lead = "One account for check-ins, stars and merch. Takes ten seconds." }: { title?: string; lead?: string }) {
+export function AuthPanel({ title = "Get your UB Blockchain Passport", lead = "One account for check-ins, stars and merch. Takes ten seconds." }: { title?: string; lead?: string }) {
   const [invited, setInvited] = useState("");
 
   // Invite links look like /app/profile/?ref=UB-XXXXXX — keep it until the pass is created.

@@ -27,7 +27,7 @@ const time = (ms: number) => {
 };
 
 const preview = (m: ChatMsg) =>
-  m.kind === "card" ? (m.mine ? "You shared your pass" : "Shared their pass")
+  m.kind === "card" ? (m.mine ? "You shared your Passport" : "Shared their Passport")
   : `${m.mine ? "You: " : ""}${m.kind === "image" ? "Photo" : m.kind === "gif" ? "GIF" : m.body}`;
 
 // The pass someone shared when you connected: the same ticket as Profile → My pass (QR stub included) + save to contacts.
@@ -36,7 +36,7 @@ function CardMsg({ m }: { m: ChatMsg }) {
   const c = m.card;
   return (
     <div className={`chat-card ${m.mine ? "is-mine" : ""}`}>
-      <small className="chat-card-label">{m.mine ? "You shared your pass" : `${c.name.split(" ")[0]} shared their pass`} · {time(m.at)}</small>
+      <small className="chat-card-label">{m.mine ? "You shared your Passport" : `${c.name.split(" ")[0]} shared their Passport`} · {time(m.at)}</small>
       <BusinessCard person={c} qr={cardQr(c.id)} />
       {!m.mine && (
         <button className="link-btn chat-card-save" onClick={() => saveContact({ name: c.name, about: c.about, interests: c.interests, socials: c.socials ?? {} })}>
@@ -137,7 +137,7 @@ function TeamInbox({ rows }: { rows: TeamInboxRow[] }) {
       <h2 className="team-inbox-h"><Headset size={16} /> {TEAM} inbox</h2>
       <label className="team-find">
         <Search size={16} />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or pass code" aria-label="Find an attendee to message" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or Passport code" aria-label="Find an attendee to message" />
       </label>
       {list.length === 0 ? (
         <p className="muted small chat-threads-empty">{found ? "No one by that name." : "No questions yet."}</p>
@@ -717,7 +717,7 @@ export function Chat() {
   const q = useSearchParams();
   const pass = q.get("p");
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Messages" lead="Make a pass to chat with the people you meet." />;
+  if (status === "out" || !me) return <AuthPanel title="Messages" lead="Get your Passport to chat with the people you meet." />;
   if (q.get("g") === "hack" && HACK_SECTION_OPEN) return <HackGroup />;
   const team = q.get("t");
   if (team) return <TeamChat key={team} pass={team === "team" ? null : team} />;

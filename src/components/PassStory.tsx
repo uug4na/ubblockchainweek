@@ -214,7 +214,7 @@ export async function drawStory(u: CardPerson): Promise<Blob> {
   y = top + faceH + stubH + 60;
   ctx.fillStyle = "rgba(255,255,255,.8)";
   ctx.font = font(500, 36);
-  ctx.fillText("Get your free pass", X, y + 30);
+  ctx.fillText("Get your free Passport", X, y + 30);
   ctx.fillStyle = LIME;
   ctx.font = font(700, 40);
   ctx.fillText(location.host + withBase("/app"), X, y + 84);
@@ -273,16 +273,16 @@ export function ShareStory({ person }: { person: CardPerson }) {
       {url &&
         createPortal(
           <div className="sheet-wrap" onClick={close}>
-            <div className="sheet story-sheet" role="dialog" aria-label="Share your pass" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet story-sheet" role="dialog" aria-label="Share your Passport" onClick={(e) => e.stopPropagation()}>
               <button className="icon-btn sheet-x" aria-label="Close" onClick={close}><X size={16} /></button>
-              <h2>Share your pass</h2>
+              <h2>Share your Passport</h2>
               <img src={url} alt="Your UB Blockchain Week 2026 story" className="story-preview" />
               {error && <p className="form-error">{error}</p>}
               <div className="story-actions">
                 {canShare && <button className="btn btn-primary wide" onClick={share}><Share2 size={16} /> Share</button>}
                 <button className={canShare ? "btn btn-ghost wide" : "btn btn-primary wide"} onClick={save}><Download size={16} /> Save image</button>
               </div>
-              <small className="story-hint">Instagram: Share → Stories. No QR on it — your pass stays private.</small>
+              <small className="story-hint">Instagram: Share → Stories. No QR on it — your Passport stays private.</small>
             </div>
           </div>,
           document.querySelector(".app-shell") ?? document.body,

@@ -8,14 +8,15 @@ import { Logo } from "./Toono";
 import { OfflineBar } from "./Pwa";
 import { MeetPrompt } from "./MeetPrompt";
 import { QuizPrompt } from "./Quiz";
-import { AppTour } from "./AppTour";
 import { useMe } from "@/lib/me";
 import { site } from "@/data/site";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
-import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
+import { AppTour } from "./AppTour";
+import { PassportSetup } from "./PassportSetup";
 
 // what the first-run guide (AppTour) points at
 const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/games": "stars", "/app/profile": "profile" };
+import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 
 const side = [
   { href: "/app", label: "Home", icon: Home },
@@ -26,7 +27,7 @@ const side = [
   ...(MERCH_OPEN ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
   ...(HACK_SECTION_OPEN ? [{ href: "/app/hack", label: "Hackathon", icon: Trophy }] : []),
   { href: "/app/research", label: "Research", icon: GraduationCap },
-  { href: "/app/profile", label: "Profile & pass", icon: UserRound },
+  { href: "/app/profile", label: "Profile & Passport", icon: UserRound },
 ];
 
 const tabs = [
@@ -118,15 +119,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main className="app-main">
         <div className="app-inner">
-          <OfflineBar>Offline — showing your saved pass. Check-ins and swaps need signal.</OfflineBar>
+          <OfflineBar>Offline — showing your saved Passport. Check-ins and swaps need signal.</OfflineBar>
           {/* keyed by route (and by the first sign-in check) so each screen fades in once it has something to show */}
           <div key={status === "loading" ? `${screenKey(path)}:wait` : screenKey(path)} className="page-in">{children}</div>
         </div>
       </main>
 
+      <PassportSetup />
+      <AppTour />
       <MeetPrompt />
       <QuizPrompt />
-      <AppTour />
 
       <nav className="app-tabs" aria-label="App" style={{ ["--n" as string]: tabs.length }}>
         {tabs.map((t) => (

@@ -29,7 +29,7 @@ export function SiteFooter() {
           <div className="t-footer-cta-side">
             <p>{site.dates} · free to attend</p>
             <div className="t-footer-actions">
-              <Link href="/app" className="t-btn t-btn-fill">Get your pass <ArrowRight size={16} /></Link>
+              <Link href="/app" className="t-btn t-btn-fill">Get your Passport <ArrowRight size={16} /></Link>
               <Link href="/program" className="t-btn t-btn-line">See the program</Link>
             </div>
           </div>

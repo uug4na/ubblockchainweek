@@ -113,7 +113,7 @@ export default function PredictPage() {
   }, [status, load]);
 
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Predictions" lead="Make a pass to stake stars on what happens during the week." />;
+  if (status === "out" || !me) return <AuthPanel title="Predictions" lead="Get your Passport to stake stars on what happens during the week." />;
 
   const open = data?.markets.filter((m) => m.status === "open" || m.status === "closed") ?? [];
   const done = data?.markets.filter((m) => m.status === "resolved") ?? [];

@@ -86,7 +86,7 @@ function EventCard({ group, stock, me, now, onBought, onPass }: { group: SeatGro
     action = (
       <div className="event-in">
         <p className="event-state is-in"><Check size={18} /> You&apos;re in</p>
-        <button className="btn btn-tint" onClick={onPass}><QrCodeIcon size={16} /> Show pass</button>
+        <button className="btn btn-tint" onClick={onPass}><QrCodeIcon size={16} /> Show Passport</button>
       </div>
     );
   else if (closed(seat)) action = <p className="event-state">Closed</p>;
@@ -280,7 +280,7 @@ export default function MerchPage() {
         <section className="held">
           <div className="held-head">
             <h2>Your merch</h2>
-            {ready > 0 && <button className="btn btn-tint" onClick={() => setPassOpen(true)}><QrCodeIcon size={16} /> Show pass</button>}
+            {ready > 0 && <button className="btn btn-tint" onClick={() => setPassOpen(true)}><QrCodeIcon size={16} /> Show Passport</button>}
           </div>
           <div className="settings-group held-list">
             {[...readyRows, ...(showDone ? doneRows : [])].map((g) => {
@@ -304,7 +304,7 @@ export default function MerchPage() {
               </button>
             )}
           </div>
-          {ready > 0 && <p className="held-note">Show your pass at the merch desk to collect.</p>}
+          {ready > 0 && <p className="held-note">Show your Passport at the merch desk to collect.</p>}
         </section>
       )}
 

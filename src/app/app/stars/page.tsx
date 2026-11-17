@@ -113,7 +113,7 @@ function Invite({ me }: { me: Me }) {
   const [copied, setCopied] = useState(false);
   const link = typeof window === "undefined" ? "" : `${window.location.origin}${page("/app/profile")}?ref=${me.user.id}`;
   async function share() {
-    const text = `Come to ${site.name} with me: ${site.dates}, ${site.city}. Get your pass here:`;
+    const text = `Come to ${site.name} with me: ${site.dates}, ${site.city}. Get your UB Blockchain Passport here:`;
     if (navigator.share) {
       try { await navigator.share({ title: site.name, text, url: link }); } catch {}
     } else {
@@ -158,7 +158,7 @@ function StarsSoon() {
 function StarsLive() {
   const { status, me } = useMe();
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead="Make a pass, scan the entrance QR, and every session and social task adds up." />;
+  if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead="Get your Passport, scan the entrance QR, and every session and social task adds up." />;
 
   const verified = !!me.user.verifiedAt;
   // follows first, then the posts that share the week
