@@ -83,7 +83,7 @@ export default function Home() {
             <h1 className="t-display"><span>The blockchain</span><span>week of</span><span>Mongolia</span></h1>
             <p className="t-hero-meta">{site.dates} • {site.city}</p>
             <div className="t-hero-actions">
-              <a href={applyForm} target="_blank" rel="noopener noreferrer" className="t-btn t-btn-white">Get involved</a>
+              <Link href="/app" className="t-btn t-btn-white">Attendee web app</Link>
               <Link href="/program" className="t-btn t-btn-line">See the program</Link>
             </div>
             <p className="t-powered">
