@@ -1847,6 +1847,14 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 .mini span, .earn-row span:not(.task-stars), .ledger-row span:not(.plus):not(.minus) { color: var(--label-2); }
 /* pass card: the badge figure sits under the UBBW / LIVE row, not on top of it */
 .in-pass-art { top: 13%; right: 4%; width: 26%; opacity: .45; }
+/* PC: the phone-sized card left a gap beside it in the wide column. Here it fills the column as a wide
+   ticket: fixed type sizes (not scaled to the width), the figure on the right between LIVE and the stars. */
+@media (min-width: 1100px) {
+  .in-pass { max-width: none; aspect-ratio: auto; min-height: 220px; padding: 22px 28px 20px; }
+  .in-pass > * { --u: 1.2px; }
+  .in-pass-art { top: 50%; right: 4%; width: min(150px, 24%); transform: translateY(-58%); opacity: .5; }
+  .in-pass-row { padding-top: 18px; }
+}
 /* countdown: keep the title and date clear of the stopwatch on phones */
 @media (max-width: 640px) { .countdown h2, .countdown > div > p { padding-right: 92px; } }
 /* a locked button reads locked, not as the green call to action */
@@ -3080,6 +3088,16 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .chat-thread.is-unread .chat-thread-bottom small { color: var(--label); font-weight: 600; }
 .chat-thread.is-unread .chat-when { color: var(--accent); font-weight: 600; }
 .chat-threads-empty { margin-top: 12px; }
+/* featured crew (0051): four faces in a row above the threads, like a favourites row */
+.crew-feat { margin-top: 8px; }
+.crew-feat-h { margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--label-2); }
+.crew-feat ul { list-style: none; margin: 0; padding: 12px 8px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: var(--cell); border: .5px solid var(--sep); border-radius: var(--r); }
+.crew-feat a { display: grid; justify-items: center; gap: 6px; padding: 4px 2px; color: var(--label); text-decoration: none; border-radius: var(--r); }
+.crew-feat a:hover { background: var(--fill-2); }
+.crew-feat-ava { position: relative; display: block; }
+.crew-feat-ava .chat-badge { position: absolute; top: -2px; right: -4px; }
+.crew-feat b { max-width: 100%; font-size: 13px; line-height: 1.2; font-weight: 500; text-align: center; overflow-wrap: anywhere; }
+.crew-feat a.is-unread b { font-weight: 700; }
 .person-note { width: 100%; resize: vertical; min-height: 64px; padding: 10px 12px; border-radius: var(--r); border: .5px solid var(--sep); background: var(--cell-2); color: var(--label); font: inherit; font-size: 15px; line-height: 1.4; }
 .person-note:focus, .person-note:focus-visible { outline: none; border-color: var(--label-2); }
 .person-note-hint { font-size: 12px; color: var(--label-2); }

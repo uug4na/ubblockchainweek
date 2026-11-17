@@ -48,6 +48,29 @@ function CardMsg({ m }: { m: ChatMsg }) {
   );
 }
 
+// Featured crew (0051): pinned at the top, anyone can message them without meeting first.
+function FeaturedCrew({ people }: { people: NonNullable<Chats["featured"]> }) {
+  return (
+    <section className="crew-feat" aria-label="Ask the crew">
+      <h2 className="crew-feat-h">Ask the crew</h2>
+      <ul>
+        {people.map((p) => (
+          <li key={p.id}>
+            <Link href={`/app/chat/?p=${encodeURIComponent(p.id)}`} className={p.unread ? "is-unread" : undefined}>
+              <span className="crew-feat-ava">
+                <PixelAvatar seed={p.id} size={56} className="is-small" />
+                {p.unread > 0 && <span className="chat-badge">{p.unread}</span>}
+              </span>
+              {/* first name; a hyphenated one (Nomin-Erdene) may wrap after the hyphen on phones */}
+              <b>{p.name.split(" ")[0].replace(/-/g, "-\u200b")}</b>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function Threads() {
   const [data, setData] = useState<Chats | null>(null);
   const [error, setError] = useState("");
@@ -65,6 +88,7 @@ function Threads() {
       <p className="app-sub">{data ? `${data.network} in your network` : " "}</p>
       {error && <p className="form-error">{error}</p>}
       {data?.inbox && <TeamInbox rows={data.inbox} />}
+      {!!data?.featured?.length && <FeaturedCrew people={data.featured} />}
       {data && (
         data.threads.length === 0 && !(HACK_SECTION_OPEN && data.hack) && !data.team ? (
           <p className="muted chat-threads-empty">Meet people to chat with them.{GAMES_PLAYABLE && <> <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></>}</p>
