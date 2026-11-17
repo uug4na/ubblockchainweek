@@ -40,6 +40,7 @@ const rpc = async (c: SupabaseClient, fn: string, args: Record<string, unknown> 
 
 const stockBefore = (await db.query("select item_id, qty from ubbw.stock")).rows;
 const hackPaths: string[] = []; // test uploads to remove afterwards
+let featuredBefore: string | null = null; // chat_featured config, put back afterwards
 try {
   console.log("crew");
   await db.query(
@@ -129,6 +130,24 @@ try {
   await rpc(L, "staff_event_set", { session_id: LIVE, action: "mode", payload: { mode: "in_person" } });
   ok("back to In person: the watch task disappears", !((await rpc(U, "app_watch_tasks")).data ?? []).some((x: any) => x.sessionId === LIVE));
   await admin.storage.from("task-proofs").remove([shot2, fshot]);
+
+  // Featured crew (0051): anyone can message them without a Proof of Meet connection.
+  console.log("featured crew chat");
+  featuredBefore = (await db.query("select value from ubbw.config where key = 'chat_featured'")).rows[0]?.value ?? null;
+  const FC = await signIn("t.featured", "Test Featured");
+  const fc = (await rpc(FC, "app_me")).data;
+  await db.query(`update ubbw.config set value = $1 where key = 'chat_featured'`, [`t.featured@${DOMAIN}`]);
+  const ch = (await rpc(U, "app_chats")).data;
+  ok("attendee sees the featured crew pinned", ch?.featured?.[0]?.id === fc.user.id && !ch.threads.some((t: any) => t.id === fc.user.id));
+  const net0 = ch.network;
+  const fm = await rpc(U, "app_chat_send", { pass: fc.user.id, body: "Hi crew" });
+  ok("attendee messages featured crew without meeting", fm.data?.body === "Hi crew", fm.error);
+  const fcv = (await rpc(FC, "app_chats")).data;
+  const row = fcv?.threads?.find((t: any) => t.id === me.user.id);
+  ok("featured crew sees the attendee's thread, unread", row?.unread === 1 && row?.last?.body === "Hi crew");
+  ok("featured crew can reply", !(await rpc(FC, "app_chat_send", { pass: me.user.id, body: "Hello!" })).error);
+  ok("it isn't a connection (network unchanged)", (await rpc(U, "app_chats")).data.network === net0);
+  ok("two attendees who haven't met still need Proof of Meet", (await rpc(F, "app_chat_send", { pass: me.user.id, body: "x" })).error?.includes("Proof of Meet") ?? false);
 
   ok("volunteer can't award", (await rpc(V, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 50, reason: "x" } })).error?.includes("lead") ?? false);
   ok("lead capped at ±100", (await rpc(L, "staff_act", { action: "award", pass_code: me.user.id, payload: { amount: 200, reason: "x" } })).error?.includes("100") ?? false);
@@ -430,6 +449,7 @@ try {
   ok("reviewer can't open the hackathon console", !!(await rpc(R, "staff_hack")).error);
   ok("volunteer can't read abstracts", !!(await rpc(V, "staff_research")).error);
 } finally {
+  if (featuredBefore !== null) await db.query(`update ubbw.config set value = $1 where key = 'chat_featured'`, [featuredBefore]);
   await db.query(`delete from ubbw.submissions where task_id = 'watch-db-test-live'`);
   await db.query(`delete from ubbw.ledger where ref = 'db-test-live'`);
   await db.query(`delete from ubbw.sessions where id = 'db-test-live'`);
