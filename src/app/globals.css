@@ -989,20 +989,26 @@ a, button, summary, label { -webkit-tap-highlight-color: transparent; touch-acti
 @media print { .staff-side, .staff-tabs, .staff-top, .offline-bar { display: none !important; } .reward-poster { max-width: 120mm; } }
 
 /* "You're in" — shown at the door */
-.in-pass { position: relative; overflow: hidden; display: grid; justify-items: center; text-align: center; gap: 6px; padding: 28px 22px 26px; border-radius: var(--r); background: linear-gradient(150deg, #13effd, #c6fc1f); color: var(--on-bright); box-shadow: 0 30px 60px -30px rgba(19, 239, 253,.6); margin-bottom: 16px; }
+/* Pass card: 358×220 on a 390 pt phone (iPhone 15). Same shape on every width; everything inside is
+   sized in --u (1/358 of the card width), so the whole card scales as one piece. */
+.in-pass { position: relative; overflow: hidden; container-type: inline-size; width: 100%; max-width: 440px; aspect-ratio: 358 / 220; padding: 4.47% 5.03%; display: flex; flex-direction: column; text-align: left; border-radius: var(--r); background: linear-gradient(150deg, #13effd, #c6fc1f); color: var(--on-bright); box-shadow: 0 30px 60px -30px rgba(19, 239, 253,.6); margin-bottom: 16px; }
+.in-pass > * { --u: calc(100cqw / 322); position: relative; }
 .in-pass-art { position: absolute; right: -90px; top: -90px; color: rgba(25,20,20,.08); animation: spin 40s linear infinite; }
-.in-pass-top { position: relative; width: 100%; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(25,20,20,.72); }
-.in-pass-live { display: inline-flex; align-items: center; gap: 6px; }
-.in-pass-live i { width: 8px; height: 8px; border-radius: 50%; background: #2945d5; animation: pulse 1.2s ease-in-out infinite; }
+.in-pass-top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: calc(10.5 * var(--u)); line-height: calc(14 * var(--u)); letter-spacing: .08em; text-transform: uppercase; color: rgba(25,20,20,.72); }
+.in-pass-live { display: inline-flex; align-items: center; gap: calc(5 * var(--u)); }
+.in-pass-live i { width: calc(7 * var(--u)); height: calc(7 * var(--u)); border-radius: 50%; background: #2945d5; animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; transform: scale(.7); } }
-.in-pass-tick { position: relative; margin-top: 10px; color: #2945d5; }
-.in-pass h2 { position: relative; font-size: 38px; line-height: 1; }
-.in-pass-name { position: relative; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; font-size: 22px; line-height: 1.15; margin-top: 4px; overflow-wrap: anywhere; }
-.in-pass-meta { position: relative; font-family: var(--font-mono); font-size: 13px; color: rgba(25,20,20,.72); }
-.in-pass-clock { position: relative; margin-top: 10px; font-family: var(--font-mono); font-size: 44px; font-weight: 600; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
-.in-pass-day { position: relative; color: rgba(25,20,20,.72); font-size: 14px; }
-.in-pass-stars { position: relative; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 6px 12px; border-radius: var(--r); background: var(--saffron); color: var(--on-bright); font-weight: 700; font-size: 14px; }
-.in-pass-hint { position: relative; margin-top: 8px; font-size: 13px; color: rgba(25,20,20,.72); }
+.in-pass-head { display: flex; align-items: center; gap: calc(7 * var(--u)); margin-top: calc(8 * var(--u)); }
+.in-pass-tick { flex: none; width: calc(26 * var(--u)); height: calc(26 * var(--u)); color: #2945d5; }
+.in-pass h2 { font-size: calc(28 * var(--u)); line-height: 1; }
+.in-pass-event { margin-top: calc(6 * var(--u)); font-family: var(--font-display); font-weight: 600; font-size: calc(13 * var(--u)); line-height: calc(16 * var(--u)); overflow-wrap: anywhere; }
+.in-pass-name { margin-top: calc(2 * var(--u)); font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; font-size: calc(17 * var(--u)); line-height: calc(21 * var(--u)); overflow-wrap: anywhere; }
+.in-pass-meta { font-family: var(--font-mono); font-size: calc(11 * var(--u)); line-height: calc(14 * var(--u)); color: rgba(25,20,20,.72); }
+.in-pass-row { display: flex; align-items: center; justify-content: space-between; gap: calc(8 * var(--u)); margin-top: auto; padding-top: calc(4 * var(--u)); }
+.in-pass-clock { font-family: var(--font-mono); font-size: calc(34 * var(--u)); line-height: 1; font-weight: 600; letter-spacing: .03em; font-variant-numeric: tabular-nums; }
+.in-pass-stars { display: inline-flex; align-items: center; gap: calc(4 * var(--u)); padding: calc(4 * var(--u)) calc(9 * var(--u)); border-radius: var(--r); background: var(--saffron); color: var(--on-bright); font-weight: 700; font-size: calc(12 * var(--u)); }
+.in-pass-stars svg { width: calc(12 * var(--u)); height: calc(12 * var(--u)); }
+.in-pass-foot { display: flex; justify-content: space-between; gap: calc(8 * var(--u)); margin-top: calc(6 * var(--u)); font-size: calc(11 * var(--u)); line-height: calc(14 * var(--u)); color: rgba(25,20,20,.72); }
 @media (prefers-reduced-motion: reduce) { .in-pass-art { animation: none; } }
 
 /* entrance poster */
@@ -1840,7 +1846,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 /* room · time, check-in time, ledger date: secondary, not tertiary — tertiary was unreadable on white */
 .mini span, .earn-row span:not(.task-stars), .ledger-row span:not(.plus):not(.minus) { color: var(--label-2); }
 /* pass card: the badge figure sits under the UBBW / LIVE row, not on top of it */
-.in-pass-art { top: 40px; width: 120px; }
+.in-pass-art { top: 13%; right: 4%; width: 26%; opacity: .45; }
 /* countdown: keep the title and date clear of the stopwatch on phones */
 @media (max-width: 640px) { .countdown h2, .countdown > div > p { padding-right: 92px; } }
 /* a locked button reads locked, not as the green call to action */
@@ -3242,6 +3248,13 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 /* UB Hack group in Messages (0043) */
 .chat-group-ava { grid-row: 1 / span 2; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--klein); color: #fff; }
 .chat-group-ava.is-small { width: 36px; height: 36px; flex: none; }
+/* UBBW Team chat (0046): pinned team row, admins' inbox */
+.chat-group-ava.is-team { background: var(--green); color: #000; }
+.team-inbox { margin-top: 12px; margin-bottom: 20px; }
+.team-inbox-h { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--label-2); margin: 0 0 8px; }
+.team-find { display: flex; align-items: center; gap: 8px; padding: 0 12px; height: 40px; border-radius: var(--r); background: var(--cell); border: .5px solid var(--sep); color: var(--label-2); }
+.team-find input { flex: 1; min-width: 0; border: 0; background: none; color: var(--label); font: inherit; font-size: 15px; outline: none; }
+.team-by { display: block; font-size: 11px; font-weight: 600; color: var(--label-2); margin-bottom: 2px; }
 .chat > .hk-chat { flex: 1; display: flex; flex-direction: column; }
 .chat > .hk-chat .chat-log { min-height: 0; }
 /* Chat header starts flush under the top bar (cancels .app-main's top padding), so its resting spot equals

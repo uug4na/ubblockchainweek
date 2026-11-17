@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BadgeCheck, Star } from "lucide-react";
-import { site } from "@/data/site";
+import { site, days } from "@/data/site";
 import { IsoArt } from "@/components/iso/IsoArt";
 import badgeArt from "@/components/iso/figures/minis/badge";
 
@@ -17,6 +17,10 @@ export function InPass({ name, pass, since, welcomeStars }: { name: string; pass
   const clock = new Date(now).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: site.tz });
   const at = new Date(since).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: site.tz });
   const day = new Date(now).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: site.tz });
+  // The entrance QR is per day, so the event they came in to is that day's programme.
+  const inDate = new Date(since).toLocaleDateString("en-CA", { timeZone: site.tz });
+  const n = days.findIndex((d) => d.date === inDate);
+  const event = n >= 0 ? `Day ${n + 1} · ${days[n].label}` : site.name;
 
   return (
     <section className="in-pass" aria-live="polite">
@@ -25,14 +29,21 @@ export function InPass({ name, pass, since, welcomeStars }: { name: string; pass
         <span>{site.short}</span>
         <span className="in-pass-live"><i /> live</span>
       </div>
-      <BadgeCheck size={46} className="in-pass-tick" />
-      <h2>You&apos;re in.</h2>
+      <div className="in-pass-head">
+        <BadgeCheck className="in-pass-tick" />
+        <h2>You&apos;re in.</h2>
+      </div>
+      <p className="in-pass-event">{event}</p>
       <p className="in-pass-name">{name}</p>
       <p className="in-pass-meta">{pass} · in since {at}</p>
-      <div className="in-pass-clock">{clock}</div>
-      <p className="in-pass-day">{day}</p>
-      {!!welcomeStars && <p className="in-pass-stars"><Star size={16} fill="currentColor" /> +{welcomeStars} welcome stars</p>}
-      <p className="in-pass-hint">Show this screen at the door.</p>
+      <div className="in-pass-row">
+        <div className="in-pass-clock">{clock}</div>
+        {!!welcomeStars && <p className="in-pass-stars"><Star fill="currentColor" /> +{welcomeStars}</p>}
+      </div>
+      <div className="in-pass-foot">
+        <span className="in-pass-day">{day}</span>
+        <span className="in-pass-hint">Show this at the door.</span>
+      </div>
     </section>
   );
 }

@@ -65,4 +65,9 @@ export type ChatMsg = { id: number; body: string; mine: boolean; at: number; kin
 export type ChatThread = Person & { last: ChatMsg | null; unread: number; met: number };
 // hack: the UB Hack group thread (0043_hack_chat_in_messages.sql), null unless you're in a team still in the hackathon
 export type HackThread = { team: string; last: { name: string; body: string; mine: boolean; crew: boolean; at: number } | null; at: number; unread: number };
-export type Chats = { network: number; unread: number; threads: ChatThread[]; hack?: HackThread | null };
+// UBBW Team chat (0046_team_chat.sql): attendees get `team` (their pinned thread), admins get `inbox` (every attendee thread).
+// name: "UBBW Team" for admin messages when an attendee reads them; admins see the admin's own name.
+export type TeamMsg = { id: number; body: string; at: number; mine: boolean; team: boolean; name: string };
+export type TeamThread = { last: TeamMsg | null; unread: number };
+export type TeamInboxRow = Person & { last: TeamMsg; unread: number };
+export type Chats = { network: number; unread: number; threads: ChatThread[]; hack?: HackThread | null; team?: TeamThread | null; inbox?: TeamInboxRow[] | null };

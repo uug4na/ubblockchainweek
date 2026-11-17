@@ -198,6 +198,33 @@ try {
   ok("a link as gif refused", (await rpc(U, "app_chat_send_media", { pass: fr.user.id, kind: "gif", ref: "https://evil.example/x.gif" })).error?.includes("isn't available") ?? false);
   ok("receiver's list shows GIF last", (await rpc(F, "app_chats")).data?.threads[0]?.last?.kind === "gif");
   await admin.storage.from("chat-photos").remove([photo]);
+  // 0046: the pinned UBBW Team thread; admins answer from the attendee app.
+  console.log("chat: UBBW Team");
+  const t0 = (await rpc(U, "app_chats")).data;
+  ok("attendee has the team thread from the start (no inbox)", t0?.team?.unread === 0 && t0.team.last === null && !t0.inbox, t0?.team);
+  const tq = (await rpc(U, "app_team_send", { body: "Where is the merch desk?" })).data;
+  ok("attendee asks the team", tq?.mine === true && tq.team === false && tq.body === "Where is the merch desk?", tq);
+  await rpc(A, "app_me");
+  const ib = (await rpc(A, "app_chats")).data;
+  const row = ib?.inbox?.find((r: any) => r.id === me.user.id);
+  ok("admin sees it in the team inbox, unread", row?.unread === 1 && row.last?.body === "Where is the merch desk?" && !ib.team, row);
+  ok("lead can't open someone's team thread", !!(await rpc(L, "app_team_chat", { pass: me.user.id })).error);
+  ok("attendee can't open someone else's team thread", !!(await rpc(F, "app_team_chat", { pass: me.user.id })).error);
+  ok("lead can't write in someone's team thread", !!(await rpc(L, "app_team_send", { body: "hi", pass: me.user.id })).error);
+  const at = (await rpc(A, "app_team_chat", { pass: me.user.id, after: 0 })).data;
+  ok("admin opens the thread (marks read)", at?.messages?.length === 1 && at.person?.id === me.user.id
+     && (await rpc(A, "app_chats")).data.inbox.find((r: any) => r.id === me.user.id)?.unread === 0);
+  const ar = (await rpc(A, "app_team_send", { body: "Next to the entrance.", pass: me.user.id })).data;
+  ok("admin replies", ar?.mine === true && ar.team === true, ar);
+  const ut = (await rpc(U, "app_chats")).data;
+  ok("attendee: 1 unread, signed 'UBBW Team' (admin name hidden)", ut?.team?.unread === 1 && ut.team.last?.name === "UBBW Team" && ut.team.last.mine === false && ut.network === 1, ut?.team);
+  const uo = (await rpc(U, "app_team_chat", {})).data;
+  ok("attendee opens it: both messages, read", uo?.messages?.length === 2 && !uo.person && (await rpc(U, "app_chats")).data.team.unread === 0);
+  ok("admin writes first", (await rpc(A, "app_team_send", { body: "Your hoodie is ready.", pass: fr.user.id })).data?.team === true
+     && (await rpc(F, "app_chats")).data?.team?.unread === 1);
+  ok("admin finds attendees by name", (await rpc(A, "app_team_find", { q: "Test Gu" })).data?.some((p: any) => p.id === me.user.id));
+  ok("attendee can't search people", !!(await rpc(U, "app_team_find", { q: "Test" })).error);
+  ok("admin replies are in the activity log", (await db.query(`select count(*)::int n from ubbw.audit where staff_email = $1 and action = 'chat'`, [`t.admin@${DOMAIN}`])).rows[0].n === 2);
   await new Promise((r) => setTimeout(r, 10_000)); // let the 10 s send window pass before the rate-limit check
 
   for (let i = 0; i < 5; i++) await rpc(U, "app_chat_send", { pass: fr.user.id, body: `m${i}` });
