@@ -5,3 +5,6 @@
 export const STARS_OPEN = false;
 export const GAMES_PLAYABLE = false;
 export const MERCH_OPEN = false;
+// Owner, 2026-11-17: the Add to Apple Wallet button is hidden until there's an Apple Developer account
+// (Pass Type ID certificate as Supabase secrets, see supabase/functions/wallet-pass/README.md). Set true to show it.
+export const WALLET_OPEN = false;

@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound } from "lucide-react";
+import { BadgeCheck, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound, Wallet as WalletIcon } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
+import { addToAppleWallet, canUseWallet } from "@/lib/wallet";
+import { WALLET_OPEN } from "@/data/open";
 import { networks, toHandle, type Socials } from "@/lib/socials";
 import { BusinessCard } from "@/components/BusinessCard";
 import { ShareStory } from "@/components/PassStory";
@@ -98,6 +100,31 @@ function useNetwork(on: boolean) {
   return on ? data : null;
 }
 
+// Apple devices only: the Passport as a Wallet pass (same QR as the card above).
+function WalletButton() {
+  const [show, setShow] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => setShow(WALLET_OPEN && canUseWallet()), []);
+  if (!show) return null;
+  return (
+    <>
+      <button
+        className="btn wallet-btn wide"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          setError("");
+          try { await addToAppleWallet(); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+        }}
+      >
+        <WalletIcon size={18} /> {busy ? "Opening Wallet…" : "Add to Apple Wallet"}
+      </button>
+      {error && <p className="form-error" role="alert">{error}</p>}
+    </>
+  );
+}
+
 export default function ProfilePage() {
   const { status, me } = useMe();
   const net = useNetwork(status === "in");
@@ -122,9 +149,15 @@ export default function ProfilePage() {
         {back}
         <h1 className="app-h1 passport-h1">Your UB Blockchain Passport</h1>
         <p className="app-sub">One QR for the desk, merch and your contact.</p>
-        <BusinessCard person={u} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />
-        <ShareStory person={u} />
-        <button className="btn btn-ghost wide" style={{ marginTop: 10 }} onClick={() => setView("edit")}>Edit card</button>
+        {/* PC: the card at its phone size, the actions beside it (it used to stretch across the whole column) */}
+        <div className="passport-view">
+          <BusinessCard person={u} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />
+          <div className="passport-actions">
+            <WalletButton />
+            <ShareStory person={u} />
+            <button className="btn btn-ghost wide" style={{ marginTop: 10 }} onClick={() => setView("edit")}>Edit card</button>
+          </div>
+        </div>
       </div>
     );
   if (view === "edit")
