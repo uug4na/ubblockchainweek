@@ -82,7 +82,7 @@ function Form({ onDone, onCancel }: { onDone: (d: Data) => void; onCancel?: () =
   }
 
   return (
-    <form className="form hk-form" onSubmit={submit}>
+    <form className="form hk-form rs-form" onSubmit={submit}>
       <div className="field">
         <label htmlFor="rs-title">Research title</label>
         <input id="rs-title" value={f.title} onChange={(e) => set({ title: e.target.value })} required maxLength={200} />
@@ -147,24 +147,28 @@ export default function ResearchPage() {
       <>
         {head}
         {data.open ? (
-          <>
-            <Limits used={0} />
-            <Form onDone={done} />
-          </>
+          <div className="desk">
+            <div className="desk-rail is-sticky"><Limits used={0} /></div>
+            <div className="desk-main"><Form onDone={done} /></div>
+          </div>
         ) : <div className="panel empty"><p>Registration closed on 30 November at 23:59.</p></div>}
       </>
     );
 
-  if (adding) return (<>{head}<Limits used={data.items.length} /><Form onDone={done} onCancel={() => setAdding(false)} /></>);
+  if (adding) return (<>{head}<div className="desk"><div className="desk-rail is-sticky"><Limits used={data.items.length} /></div><div className="desk-main"><Form onDone={done} onCancel={() => setAdding(false)} /></div></div></>);
 
   return (
     <>
       {head}
+      <div className="desk">
+      <div className="desk-rail">
       <section className="panel rs-done">
         <BadgeCheck size={28} />
         <h2>You&apos;re registered</h2>
         <p>The jury reads every abstract. Present your research at the final on <b>Tue 1 Dec, 11:00–17:00</b>.</p>
       </section>
+      </div>
+      <div className="desk-main">
       {data.items.map((r) => (
         <section className="panel rs-mine" key={r.id}>
           <h2>{r.title}</h2>
@@ -176,10 +180,14 @@ export default function ResearchPage() {
           {r.file && <button type="button" className="btn btn-ghost" onClick={() => openPdf(r.file!)}><FileText size={16} /> Your PDF</button>}
         </section>
       ))}
+      </div>
+      <div className="desk-rail is-low">
       {data.open && <Limits used={data.items.length} />}
       {data.open && data.items.length < MAX_PAPERS && (
         <button type="button" className="btn btn-ghost wide" style={{ marginTop: 16 }} onClick={() => setAdding(true)}>Register another paper</button>
       )}
+      </div>
+      </div>
     </>
   );
 }

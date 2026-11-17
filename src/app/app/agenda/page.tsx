@@ -14,6 +14,7 @@ export default function AgendaPage() {
       <h1 className="app-h1">Agenda.</h1>
       <p className="app-sub">Ulaanbaatar time</p>
 
+      <div className="agenda-days">
       {days.map((d) => {
         const list = sessions.filter((s) => s.day === d.date).sort((a, b) => a.start.localeCompare(b.start));
         return (
@@ -53,6 +54,7 @@ export default function AgendaPage() {
           </section>
         );
       })}
+      </div>
     </>
   );
 }

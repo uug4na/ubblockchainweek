@@ -11,6 +11,7 @@ import { InstallPrompt } from "@/components/Pwa";
 import { InPass } from "@/components/InPass";
 import { HACK_DETAILS_PUBLIC, HACK_SECTION_OPEN } from "@/data/hackathon";
 import { useMerchCatalog } from "@/lib/merchCatalog";
+import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 import { useNow } from "@/lib/time";
 import { IsoArt } from "@/components/iso/IsoArt";
 import stopwatchArt from "@/components/iso/figures/minis/stopwatch";
@@ -45,6 +46,18 @@ function PassStatus({ me }: { me: Me }) {
           <span>{mine.status === "reserved" ? "Show the QR at the merch desk" : `${me.attended.length} sessions`}</span>
         </div>
         <Link href="/app/merch" className="btn btn-ghost">{mine.status === "reserved" ? "Show QR" : "Merch"}</Link>
+      </section>
+    );
+  // Merch is closed for now: no "N more for the hoodie" promise, point at what is open.
+  if (!MERCH_OPEN)
+    return (
+      <section className="pass-strip">
+        <StarChip n={me.balance} />
+        <div>
+          <b>Your stars are saved</b>
+          <span>Merch opens closer to the week</span>
+        </div>
+        <Link href="/app/games" className="btn btn-ghost">Games</Link>
       </section>
     );
   const next = merch.filter((m) => m.cost > me.balance).sort((a, b) => a.cost - b.cost)[0];
@@ -115,6 +128,10 @@ export default function AppHome() {
         {(phase === "before" || phase === "loading") && <Countdown now={now} />}
       </section>
 
+      {/* PC (>=1100px): main column left, shortcuts rail right. Phones: the wrappers vanish (display: contents). */}
+      <div className="desk is-home">
+      <div className="desk-main">
+
       {me?.inToday && <div style={{ marginTop: 16 }}><InPass name={me.user.name} pass={me.user.id} since={me.inToday} /></div>}
       {me ? (
         <PassStatus me={me} />
@@ -128,11 +145,13 @@ export default function AppHome() {
           <Link href="/app/profile" className="btn btn-clay">Get Passport</Link>
         </section>
       ) : null}
+      </div>
 
+      <div className="desk-rail">
       <div className="quick">
         <Link href="/app/scan"><ScanLine size={22} /><span>Scan<small>Posters</small></span></Link>
-        <Link href="/app/stars"><Star size={22} /><span>Earn stars<small>Tasks</small></span></Link>
-        <Link href="/app/merch"><Gift size={22} /><span>Merch<small>Limited</small></span></Link>
+        <Link href="/app/stars"><Star size={22} /><span>Earn stars<small>{STARS_OPEN ? "Tasks" : "Soon"}</small></span></Link>
+        <Link href="/app/merch"><Gift size={22} /><span>Merch<small>{MERCH_OPEN ? "Limited" : "Soon"}</small></span></Link>
       </div>
 
       {/* The two competitions, each its own section */}
@@ -140,7 +159,9 @@ export default function AppHome() {
         {HACK_SECTION_OPEN && <Link href="/app/hack"><i className="tile t-klein"><Trophy size={18} /></i><span>Hackathon<small>{HACK_DETAILS_PUBLIC ? "UB Hack · ₮15.5M" : "UB Hack"}</small></span><ChevronRight size={18} /></Link>}
         <Link href="/app/research"><i className="tile t-fushia"><GraduationCap size={18} /></i><span>Research conference<small>The Future of Money · ₮3M</small></span><ChevronRight size={18} /></Link>
       </nav>
+      </div>
 
+      <div className="desk-main is-low">
       {live.length > 0 && (
         <section className="panel">
           <div className="panel-head"><h2>Happening now</h2></div>
@@ -175,7 +196,8 @@ export default function AppHome() {
           ))}
         </div>
       </section>
-
+      </div>
+      </div>
     </>
   );
 }

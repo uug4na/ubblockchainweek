@@ -238,7 +238,7 @@ export default function StaffScan() {
         <QrScanner
           onResult={lookup}
           busy={busy}
-          manualLabel="No phone? Type their pass or claim code"
+          manualLabel="No phone? Type their Passport or claim code"
           manualPlaceholder={station === "merch" ? "CL-XXXXXX or UB-XXXXXX" : "UB-XXXXXX"}
         />
 
@@ -255,14 +255,14 @@ export default function StaffScan() {
                 <b>{stations.find((x) => x.id === station)?.label}</b>
                 <span>
                   {station === "desk" && "For people without a phone."}
-                  {station === "seats" && "Scan their pass at the event door."}
-                  {station === "merch" && "Scan their pass (or an old claim QR)."}
+                  {station === "seats" && "Scan their Passport at the event door."}
+                  {station === "merch" && "Scan their Passport (or an old claim QR)."}
                   {station === "reward" &&
                     (rewards === null
                       ? "Loading rewards…"
                       : rewards.length === 0
                         ? "No rewards yet — a lead sets them up under Rewards."
-                        : `Scan a pass to give “${reward?.title}” (+${reward?.stars}).`)}
+                        : `Scan a Passport to give “${reward?.title}” (+${reward?.stars}).`)}
                 </span>
               </div>
             )

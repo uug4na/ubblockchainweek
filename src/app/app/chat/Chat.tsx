@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { GAMES_PLAYABLE } from "@/data/open";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { ArrowUp, AtSign, Check, CheckCheck, ChevronLeft, ChevronRight, ExternalLink, Headset, ImageIcon, Info, Search, Trophy, UserPlus, X } from "lucide-react";
@@ -66,7 +67,7 @@ function Threads() {
       {data?.inbox && <TeamInbox rows={data.inbox} />}
       {data && (
         data.threads.length === 0 && !(HACK_SECTION_OPEN && data.hack) && !data.team ? (
-          <p className="muted chat-threads-empty">Meet people to chat with them. <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></p>
+          <p className="muted chat-threads-empty">Meet people to chat with them.{GAMES_PLAYABLE && <> <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></>}</p>
         ) : (
           // messenger-style list: no card around it, compact two-line rows; UBBW Team, then the UB Hack group, are pinned first
           <ul className="chat-threads">
@@ -91,7 +92,7 @@ function Threads() {
         )
       )}
       {data && data.team && data.threads.length === 0 && (
-        <p className="muted chat-threads-empty">Meet people to chat with them. <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></p>
+        <p className="muted chat-threads-empty">Meet people to chat with them.{GAMES_PLAYABLE && <> <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></>}</p>
       )}
     </div>
   );

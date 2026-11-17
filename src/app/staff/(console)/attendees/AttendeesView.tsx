@@ -91,7 +91,7 @@ export function AttendeesView() {
         <div>
           <span className="eyebrow">Attendees</span>
           <h1 className="app-h1">Attendees</h1>
-          <p className="muted">{data ? `${num(all.length)} passes · ${num(counts.in)} checked in` : error || "Loading…"}</p>
+          <p className="muted">{data ? `${num(all.length)} Passports · ${num(counts.in)} checked in` : error || "Loading…"}</p>
         </div>
         <button className="btn btn-ghost" onClick={() => download("/api/staff/attendees?format=csv", "ubbw-attendees.csv")}><Download size={16} /> CSV</button>
       </div>
@@ -99,7 +99,7 @@ export function AttendeesView() {
       <div className="toolbar staff-toolbar att-toolbar">
         <div className="search">
           <Search size={18} />
-          <input value={q} onChange={(e) => { setQ(e.target.value); reset(); }} placeholder="Name, email or UB- code" aria-label="Search attendees" inputMode="search" />
+          <input value={q} onChange={(e) => { setQ(e.target.value); reset(); }} placeholder="Name, email or UB-code" aria-label="Search attendees" inputMode="search" />
           {q && <button className="att-clear" aria-label="Clear search" onClick={() => { setQ(""); reset(); }}><X size={16} /></button>}
         </div>
         <div className="att-filter-row">

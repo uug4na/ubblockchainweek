@@ -181,7 +181,7 @@ export default function StaffHome() {
 
       <Link href="/staff/scan" className="scan-cta">
         <ScanLine size={30} />
-        <span>Scan a pass<small>Merch · reward · backup check-in</small></span>
+        <span>Scan a Passport<small>Merch · reward · backup check-in</small></span>
         <ChevronRight size={22} />
       </Link>
 

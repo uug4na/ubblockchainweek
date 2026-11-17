@@ -183,7 +183,9 @@ function TeamView({ team, open, onChange, go }: { team: Team; open: boolean; onC
       <h1 className="app-h1">Team</h1>
       <p className="app-sub">{team.members.length} {team.members.length === 1 ? "member" : "members"} · {trackNames(team.tracks)}</p>
 
+      <div className="desk">
       {open && live && (
+        <div className="desk-rail is-sticky">
         <section className="panel hk-invite">
           <small>Team code</small>
           <b>{team.code}</b>
@@ -195,8 +197,10 @@ function TeamView({ team, open, onChange, go }: { team: Team; open: boolean; onC
             </button>
           </div>
         </section>
+        </div>
       )}
 
+      <div className="desk-main">
       <div className="settings-group">
         {team.members.map((m) => (
           <div className="settings-row" key={m.id}>
@@ -216,6 +220,8 @@ function TeamView({ team, open, onChange, go }: { team: Team; open: boolean; onC
           </button>
         </div>
       )}
+      </div>
+      </div>
     </>
   );
 }
@@ -228,7 +234,7 @@ function ProjectForm({ team, onSaved }: { team: Team; onSaved: (h: Hack) => void
   const edit = (p: Partial<typeof d>) => { setD((x) => ({ ...x, ...p })); setState("idle"); };
   return (
     <form
-        className="form hk-form"
+        className="form hk-form hk-pform"
         onSubmit={async (e) => {
           e.preventDefault();
           setState("saving");
@@ -302,7 +308,11 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
       <Back to="home" label="Hackathon" go={go} />
       <h1 className="app-h1">{stage1 ? "Registration" : "Project & documents"}</h1>
       <p className="app-sub">{stage1 ? team.leader ? "Team name, project, description and pitch deck." : "Your leader fills this in. Anyone in the team can add files." : team.leader ? "Everything the jury sees." : "Everything the jury sees. Your leader edits it; anyone can add files."}</p>
+      <div className="desk">
+      <div className="desk-main">
       <ProjectForm key={`${team.name}|${team.title}|${team.summary}|${team.tracks.join()}|${team.sourceUrl}|${team.demoUrl}|${team.siteUrl}`} team={team} onSaved={onChange} />
+      </div>
+      <div className="desk-rail is-sticky">
       <h2 className="hk-sec">{stage1 ? "Pitch deck" : "Files"}</h2>
       <p className="hk-sec-sub">{stage1 ? `PDF or slides, up to ${MAX_MB} MB.` : `Pitch deck, one-pager, diagrams. Up to ${MAX_MB} MB each.`}</p>
       {team.files.length > 0 && (
@@ -329,6 +339,8 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
           </button>
         </>
       )}
+      </div>
+      </div>
     </>
   );
 }
@@ -372,6 +384,8 @@ export default function HackPage() {
         <h1 className="app-h1">Hackathon.</h1>
         {tabs}
         <p className="app-sub">{HACK_DETAILS_PUBLIC ? <>UB Hack · Stablecoin &amp; DeFi · ₮15.5M prize pool</> : "UB Hack"}</p>
+        <div className="desk">
+        <div className="desk-main">
         <section className="panel hk-start">
           <Steps stage="registered" />
           <p>Solo or as a team, any size. One person creates the team, the others join with its code.</p>
@@ -384,7 +398,9 @@ export default function HackPage() {
         ) : (
           <div className="panel empty"><p>Registration closed on 23 November.</p></div>
         )}
-        {projectsRow && <nav className="settings-group">{projectsRow}</nav>}
+        </div>
+        {projectsRow && <div className="desk-rail"><nav className="settings-group">{projectsRow}</nav></div>}
+        </div>
       </>
     );
   }
@@ -397,18 +413,24 @@ export default function HackPage() {
     <>
       <h1 className="app-h1">Hackathon.</h1>
       {tabs}
+      <div className="desk">
+      <div className="desk-main">
       <section className={`panel hk-overview is-${t.stage}`}>
         <small>{trackNames(t.tracks)}</small>
         <h2>{t.name}</h2>
         {t.stage === "out" ? <p className="hk-out">Not selected</p> : <Steps stage={t.stage} />}
         <p className="hk-next">{nextStep(t)}</p>
       </section>
+      </div>
+      <div className="desk-rail">
       <nav className="settings-group">
         <button onClick={() => go("team")}><i className="tile t-gray"><Users size={18} /></i><span>Team</span><small>{t.members.length === 1 ? "Solo" : `${t.members.length} members`}</small><ChevronRight size={18} /></button>
         <button onClick={() => go("files")}><i className="tile t-klein"><FolderGit2 size={18} /></i><span>{t.stage === "registered" ? "Registration" : "Project & documents"}</span><small className={ready ? undefined : "is-todo"}>{ready ? `${t.files.length} ${t.files.length === 1 ? "file" : "files"}` : "To do"}</small><ChevronRight size={18} /></button>
         {data.chat && <button onClick={() => router.push("/app/chat/?g=hack")}><i className="tile t-aqua"><MessageCircle size={18} /></i><span>Group chat</span><small>In Messages</small><ChevronRight size={18} /></button>}
         {projectsRow}
       </nav>
+      </div>
+      </div>
     </>
   );
 }
