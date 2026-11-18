@@ -40,7 +40,7 @@ const actionLabel: Record<string, string> = {
   award: "Bonus", review: "Star task", stock: "Stock", game: "Game", notice: "Notice",
 };
 
-function Columns({ rows, label }: { rows: { key: string; tick: string; v: number }[]; label: string }) {
+export function Columns({ rows, label }: { rows: { key: string; tick: string; v: number }[]; label: string }) {
   if (!rows.length) return <p className="muted small">No data yet.</p>;
   const max = Math.max(1, ...rows.map((r) => r.v));
   const peak = rows.reduce((p, r) => (r.v > p.v ? r : p), rows[0]);

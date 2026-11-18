@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Handshake, TrendingUp, Ticket, Coins, ChevronRight, Zap } from "lucide-react";
+import { Handshake, TrendingUp, Ticket, Coins, ChevronRight, Zap, Bird } from "lucide-react";
 import type { SVGProps } from "react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { RewardsHead } from "@/components/RewardsHead";
@@ -27,6 +27,7 @@ function ShagaiIcon({ strokeWidth = 2, ...p }: SVGProps<SVGSVGElement>) {
 const games = [
   { href: "/app/games/shagai", icon: ShagaiIcon, title: "Shagai", body: "Roll the Dorvon Berkh", tag: "Luck", tone: "var(--violet)" },
   { href: "/app/games/flip", icon: Coins, title: "Coin flip", body: "Heads or tails, double up", tag: "Luck", tone: "var(--cyan)" },
+  { href: "/app/games/flappy", icon: Bird, title: "Flappy Bird", body: "Ardcoin · fly the pipes", tag: "Skill", tone: "#a4e77f" },
   { href: "/app/games/scratch", icon: Ticket, title: "Scratch card", body: "Stars, jackpot or merch", tag: "Luck", tone: "var(--klein)" },
   { href: "/app/games/meet", icon: Handshake, title: "Proof of Meet", body: "Scan a new contact", tag: "Earn", tone: "var(--fushia)" },
   { href: "/app/games/predict", icon: TrendingUp, title: "Predictions", body: "Call it, win double", tag: "Risk", tone: "#9ccf2e" },

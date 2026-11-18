@@ -7,6 +7,7 @@ import { usePolling } from "@/lib/usePolling";
 import { usePersisted } from "@/lib/store";
 import type { Market } from "@/lib/types";
 import { site } from "@/data/site";
+import { FlappyBoard } from "./FlappyBoard";
 
 type Stats = {
   meet: { connections: number; today: number; bonus: number };
@@ -71,6 +72,7 @@ export function GamesView() {
     { id: "scratch", label: "Scratch" },
     { id: "coin", label: "Coin" },
     { id: "shagai", label: "Shagai" },
+    { id: "flappy", label: "Flappy" },
   ];
   const [saved, setTab] = usePersisted<string>("ubbw.staff.games", "predict");
   const tab = tabs.some((x) => x.id === saved) ? saved : "predict";
@@ -209,7 +211,9 @@ export function GamesView() {
       )}
       </>)}
 
-      {s && tab !== "predict" && (
+      {tab === "flappy" && <FlappyBoard />}
+
+      {s && tab !== "predict" && tab !== "flappy" && (
         <>
           <div className="gm-grid gm-one">
             {tab === "meet" && <GameCard icon={<Handshake size={20} />} tint="t-blue" name="Proof of Meet" what="Attendees scan each other to connect." big={s.meet.connections} bigLabel="connections made"
