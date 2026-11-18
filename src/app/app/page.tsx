@@ -15,6 +15,7 @@ import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 import { useNow } from "@/lib/time";
 import { IsoArt } from "@/components/iso/IsoArt";
 import stopwatchArt from "@/components/iso/figures/minis/stopwatch";
+import { PartnerWheel, PinnedPartners } from "@/components/PartnerWheel";
 
 const start = new Date(site.startISO).getTime();
 const end = new Date(site.endISO).getTime();
@@ -48,18 +49,8 @@ function PassStatus({ me }: { me: Me }) {
         <Link href="/app/merch" className="btn btn-ghost">{mine.status === "reserved" ? "Show QR" : "Merch"}</Link>
       </section>
     );
-  // Merch is closed for now: no "N more for the hoodie" promise, point at what is open.
-  if (!MERCH_OPEN)
-    return (
-      <section className="pass-strip">
-        <StarChip n={me.balance} />
-        <div>
-          <b>Your stars are saved</b>
-          <span>Merch opens closer to the week</span>
-        </div>
-        <Link href="/app/games" className="btn btn-ghost">Games</Link>
-      </section>
-    );
+  // Merch is closed for now: no strip at all (owner, 18 Nov: "Your stars are saved" was unnecessary).
+  if (!MERCH_OPEN) return null;
   const next = merch.filter((m) => m.cost > me.balance).sort((a, b) => a.cost - b.cost)[0];
   return (
     <section className="pass-strip">
@@ -126,7 +117,10 @@ export default function AppHome() {
           )}
         </div>
         {(phase === "before" || phase === "loading") && <Countdown now={now} />}
+        <PinnedPartners />
       </section>
+
+      <PartnerWheel />
 
       {/* PC (>=1100px): main column left, shortcuts rail right. Phones: the wrappers vanish (display: contents). */}
       <div className="desk is-home">

@@ -595,7 +595,7 @@ const PHOTOS = [
   ...nums(10).map((n) => "2025/recap/roundtable/" + n),
 ];
 const LOGOS = {
-  "TenGer HD": "partners/tenger-hd.png", Ard: "partners/icons/ard.png", Unread: "partners/icons/unread.png",
+  "TenGer TV": "partners/tenger-hd.png", Ard: "partners/icons/ard.png", Unread: "partners/icons/unread.png",
   CryptoRank: "partners/icons/cryptorank.svg", Binance: "partners/icons/binance.svg", Circle: "partners/icons/circle.svg", Tether: "partners/icons/tether.svg",
 };
 const imgUrl = (p, small) => (!p ? "" : p.startsWith("data:") || p.startsWith("/") ? p : BRAND + p + (p.includes(".") ? "" : (small ? "-s" : "") + ".webp"));
@@ -678,7 +678,7 @@ const PRESETS = {
       { when: L("All week", "Долоо хоногийн турш"), t: L("Workshops & AMAs", "Воркшоп ба AMA"), body: L("Hands-on workshops, open AMAs and the nightly UB Blockchain review.", "Практик воркшоп, нээлттэй AMA, орой бүр UB Blockchain тойм.") },
     ] },
     { type: "partners", f: { eyebrow: L("2026 partners", "2026 оны түншүүд"), title: L("Made *together*", "Хамтдаа *бүтээв*") }, items: [
-      { name: L("TenGer HD"), about: L("Host", "Зохион байгуулагч"), logo: LOGOS["TenGer HD"], light: false },
+      { name: L("TenGer TV"), about: L("Host", "Зохион байгуулагч"), logo: LOGOS["TenGer TV"], light: false },
       { name: L("Ard"), about: L("Partner", "Түнш"), logo: LOGOS.Ard, light: false },
       { name: L("Unread"), about: L("Partner", "Түнш"), logo: LOGOS.Unread, light: false },
       { name: L("CryptoRank"), about: L("Partner", "Түнш"), logo: LOGOS.CryptoRank, light: true },
