@@ -3,20 +3,23 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LocateFixed, Navigation, X } from "lucide-react";
-import type { Map as LMap, Marker } from "leaflet";
-import { brandMap, brandPin } from "@/components/map/brandMap";
-import { getSpot } from "@/lib/geo";
+import type { Circle, Map as LMap, Marker } from "leaflet";
+import { brandMap, brandPin, ringStyle } from "@/components/map/brandMap";
+import { bestSpot, ROUGH_M, type Spot } from "@/lib/geo";
 import { appleDirections, farText, googleDirections, isApple, metres } from "@/lib/eventPlaces";
 
 type Place = { lat: number; lng: number; name: string | null };
 
 // Where an event is: map, venue, how far you are, and directions in your map app.
 // Distance shows by itself when location is already allowed; otherwise one tap asks for it.
-export function PlaceSheet({ title, when, place, onClose }: { title: string; when: string; place: Place; onClose: () => void }) {
+// onSpot hands the found location back (Agenda uses it to show the distance on every item).
+export function PlaceSheet({ title, when, place, onClose, onSpot }: { title: string; when: string; place: Place; onClose: () => void; onSpot?: (s: Spot) => void }) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
   const me = useRef<Marker | null>(null);
+  const meRing = useRef<Circle | null>(null); // how far off your own location could be
   const [far, setFar] = useState<number | null>(null);
+  const [acc, setAcc] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const apple = isApple();
@@ -41,6 +44,7 @@ export function PlaceSheet({ title, when, place, onClose }: { title: string; whe
       map.current?.remove();
       map.current = null;
       me.current = null;
+      meRing.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place]);
@@ -49,13 +53,17 @@ export function PlaceSheet({ title, when, place, onClose }: { title: string; whe
     setBusy(true);
     setError("");
     try {
-      const s = await getSpot(15_000);
+      const s = await bestSpot();
       setFar(metres(s, place));
+      setAcc(s.acc);
+      onSpot?.(s);
       const m = map.current;
       if (m) {
         const L = (await import("leaflet")).default;
         if (me.current) me.current.setLatLng(s);
         else me.current = L.marker(s, { icon: L.divIcon({ className: "bm-me", iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false, keyboard: false }).addTo(m);
+        meRing.current?.remove();
+        meRing.current = s.acc > ROUGH_M ? L.circle(s, { ...ringStyle, radius: s.acc }).addTo(m) : null;
         m.fitBounds(L.latLngBounds([place, s]), { padding: [48, 48], maxZoom: 16 });
       }
     } catch (e) {
@@ -74,7 +82,15 @@ export function PlaceSheet({ title, when, place, onClose }: { title: string; whe
           <h2>{place.name || "Event place"}</h2>
           <p className="where-for">{title} · {when}</p>
           {far != null ? (
-            <p className="where-far"><b>{farText(far)}</b> from you</p>
+            <>
+              <p className="where-far">{acc > ROUGH_M && "About "}<b>{farText(far)}</b> from you</p>
+              {acc > ROUGH_M && (
+                <p className="where-rough">
+                  This device only knows your location to within {farText(acc)}.{" "}
+                  <button type="button" className="link-btn" onClick={locate} disabled={busy}>{busy ? "Finding you…" : "Try again"}</button>
+                </p>
+              )}
+            </>
           ) : (
             <button type="button" className="link-btn where-locate" onClick={locate} disabled={busy}>
               <LocateFixed size={15} /> {busy ? "Finding you…" : "How far am I?"}

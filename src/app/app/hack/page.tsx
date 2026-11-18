@@ -32,12 +32,12 @@ async function openFile(path: string) {
 // What the team should do now, in one sentence.
 function nextStep(t: Team) {
   if (t.stage === "out") return "Thanks for taking part. Your team space is now read-only.";
-  if (t.stage === "final") return "You're in the final 10. Kickoff 1 Dec, pitch day 4 Dec.";
-  if (t.stage === "top20") return "You're in the top 20. Prepare your idea for the online pitch on 27 Nov.";
-  // Stage 1 is registration: project name, description and a pitch deck. Links come from stage 2.
-  const missing = [!t.title && "project name", !t.summary && "description", !t.files.length && "pitch deck"].filter(Boolean) as string[];
-  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} before 23 Nov.`;
-  return "All set. 20 teams are picked for the online pitch after 23 Nov.";
+  if (t.stage === "final") return "Pitch Day is 3 Dec: 5 minutes to present, 5 for questions. Name your first pilot user, the data you need and one measurable outcome.";
+  if (t.stage === "top20") return "You're shortlisted. Demo Day is 2 Dec: run one workflow, the normal case and one exception, in 5 minutes.";
+  // Stage 1 is the proposal: project name, a short summary and the one-page proposal. Links come later.
+  const missing = [!t.title && "project name", !t.summary && "proposal summary", !t.files.length && "one-page proposal"].filter(Boolean) as string[];
+  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} before 29 Nov.`;
+  return "All set. Eight teams are shortlisted on 29 Nov.";
 }
 
 function Steps({ stage }: { stage: Team["stage"] }) {
@@ -56,18 +56,17 @@ function Steps({ stage }: { stage: Team["stage"] }) {
 }
 
 function Back({ to, label, go }: { to: View; label: string; go: (v: View) => void }) {
-  return <button className="back-link game-back" onClick={() => go(to)}><ChevronLeft size={18} /> {label}</button>;
+  return <button type="button" className="back-link game-back hk-back" onClick={() => go(to)}><ChevronLeft size={18} /> {label}</button>;
 }
 
-// 1–3 tracks, depending on the project.
+// Real World Mining: each team chooses one of the four workflows (stored in `tracks`, 0057).
 function TrackPicker({ value, onChange, disabled }: { value: Track[]; onChange: (v: Track[]) => void; disabled?: boolean }) {
-  const flip = (id: Track) => onChange(value.includes(id) ? value.filter((x) => x !== id) : tracks.map((t) => t.id).filter((x) => x === id || value.includes(x)));
   return (
     <fieldset className="field">
-      <legend>Tracks <small>pick one or more</small></legend>
-      <div className="hk-track-cards" role="group" aria-label="Tracks">
+      <legend>Workflow <small>choose one</small></legend>
+      <div className="hk-track-cards" role="radiogroup" aria-label="Workflow">
         {tracks.map((t) => (
-          <button type="button" key={t.id} role="checkbox" aria-checked={value.includes(t.id)} className={value.includes(t.id) ? "is-on" : undefined} onClick={() => flip(t.id)} disabled={disabled}>
+          <button type="button" key={t.id} role="radio" aria-checked={value.includes(t.id)} className={value.includes(t.id) ? "is-on" : undefined} onClick={() => onChange([t.id])} disabled={disabled}>
             <b>{t.label}</b><small>{t.text}</small>
             {value.includes(t.id) && <Check size={18} />}
           </button>
@@ -255,8 +254,8 @@ function ProjectForm({ team, onSaved }: { team: Team; onSaved: (h: Hack) => void
           <input id="hk-title" value={d.title} onChange={(e) => edit({ title: e.target.value })} maxLength={120} disabled={!can} />
         </div>
         <div className="field">
-          <label htmlFor="hk-sum">Description</label>
-          <textarea id="hk-sum" value={d.summary} onChange={(e) => edit({ summary: e.target.value })} maxLength={2000} rows={4} disabled={!can} placeholder="The problem, who it's for, how it works." />
+          <label htmlFor="hk-sum">Proposal summary</label>
+          <textarea id="hk-sum" value={d.summary} onChange={(e) => edit({ summary: e.target.value })} maxLength={2000} rows={4} disabled={!can} placeholder="The user, the decision they make, the evidence they need and the technology you propose." />
         </div>
         <TrackPicker value={d.tracks} onChange={(v) => edit({ tracks: v })} disabled={!can} />
         {team.stage !== "registered" && <>
@@ -307,14 +306,14 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
     <>
       <Back to="home" label="Hackathon" go={go} />
       <h1 className="app-h1">{stage1 ? "Registration" : "Project & documents"}</h1>
-      <p className="app-sub">{stage1 ? team.leader ? "Team name, project, description and pitch deck." : "Your leader fills this in. Anyone in the team can add files." : team.leader ? "Everything the jury sees." : "Everything the jury sees. Your leader edits it; anyone can add files."}</p>
+      <p className="app-sub">{stage1 ? team.leader ? "Team name, workflow, proposal summary and your one-page proposal." : "Your leader fills this in. Anyone in the team can add files." : team.leader ? "Everything the jury sees." : "Everything the jury sees. Your leader edits it; anyone can add files."}</p>
       <div className="desk">
       <div className="desk-main">
       <ProjectForm key={`${team.name}|${team.title}|${team.summary}|${team.tracks.join()}|${team.sourceUrl}|${team.demoUrl}|${team.siteUrl}`} team={team} onSaved={onChange} />
       </div>
       <div className="desk-rail is-sticky">
-      <h2 className="hk-sec">{stage1 ? "Pitch deck" : "Files"}</h2>
-      <p className="hk-sec-sub">{stage1 ? `PDF or slides, up to ${MAX_MB} MB.` : `Pitch deck, one-pager, diagrams. Up to ${MAX_MB} MB each.`}</p>
+      <h2 className="hk-sec">{stage1 ? "One-page proposal" : "Files"}</h2>
+      <p className="hk-sec-sub">{stage1 ? `PDF, up to ${MAX_MB} MB: the user, the decision, the evidence, the technology and one workflow you can demo by 2 December.` : `Proposal, demo inputs and instructions, diagrams. Up to ${MAX_MB} MB each.`}</p>
       {team.files.length > 0 && (
         <div className="settings-group">
           {team.files.map((f) => (
@@ -382,8 +381,8 @@ export default function HackPage() {
     return (
       <>
         <h1 className="app-h1">Hackathon.</h1>
+        <p className="app-sub hk-lead">{HACK_DETAILS_PUBLIC ? <>Real World Mining · powered by Global MPC · ₮10M prize pool</> : "UB Hack"}</p>
         {tabs}
-        <p className="app-sub">{HACK_DETAILS_PUBLIC ? <>UB Hack · Stablecoin &amp; DeFi · ₮15.5M prize pool</> : "UB Hack"}</p>
         <div className="desk">
         <div className="desk-main">
         <section className="panel hk-start">
@@ -396,7 +395,7 @@ export default function HackPage() {
             <button className="btn btn-ghost wide" onClick={() => go("join")}>Join with a code</button>
           </div>
         ) : (
-          <div className="panel empty"><p>Registration closed on 23 November.</p></div>
+          <div className="panel empty"><p>Registration closed on 28 November.</p></div>
         )}
         </div>
         {projectsRow && <div className="desk-rail"><nav className="settings-group">{projectsRow}</nav></div>}

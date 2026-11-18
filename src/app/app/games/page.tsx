@@ -8,6 +8,7 @@ import { AuthPanel } from "@/components/AuthPanel";
 import { RewardsHead } from "@/components/RewardsHead";
 import { useTick } from "@/components/Quiz";
 import { useMe } from "@/lib/me";
+import { withBase } from "@/lib/base";
 import { clock, isPlayer, serverNow, startQuiz, useQuiz } from "@/lib/quiz";
 import { gameOpen, SoonSheet } from "./soon";
 
@@ -25,11 +26,11 @@ function ShagaiIcon({ strokeWidth = 2, ...p }: SVGProps<SVGSVGElement>) {
 
 // Each game keeps its own colour (the card's background), wherever it sits in the list.
 const games = [
-  { href: "/app/games/shagai", icon: ShagaiIcon, title: "Shagai", body: "Roll the Dorvon Berkh", tag: "Luck", tone: "var(--violet)" },
-  { href: "/app/games/flip", icon: Coins, title: "Coin flip", body: "Heads or tails, double up", tag: "Luck", tone: "var(--cyan)" },
-  { href: "/app/games/scratch", icon: Ticket, title: "Scratch card", body: "Stars, jackpot or merch", tag: "Luck", tone: "var(--klein)" },
-  { href: "/app/games/meet", icon: Handshake, title: "Proof of Meet", body: "Scan a new contact", tag: "Earn", tone: "var(--fushia)" },
-  { href: "/app/games/predict", icon: TrendingUp, title: "Predictions", body: "Call it, win double", tag: "Risk", tone: "#9ccf2e" },
+  { href: "/app/games/shagai", icon: ShagaiIcon, title: "Shagai", body: "Roll the Dorvon Berkh", tag: "Luck", tone: "var(--violet)", image: "/games/cards/shagai.jpg", glass: true },
+  { href: "/app/games/flip", icon: Coins, title: "Coin flip", body: "Heads or tails, double up", tag: "Luck", tone: "var(--cyan)", image: "/games/cards/flip.jpg", glass: true },
+  { href: "/app/games/scratch", icon: Ticket, title: "Scratch card", body: "Stars, jackpot or merch", tag: "Luck", tone: "var(--klein)", image: "/games/cards/scratch.jpg", glass: true },
+  { href: "/app/games/meet", icon: Handshake, title: "Proof of Meet", body: "Scan a new contact", tag: "Earn", tone: "var(--fushia)", image: "/games/cards/meet.jpg", glass: true },
+  { href: "/app/games/predict", icon: TrendingUp, title: "Predictions", body: "Call it, win double", tag: "Risk", tone: "#9ccf2e", image: "/games/cards/predict.jpg", glass: true },
 ];
 
 // The global quiz sits above the other games: live now, or counting down to the next drop.
@@ -85,11 +86,15 @@ export default function GamesPage() {
           <Link
             key={g.href}
             href={g.href}
-            className="game-card"
+            className={`game-card ${g.glass ? "is-glass" : ""}`}
             style={{ ["--tone" as string]: g.tone }}
             onClick={gameOpen(g.href) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
           >
-            <g.icon className="game-art" aria-hidden strokeWidth={1.5} />
+            {/* Each game shows its card artwork on the right . */}
+            {/* Glass cards: one continuous panorama fills the card; the text side is frosted with a progressive blur
+                (strong on the left, easing to sharp toward the art) so there's no seam or ghosting. */}
+            {g.glass && <span className="game-blur" aria-hidden><i /><i /><i /><i /><i /></span>}
+            {g.image ? <img className="game-photo" src={withBase(g.image)} alt="" aria-hidden /> : <g.icon className="game-art" aria-hidden strokeWidth={1.5} />}
             <span className="game-text">
               <span className="game-tag">{g.tag}</span>
               <b>{g.title}{!gameOpen(g.href) && <span className="soon-tag">Coming soon</span>}</b>

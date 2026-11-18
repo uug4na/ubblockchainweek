@@ -1,10 +1,10 @@
 "use client";
 
-import { StablecoinPrimer } from "@/components/StablecoinPrimer";
-import { HACK_DETAILS_PUBLIC, hackAwards, hackDays, hackPool, hackPrizes } from "@/data/hackathon";
+import { MiningPrimer } from "@/components/MiningPrimer";
+import { HACK_DETAILS_PUBLIC, hackDays, hackPool, hackPrizes } from "@/data/hackathon";
 import "./learn.css";
 
-// App › Hackathon tabs next to the team space: Timeline, Prizes, Learn (Stablecoin 101).
+// App › Hackathon tabs next to the team space: Timeline, Prizes, Learn (Real World Mining 101).
 // Same content as /hackathon (src/data/hackathon.ts, stablecoinPrimer.ts), laid out for the app.
 export type InfoTab = "team" | "timeline" | "prizes" | "learn";
 
@@ -24,11 +24,12 @@ export function InfoTabs({ tab, onTab }: { tab: InfoTab; onTab: (t: InfoTab) => 
   );
 }
 
-// Which stage is on today (Ulaanbaatar time): 0 before stage 2, 1 for stage 2, 2 from stage 3.
+// Which stage is on today (Ulaanbaatar time), per the Real World Mining schedule (18 Nov):
+// 0 proposals + shortlist (to 29 Nov), 1 Demo Day (from 30 Nov, day 2 Dec), 2 Final Pitch Day (3 Dec).
 function stageNow() {
   const now = Date.now();
-  if (now >= Date.parse("2026-11-30T00:00:00+08:00")) return 2;
-  if (now >= Date.parse("2026-11-24T00:00:00+08:00")) return 1;
+  if (now >= Date.parse("2026-12-03T00:00:00+08:00")) return 2;
+  if (now >= Date.parse("2026-11-30T00:00:00+08:00")) return 1;
   return 0;
 }
 
@@ -45,7 +46,15 @@ export function Timeline() {
           <h2>{d.title}</h2>
           <ul>
             {d.slots.map((s) => (
-              <li key={s.time + s.what}><time>{s.time}</time><span>{s.what}</span></li>
+              <li key={s.time + s.what}>
+                <time>{s.time}</time>
+                <span>
+                  {s.what}
+                  {s.items?.map((t) => <small key={t} className="hk-tl-detail">{t}</small>)}
+                  {s.scores?.map((c) => <small key={c.label} className="hk-tl-detail">{c.label} · {c.pts} pts</small>)}
+                  {s.note && <small className="hk-tl-detail is-note">{s.note}</small>}
+                </span>
+              </li>
             ))}
           </ul>
         </li>
@@ -60,22 +69,13 @@ export function Prizes() {
       <section className="panel hk-pool">
         <small>Prize pool</small>
         <b><span className="hk-cur-sm">₮</span>{hackPool.replace("₮", "")}</b>
-        <p>Ten winning teams.</p>
+        <p>Four prizes, one team each.</p>
       </section>
       <div className="settings-group hk-prize-list">
         {hackPrizes.map((p) => (
-          <div className="settings-row" key={p.tier}>
+          <div className="settings-row" key={p.place}>
             <span><b>{p.place}</b><small>{p.teams}</small></span>
             <strong><span className="hk-cur-sm">₮</span>{p.amount}{p.teams !== "1 team" && <em> each</em>}</strong>
-          </div>
-        ))}
-      </div>
-      <h2 className="hk-sec">Special awards</h2>
-      <p className="hk-sec-sub">₮500,000 each, open to every finalist team.</p>
-      <div className="settings-group hk-award-list">
-        {hackAwards.map((a) => (
-          <div className="settings-row" key={a.no}>
-            <span><b>{a.title}</b><small>{a.text}</small></span>
           </div>
         ))}
       </div>
@@ -86,8 +86,8 @@ export function Prizes() {
 export function Learn() {
   return (
     <div className="app-learn">
-      <p className="app-sub" style={{ marginTop: 0 }}>New to stablecoins? Five short chapters: how they work, why some held and others collapsed, and the mistakes to avoid in your code.</p>
-      <StablecoinPrimer />
+      <p className="app-sub" style={{ marginTop: 0 }}>New to mining data? Five short chapters: how a sample becomes a decision, the three levels of certainty, how to check a record, real cases and how to build it safely.</p>
+      <MiningPrimer />
     </div>
   );
 }

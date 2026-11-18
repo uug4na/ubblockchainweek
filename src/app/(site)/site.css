@@ -1709,3 +1709,166 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 /* ── /hackathon hero: sparse ₮ rain (TetherRain) above the scrim, under the copy ── */
 .t-site .hack-rain { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
+
+/* ── UB Hack: Real World Mining brief (owner, 18 Nov) — reuses the tracks / awards styles ── */
+.hk-why { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px clamp(32px, 5vw, 80px); margin: 0 0 clamp(32px, 4vw, 52px); }
+.hk-why h3 { grid-column: 1 / -1; margin: 0; font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--t-accent-light); }
+.hk-why p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--t-ink); }
+.hk-list-title { margin: 0 0 14px; font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--t-accent-light); }
+.hk-track-list.is-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hk-tech { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.hk-tech li { display: grid; align-content: start; gap: 10px; padding: clamp(20px, 2.2vw, 26px); border-radius: var(--r); background: #0a1a7a; }
+.hk-tech b { font-size: 18px; font-weight: 700; color: #fff; }
+.hk-tech p { margin: 0; font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, .72); }
+.hk-score ol { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.hk-score-note { margin: 20px 0 0; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .14); max-width: 900px; font-size: 14.5px; line-height: 1.6; color: rgba(255, 255, 255, .68); }
+@media (max-width: 1100px) {
+  .hk-track-list.is-four, .hk-tech { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hk-score ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hk-why { grid-template-columns: 1fr; margin-bottom: 24px; }
+  .hk-why p { font-size: 15px; }
+  .hk-tech { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .hk-tech::-webkit-scrollbar { display: none; }
+  .hk-tech > * { flex: 0 0 84%; scroll-snap-align: start; }
+}
+
+/* ── UB Hack polish (owner, 18 Nov): challenge as a lede, sidenote text, aligned workflow cards, prize bento ── */
+/* the challenge: scenario muted, the question in ink, the ask on its own line */
+.hk-challenge .hk-head { align-items: end; }
+.hk-lede { margin: 0; max-width: 560px; font-size: clamp(18px, 1.55vw, 21px); line-height: 1.5; letter-spacing: -0.005em; text-wrap: pretty; }
+.hk-lede .is-scene { color: var(--t-muted); }
+.hk-lede .is-q { color: var(--t-ink); font-weight: 600; }
+.hk-lede .is-ask { display: block; margin-top: 14px; color: var(--t-accent-light); font-weight: 600; }
+
+/* "Why mining?": the reason as a statement under the label (left), Global MPC's context beside it (right) */
+.hk-challenge .hk-why { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px clamp(32px, 5vw, 80px); align-items: start; }
+.hk-challenge .hk-why h3 { grid-column: 1; grid-row: 1; }
+.hk-challenge .hk-why p { grid-column: 1; grid-row: 2; max-width: 560px; font-size: clamp(19px, 1.6vw, 22px); font-weight: 600; line-height: 1.45; letter-spacing: -0.005em; color: var(--t-ink); text-wrap: pretty; }
+.hk-challenge .hk-why p + p { grid-column: 2; grid-row: 2; font-size: 16px; font-weight: 400; line-height: 1.65; letter-spacing: 0; color: var(--t-muted); }
+
+/* workflow cards: number, title, user and the divider line up across all four (subgrid) */
+.hk-track-list.is-four { grid-template-rows: auto auto auto 1fr; }
+.hk-track-list.is-four > .hk-track { display: grid; grid-row: span 4; grid-template-rows: subgrid; gap: 8px; align-content: start; }
+.hk-track-list.is-four .hk-track h3 { align-self: start; }
+.hk-track-list.is-four .hk-track .hk-sub { align-self: start; }
+.hk-track-list.is-four .hk-track dl { align-self: start; margin-top: 10px; }
+
+/* prizes: the pool next to the title, then a bento where size follows rank */
+.hk-pool-line { font-size: clamp(17px, 1.5vw, 20px) !important; line-height: 1.45 !important; }
+.hk-pool-line b { display: block; color: #fff; font-size: clamp(28px, 3vw, 40px); font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.hk-tiers.is-bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto auto; }
+.hk-tiers.is-bento li { min-height: 0; }
+.hk-tiers.is-bento .hk-of { display: none; } /* every prize is one team: the "each" spacer isn't needed here */
+.hk-tiers.is-bento .is-r1 { grid-column: 1 / span 2; grid-row: 1 / span 2; }
+.hk-tiers.is-bento .is-r2 { grid-column: 3 / span 2; grid-row: 1; }
+.hk-tiers.is-bento .is-r3 { grid-column: 3; grid-row: 2; }
+.hk-tiers.is-bento .is-r4 { grid-column: 4; grid-row: 2; }
+.hk-tiers.is-bento .is-r1 .hk-place { font-size: clamp(22px, 2vw, 28px); }
+.hk-tiers.is-bento .is-r1 .hk-share { margin-top: auto; padding-top: 48px; font-size: clamp(96px, 11vw, 168px); line-height: .85; }
+.hk-tiers.is-bento .is-r2 .hk-share { font-size: clamp(56px, 6vw, 88px); }
+.hk-tiers.is-bento .is-r3 .hk-share, .hk-tiers.is-bento .is-r4 .hk-share { margin-top: auto; padding-top: 22px; font-size: clamp(40px, 3.6vw, 54px); }
+.hk-tiers.is-bento .is-r3 .hk-place, .hk-tiers.is-bento .is-r4 .hk-place { font-size: 18px; line-height: 1.25; min-height: 2.5em; } /* one or two lines: the amounts stay level */
+.hk-tiers.is-bento .hk-bar { margin: 20px 0 0; }
+.hk-tiers.is-bento .hk-win { margin-top: 18px; }
+.hk-tiers.is-bento li { transition: transform .35s cubic-bezier(.2, .8, .2, 1), background-color .35s; }
+@media (hover: hover) {
+  .hk-tiers.is-bento li:not(.is-gold):hover { background: #0d2090; }
+}
+
+@media (max-width: 1000px) {
+  .hk-tiers.is-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hk-tiers.is-bento .is-r1 { grid-column: 1 / -1; grid-row: auto; }
+  .hk-tiers.is-bento .is-r2 { grid-column: 1 / -1; grid-row: auto; }
+  .hk-tiers.is-bento .is-r3, .hk-tiers.is-bento .is-r4 { grid-column: auto; grid-row: auto; }
+  .hk-track-list.is-four { grid-template-rows: auto auto auto 1fr auto auto auto 1fr; }
+}
+@media (max-width: 860px) {
+  .hk-challenge .hk-why { grid-template-columns: 1fr; }
+  .hk-challenge .hk-why h3 { grid-column: 1; grid-row: auto; margin: 0 0 4px; }
+  .hk-challenge .hk-why p, .hk-challenge .hk-why p + p { grid-column: 1; grid-row: auto; }
+}
+@media (max-width: 640px) {
+  .hk-lede { font-size: 17px; }
+  .hk-lede .is-ask { margin-top: 10px; }
+  .hk-challenge .hk-why p { font-size: 18px; }
+  .hk-challenge .hk-why p + p { font-size: 15px; }
+  /* the phone swipe row is flex: subgrid doesn't apply, cards size themselves */
+  .hk-track-list.is-four > .hk-track { display: flex; flex-direction: column; }
+  .hk-pool-line b { font-size: 28px; }
+  .hk-tiers.is-bento { gap: 8px; }
+  .hk-tiers.is-bento .is-r1 .hk-share { padding-top: 28px; font-size: 92px; }
+  .hk-tiers.is-bento .is-r2 .hk-share { font-size: 60px; }
+  .hk-tiers.is-bento .is-r3 .hk-share, .hk-tiers.is-bento .is-r4 .hk-share { font-size: 40px; padding-top: 14px; }
+  .hk-tiers.is-bento .is-r3 .hk-place, .hk-tiers.is-bento .is-r4 .hk-place { font-size: 15px; }
+  .hk-tiers.is-bento .hk-bar { margin-top: 16px; }
+  .hk-tiers.is-bento .hk-win { margin-top: 14px; padding-top: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .hk-tiers.is-bento li { transition: none; } }
+
+/* ── UB Hack timeline steps (owner, 18 Nov): short headline, then its parts, score rows and an outcome note ── */
+.hk-step { display: grid; gap: 10px; min-width: 0; }
+.hk-day .hk-step > span { font-size: clamp(17px, 1.5vw, 19px); font-weight: 700; line-height: 1.3; color: var(--t-ink); }
+.hk-day .hk-step-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.hk-day .hk-step-items li { display: block; position: relative; padding: 0 0 0 18px; border: 0; font-size: 15.5px; line-height: 1.5; color: var(--t-muted); }
+.hk-day .hk-step-items li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 1.5px; background: var(--t-accent-light); }
+.hk-step-scores { display: grid; margin: 0; max-width: 460px; }
+.hk-step-scores > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 7px 0; border-top: 1px solid var(--t-line); }
+.hk-step-scores > div:first-child { border-top: 0; padding-top: 0; }
+.hk-step-scores dt { font-size: 15.5px; line-height: 1.4; color: var(--t-muted); }
+.hk-step-scores dd { margin: 0; font-size: 15.5px; font-weight: 700; color: var(--t-ink); font-variant-numeric: tabular-nums; }
+.hk-step-note { margin: 2px 0 0; font-size: 15px; font-weight: 600; line-height: 1.45; color: var(--t-accent-light); }
+@media (max-width: 640px) {
+  .hk-step { gap: 8px; margin-top: 4px; }
+  .hk-day .hk-step > span { font-size: 17px; }
+  .hk-day .hk-step-items li, .hk-step-scores dt, .hk-step-scores dd { font-size: 14.5px; }
+  .hk-day .hk-step-items li:first-child { padding-top: 0; border-top: 0; }
+  .hk-step-note { font-size: 14.5px; }
+}
+.hk-step-link { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 2px; font-size: 15px; font-weight: 700; color: var(--t-accent-light); text-decoration: none; }
+.hk-step-link span { transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
+.hk-step-link:hover span { transform: translateX(3px); }
+.hk-step-link:focus-visible { outline: 2px solid var(--t-accent-light); outline-offset: 3px; border-radius: 4px; }
+
+/* Real World Mining 101: fingerprints in mono; the judging band after it on the deeper navy so two dark bands read apart */
+.lp-fp { font-family: var(--font-mono-face), ui-monospace, monospace; font-variant-numeric: tabular-nums; word-break: break-all; }
+.lp-vault-ratio.lp-fp { font-size: clamp(18px, 2vw, 24px); letter-spacing: 0; }
+.hk-learn.hk-judge { background: var(--t-deep); }
+/* chapter 03 copy switcher: same look as the phone design picker, but shown at every width */
+.lp-copies { display: inline-grid; grid-auto-flow: column; gap: 4px; padding: 4px; margin-bottom: 16px; border-radius: 8px; background: #0a1a7a; }
+.lp-copies button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 5px; background: transparent; color: rgba(255, 255, 255, .7); font: 600 14px/1.2 var(--font-body); cursor: pointer; transition: background-color .2s, color .2s; }
+.lp-copies button:hover { color: #fff; }
+.lp-copies button.is-on { background: #fff; color: var(--t-navy); }
+.lp-copies button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 640px) {
+  .lp-copies { display: grid; grid-auto-flow: row; grid-template-columns: 1fr; width: 100%; }
+  .lp-copies button { text-align: left; }
+}
+
+/* Real World Mining 101 › Case studies (owner, 18 Nov: type pass). Scoped to .is-mining so Stablecoin 101 keeps its look.
+   Hierarchy: verdict tag → display headline → place/years → three numbered steps (label over text) → lesson as a pull quote. */
+.lp-cases.is-mining .lp-case { gap: 0; padding: clamp(24px, 3vw, 40px); }
+.lp-cases.is-mining .lp-case-head { display: grid; gap: 8px; padding-bottom: clamp(20px, 2.4vw, 28px); }
+.lp-cases.is-mining .lp-case-head .lp-tag { font-size: 12px; letter-spacing: .12em; }
+.lp-cases.is-mining .lp-case-head h4 { margin: 0; font-family: var(--font-display, inherit); font-size: clamp(26px, 2.6vw, 36px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: #fff; text-wrap: balance; }
+.lp-cases.is-mining .lp-case-when { margin: 0; font-size: 15px; color: rgba(255, 255, 255, .62); font-variant-numeric: tabular-nums; }
+.lp-cases.is-mining .lp-case-steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.lp-cases.is-mining .lp-case-steps > li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 0 12px; padding: 18px 0; border-top: 1px solid var(--lp-sep); }
+.lp-cases.is-mining .lp-case-no { font: 600 13px/1.6 var(--font-mono-face), ui-monospace, monospace; color: var(--lp-dim); font-variant-numeric: tabular-nums; }
+.lp-cases.is-mining .lp-case-steps b { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; letter-spacing: .04em; color: rgba(255, 255, 255, .7); }
+.lp-cases.is-mining .lp-case-steps p { margin: 0; max-width: 62ch; font-size: 16.5px; line-height: 1.6; color: #fff; text-wrap: pretty; }
+.lp-cases.is-mining .lp-lesson { margin-top: 10px; padding: clamp(20px, 2.4vw, 28px); font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty; }
+.lp-cases.is-mining .lp-lesson b { margin-bottom: 8px; font-size: 12px; letter-spacing: .12em; }
+@media (max-width: 640px) {
+  /* picker: verdict over a short name, one line each, never clipped */
+  .lp-cases.is-mining .lp-case-list button { padding: 10px 4px; gap: 3px; min-height: 52px; align-content: center; }
+  .lp-cases.is-mining .lp-case-list .lp-tag { display: block; font-size: 10px; letter-spacing: .1em; }
+  .lp-cases.is-mining .lp-case-list small { display: none; }
+  .lp-cases.is-mining .lp-case-list b { font-size: 14px; white-space: nowrap; }
+  .lp-cases.is-mining .lp-case { padding: 22px 18px; }
+  .lp-cases.is-mining .lp-case-head h4 { font-size: 26px; }
+  .lp-cases.is-mining .lp-case-steps > li { grid-template-columns: 30px minmax(0, 1fr); gap: 0 8px; padding: 16px 0; }
+  .lp-cases.is-mining .lp-case-steps p { font-size: 15.5px; margin-top: 4px; }
+  .lp-cases.is-mining .lp-lesson { font-size: 17.5px; padding: 20px; }
+}

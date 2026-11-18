@@ -3775,6 +3775,8 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .where-for { font-size: 14px; color: var(--label-2); }
 .where-far { font-size: 15px; color: var(--label-2); }
 .where-far b { color: var(--label); }
+.where-rough { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--label-2); }  /* rough fix (PC / Wi-Fi location): how far off it could be */
+.where-rough .link-btn { font-size: 13px; }
 .where-locate { display: inline-flex; align-items: center; gap: 6px; justify-self: start; text-decoration: none; color: var(--label); font-weight: 600; font-size: 15px; }
 .where-actions { display: grid; gap: 8px; margin-top: 10px; }
 .where-actions.is-two { grid-template-columns: 1fr 1fr; }
@@ -3866,3 +3868,48 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .pwheel-card.is-pinned .pwheel-tag { padding: 1px 5px; font-size: 10px; }
 .pwheel-card.is-pinned .pwheel-dots { -webkit-mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); }
 @media (min-width: 1100px) { .pwheel { --pw-card: 136px; margin: 16px 0 0; } }
+/* Devee (Ardcoin's flappy-bird game, full screen): one quiet way out, clear of the hearts and the score. */
+.flappy-exit { position: absolute; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 4; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 999px; background: rgba(0, 0, 0, .45); color: #fff; cursor: pointer; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+
+/* Crew → Games → Devee dashboard */
+.fl-days { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 0 12px; }
+.fl-days::-webkit-scrollbar { display: none; }
+.fl-days .chip-btn { flex: none; }
+.fl-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 12px; margin-bottom: 16px; }
+.fl-charts .panel { margin: 0; }
+.fl-best { display: grid; justify-items: end; line-height: 1.1; }
+.fl-best b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fl-best small { font-size: 11px; color: var(--label-2); }
+.fl-runs { display: grid; }
+.fl-run { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 8px 0; border-top: .5px solid var(--sep); font-size: 14px; }
+.fl-run time { font-size: 13px; color: var(--label-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fl-run span { color: var(--label-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fl-run b { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.fl-run b.is-flag { color: var(--label-3); text-decoration: line-through; }
+.fl-note { margin-top: 12px; }
+.fl-find { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+/* Games list: Devee's card is its own artwork, shown as it is; the usual navy fade keeps the text readable. */
+.game-list-art .game-photo { position: absolute; right: 0; top: 0; z-index: -1; height: 100%; width: auto; pointer-events: none; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%); mask-image: linear-gradient(to right, transparent 0%, #000 40%); }
+/* Glass game cards (Shagai, Coin flip, Scratch, Meet, Predict): one continuous 15:1 panorama fills the card at full
+   height, anchored right, so the hero and its word are never cut at any width; the text side is frosted glass over the same picture. Devee unchanged. */
+.game-list-art .game-card.is-glass .game-photo { left: auto; right: 0; top: 0; width: auto; max-width: none; height: 100%; z-index: -3; -webkit-mask-image: none; mask-image: none; }
+.game-list-art .game-card.is-glass::before { z-index: -1; background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0) 30%), linear-gradient(90deg, rgba(8, 12, 44, .52) 0%, rgba(8, 12, 44, .4) 38%, rgba(8, 12, 44, .14) 58%, rgba(8, 12, 44, 0) 72%); }
+/* progressive blur: each layer blurs more and stops earlier, so the blur eases off smoothly toward the art */
+.game-list-art .game-blur { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
+.game-list-art .game-blur i { position: absolute; inset: 0; }
+.game-list-art .game-blur i:nth-child(1) { -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px); -webkit-mask-image: linear-gradient(90deg, #000 56%, transparent 70%); mask-image: linear-gradient(90deg, #000 56%, transparent 70%); }
+.game-list-art .game-blur i:nth-child(2) { -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); -webkit-mask-image: linear-gradient(90deg, #000 50%, transparent 64%); mask-image: linear-gradient(90deg, #000 50%, transparent 64%); }
+.game-list-art .game-blur i:nth-child(3) { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); -webkit-mask-image: linear-gradient(90deg, #000 44%, transparent 58%); mask-image: linear-gradient(90deg, #000 44%, transparent 58%); }
+.game-list-art .game-blur i:nth-child(4) { -webkit-backdrop-filter: blur(11px) saturate(1.3); backdrop-filter: blur(11px) saturate(1.3); -webkit-mask-image: linear-gradient(90deg, #000 36%, transparent 52%); mask-image: linear-gradient(90deg, #000 36%, transparent 52%); }
+.game-list-art .game-blur i:nth-child(5) { -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); -webkit-mask-image: linear-gradient(90deg, #000 26%, transparent 46%); mask-image: linear-gradient(90deg, #000 26%, transparent 46%); }
+
+/* Home: Hackathon + Research conference as two special cards (owner, 18 Nov). Same drifting dot texture as the
+   partner cards, in each section's own colour; strongest on the right, clear behind the title. */
+.home-compete { background: none; gap: 10px; overflow: visible; }
+.home-compete > a.is-special { overflow: hidden; isolation: isolate; border-radius: var(--r); background: var(--cell); min-height: 76px; padding: 14px 16px; }
+.home-compete > a.is-special::after { display: none; }
+.home-compete > a.is-special > :not(.compete-dots) { position: relative; z-index: 1; }
+.home-compete > a.is-special span small { color: var(--label-2); }
+.home-compete > a.is-special > svg:last-child { color: var(--label-2); }
+.compete-dots { background: color-mix(in srgb, var(--tint) 26%, transparent);
+  -webkit-mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); }
