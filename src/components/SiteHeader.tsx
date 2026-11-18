@@ -18,6 +18,7 @@ import { hackathonPublic } from "@/data/site";
 const nav: { href: string; label: string; soon?: boolean }[] = [
   { href: "/program", label: "Program" },
   { href: "/hackathon", label: "UB Hack", soon: !hackathonPublic },
+  { href: "/app/research", label: "Research" },   // the research conference lives in the attendee app
   { href: "/side-events", label: "Side events" },
 ];
 
