@@ -267,3 +267,110 @@
   .app-learn .lp-gloss-m dt { font: 600 13px/1.3 var(--font-mono-face), ui-monospace, monospace; color: var(--lp-lime); margin-bottom: 4px; }
   .app-learn .lp-gloss-m dd { margin: 0; font-size: 15px; line-height: 1.5; color: rgba(255, 255, 255, .8); }
 }
+
+/* Real World Mining 101 in the app (owner, 18 Nov): chapter 03 switcher + fingerprints (copies of the site rules) */
+.app-learn .lp-fp { font-family: var(--font-mono-face), ui-monospace, monospace; font-variant-numeric: tabular-nums; word-break: break-all; }
+.app-learn .lp-vault-ratio.lp-fp { font-size: clamp(18px, 2vw, 24px); letter-spacing: 0; }
+.app-learn .lp-copies { display: inline-grid; grid-auto-flow: column; gap: 4px; padding: 4px; margin-bottom: 16px; border-radius: 8px; background: var(--lp-cell); }
+.app-learn .lp-copies button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 5px; background: transparent; color: var(--lp-mute); font: 600 14px/1.2 var(--font-body); cursor: pointer; }
+.app-learn .lp-copies button.is-on { background: #fff; color: var(--t-navy); }
+.app-learn .lp-copies button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 640px) {
+  .app-learn .lp-copies { display: grid; grid-auto-flow: row; grid-template-columns: 1fr; width: 100%; }
+  .app-learn .lp-copies button { text-align: left; }
+}
+
+/* Timeline tab: the parts of each step under its headline */
+.hk-tl .hk-tl-detail { display: block; margin-top: 4px; font-size: 13.5px; font-weight: 400; line-height: 1.45; color: var(--label-2); }
+.hk-tl .hk-tl-detail.is-note { font-weight: 600; color: var(--label); }
+/* the primer is drawn for the site's navy band: in the app it sits on its own navy panel, so it reads in light and dark mode */
+.app-learn .lp { padding: clamp(16px, 2.6vw, 32px); border-radius: var(--r, 8px); background: var(--t-navy); color: #fff; }
+@media (max-width: 640px) { .app-learn .lp { padding: 14px 12px 18px; margin: 0 -4px; } }
+
+/* ── Hackathon screens polish (owner, 18 Nov; apple-design review) — scoped to .hk-page ──
+   Secondary text uses the label colour at 72% (≈8:1 on the light cells, also right in dark mode) instead of
+   --label-2 (≈3.3:1 on #f2f2f7). One column: 720px; 1104px when the screen has a right rail. */
+.hk-page { --hk-2: color-mix(in srgb, var(--label) 72%, transparent); width: 100%; }
+@media (min-width: 861px) {
+  .hk-page { max-width: 720px; }
+  .hk-page:has(.desk-rail) { max-width: 1104px; }
+}
+
+/* header: title → one-line lead → tabs, with room to breathe */
+.hk-page .app-h1 + .hk-lead { margin: 2px 0 18px; }
+.hk-page .app-sub { color: var(--hk-2); }
+.hk-page .hk-tabs { margin: 12px 0 20px; }
+.hk-page .hk-lead + .hk-tabs { margin-top: 0; }
+.hk-page .hk-tabs button { min-height: 40px; color: var(--hk-2); }
+.hk-page .hk-tabs button.is-on { color: #fff; }
+.hk-page .hk-tabs button:focus-visible { outline: 2px solid var(--klein); outline-offset: 2px; }
+
+/* back: a plain text link, not a bordered box (the button had the browser's default border) */
+.hk-page button.hk-back { min-height: 44px; margin: 0 0 4px -2px; padding: 0 2px; border: 0; background: none; color: var(--hk-2); font: 600 15px/1 var(--font-body); cursor: pointer; }
+.hk-page button.hk-back:hover { color: var(--label); }
+.hk-page button.hk-back:focus-visible { outline: 2px solid var(--klein); outline-offset: 2px; border-radius: 6px; }
+
+/* stage steps: readable sizes and contrast */
+.hk-page .hk-steps { gap: 8px; }
+.hk-page .hk-steps li { gap: 4px; padding: 14px; color: var(--hk-2); }
+.hk-page .hk-steps i { width: 24px; height: 24px; margin-bottom: 6px; font-size: 12.5px; }
+.hk-page .hk-steps b { font-size: 15px; }
+.hk-page .hk-steps small { font-size: 13px; }
+.hk-page .hk-steps li.is-now { color: rgba(255, 255, 255, .86); }
+.hk-page .hk-start { gap: 16px; padding: 20px; }
+.hk-page .hk-start p { color: var(--hk-2); font-size: 15px; line-height: 1.5; }
+.hk-page .hk-start-btns { margin-top: 12px; }
+.hk-page .hk-start-btns .btn { min-height: 52px; }
+@media (min-width: 861px) { .hk-page .hk-start-btns { grid-template-columns: 1fr 1fr; } }
+
+/* forms: fields as white cells (were grey on grey), labels readable, "choose one" as a quiet hint */
+.hk-page .hk-form { gap: 22px; }
+.hk-page .hk-form .field { gap: 8px; }
+.hk-page .hk-form label, .hk-page .hk-form legend { font-size: 15px; font-weight: 600; color: var(--label); }
+.hk-page .hk-form label small, .hk-page .hk-form legend small { margin-left: 6px; font-size: 13px; font-weight: 500; color: var(--hk-2); }
+.hk-page .hk-form input, .hk-page .hk-form textarea { min-height: 48px; background: var(--cell); box-shadow: inset 0 0 0 1px var(--cell-3, rgba(127, 127, 127, .25)); }
+.hk-page .hk-form input:focus, .hk-page .hk-form textarea:focus { box-shadow: 0 0 0 2px var(--accent); }
+
+/* workflow choice: every card shows a radio circle, so it reads as "pick one" before anything is picked */
+.hk-page .hk-track-cards { gap: 8px; }
+.hk-page .hk-track-cards button { min-height: 64px; gap: 4px; padding: 14px 52px 14px 16px; background: var(--cell); transition: background-color .15s, box-shadow .15s; }
+.hk-page .hk-track-cards button small { font-size: 13.5px; color: var(--hk-2); }
+.hk-page .hk-track-cards button.is-on { background: var(--klein); color: #fff; }
+.hk-page .hk-track-cards button.is-on small { color: rgba(255, 255, 255, .86); }
+.hk-page .hk-track-cards button::after { content: ""; position: absolute; right: 16px; top: 50%; width: 22px; height: 22px; translate: 0 -50%; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--cell-3, rgba(127, 127, 127, .4)); }
+.hk-page .hk-track-cards button.is-on::after { background: #fff; box-shadow: none; }
+.hk-page .hk-track-cards button svg { right: 20px; z-index: 1; width: 14px; height: 14px; color: var(--klein); stroke-width: 3; }
+.hk-page .hk-track-cards button:hover:not(.is-on):not(:disabled) { box-shadow: inset 0 0 0 1px var(--klein); }
+.hk-page .hk-track-cards button:focus-visible { outline: 2px solid var(--klein); outline-offset: 2px; }
+.hk-page .hk-form > .btn { min-height: 52px; margin-top: 4px; }
+@media (min-width: 861px) { .hk-page .hk-track-cards { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { .hk-page .hk-track-cards button { transition: none; } }
+/* a screen with no right rail: the main column takes the full 720px (the desk grid kept a 360px rail) */
+@media (min-width: 1100px) { .hk-page .desk:not(:has(> .desk-rail)) { grid-template-columns: minmax(0, 1fr); } }
+
+/* Real World Mining 101 › Case studies (owner, 18 Nov: type pass). Scoped to .is-mining so Stablecoin 101 keeps its look.
+   Hierarchy: verdict tag → display headline → place/years → three numbered steps (label over text) → lesson as a pull quote. */
+.app-learn .lp-cases.is-mining .lp-case { gap: 0; padding: clamp(24px, 3vw, 40px); }
+.app-learn .lp-cases.is-mining .lp-case-head { display: grid; gap: 8px; padding-bottom: clamp(20px, 2.4vw, 28px); }
+.app-learn .lp-cases.is-mining .lp-case-head .lp-tag { font-size: 12px; letter-spacing: .12em; }
+.app-learn .lp-cases.is-mining .lp-case-head h4 { margin: 0; font-family: var(--font-display, inherit); font-size: clamp(26px, 2.6vw, 36px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: #fff; text-wrap: balance; }
+.app-learn .lp-cases.is-mining .lp-case-when { margin: 0; font-size: 15px; color: rgba(255, 255, 255, .62); font-variant-numeric: tabular-nums; }
+.app-learn .lp-cases.is-mining .lp-case-steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.app-learn .lp-cases.is-mining .lp-case-steps > li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 0 12px; padding: 18px 0; border-top: 1px solid var(--lp-sep); }
+.app-learn .lp-cases.is-mining .lp-case-no { font: 600 13px/1.6 var(--font-mono-face), ui-monospace, monospace; color: var(--lp-dim); font-variant-numeric: tabular-nums; }
+.app-learn .lp-cases.is-mining .lp-case-steps b { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; letter-spacing: .04em; color: rgba(255, 255, 255, .7); }
+.app-learn .lp-cases.is-mining .lp-case-steps p { margin: 0; max-width: 62ch; font-size: 16.5px; line-height: 1.6; color: #fff; text-wrap: pretty; }
+.app-learn .lp-cases.is-mining .lp-lesson { margin-top: 10px; padding: clamp(20px, 2.4vw, 28px); font-size: clamp(18px, 1.6vw, 21px); font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty; }
+.app-learn .lp-cases.is-mining .lp-lesson b { margin-bottom: 8px; font-size: 12px; letter-spacing: .12em; }
+@media (max-width: 640px) {
+  /* picker: verdict over a short name, one line each, never clipped */
+  .app-learn .lp-cases.is-mining .lp-case-list button { padding: 10px 4px; gap: 3px; min-height: 52px; align-content: center; }
+  .app-learn .lp-cases.is-mining .lp-case-list .lp-tag { display: block; font-size: 10px; letter-spacing: .1em; }
+  .app-learn .lp-cases.is-mining .lp-case-list small { display: none; }
+  .app-learn .lp-cases.is-mining .lp-case-list b { font-size: 14px; white-space: nowrap; }
+  .app-learn .lp-cases.is-mining .lp-case { padding: 22px 18px; }
+  .app-learn .lp-cases.is-mining .lp-case-head h4 { font-size: 26px; }
+  .app-learn .lp-cases.is-mining .lp-case-steps > li { grid-template-columns: 30px minmax(0, 1fr); gap: 0 8px; padding: 16px 0; }
+  .app-learn .lp-cases.is-mining .lp-case-steps p { font-size: 15.5px; margin-top: 4px; }
+  .app-learn .lp-cases.is-mining .lp-lesson { font-size: 17.5px; padding: 20px; }
+}

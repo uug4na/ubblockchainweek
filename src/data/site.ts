@@ -27,7 +27,7 @@ export const site = {
 // The public UB Hack page (/hackathon) is temporarily hidden. While false: it's out of the header,
 // footer and sitemap, the page itself shows a 404, and links that pointed to it go to the attendee
 // app's hackathon section instead. Set back to true to bring everything back; nothing was deleted.
-export const hackathonPublic = false;
+export const hackathonPublic = true;
 export const hackHref = hackathonPublic ? "/hackathon" : "/app/hack";
 
 // Google Form the team collects applications with (owner, 16 Nov 2026: easier for them to receive this way).

@@ -1,30 +1,87 @@
 // Owner, 2026-11-17: the prize changed (₮10M) and the concept may change too, so the attendee app hides
 // prize money and the concept (Prizes + Learn tabs, "Stablecoin & DeFi", amounts) for now.
 // Set to true to show them again once the details below are updated.
-export const HACK_DETAILS_PUBLIC = false;
+// Owner, 18 Nov 2026: details match /hackathon again (Real World Mining, ₮10M, Real World Mining 101).
+export const HACK_DETAILS_PUBLIC = true;
 
 // Owner, 2026-11-17: hide the whole Hackathon section in the attendee app while the details are reworked.
 // Nothing is deleted: teams, files and the group chat stay in the database, and the crew console still
 // runs the hackathon. Set to true to bring the section back (Home row, sidebar, Messages group, /app/hack).
-export const HACK_SECTION_OPEN = false;
+// Owner, 18 Nov 2026: open again for Real World Mining (teams register and submit in the app).
+export const HACK_SECTION_OPEN = true;
 
-// UB Hackathon 2026, from the owner's brief "UB Hackathon 2026.pdf", pages 1–6 (12 Nov 2026).
-// Copy is the brief's own wording; only typography (dashes, quotes) is cleaned up.
+// UB Hackathon 2026: Real World Mining, powered by Global MPC. Owner, 18 Nov 2026: the participant brief
+// ("Participant brief and judging guide", proposed rules) for the challenge, workflows, technology, schedule
+// and scorecard; prizes from the owner (₮5M / ₮3M / ₮1M / ₮1M), not the brief's 3M / 2M.
+// Before that: the owner's brief "UB Hackathon 2026.pdf", pages 1–6 (12 Nov 2026); hackTracks and
+// hackAwards below are from that brief and no longer shown on /hackathon.
+
+export const hackIdea = { title: "Real World Mining", by: "Global MPC" };
 
 export const hackFacts = [
-  { label: "Dates", value: "1–4 Dec 2026" },
-  { label: "Prize pool", value: "₮15.5M" },
-  { label: "Tracks", value: "3 tracks" },
+  { label: "Dates", value: "29 Nov – 3 Dec 2026" },
+  { label: "Prize pool", value: "₮10M" },
+  { label: "Powered by", value: "Global MPC" },
   { label: "Teams", value: "Solo or any size" },
   { label: "Location", value: "Ulaanbaatar, Mongolia" },
 ];
 
 export const hackStats = [
-  { value: "₮15.5M", label: "prize pool" },
-  { value: "10", label: "winning teams" },
-  { value: "3", label: "tracks" },
-  { value: "100", label: "point judging rubric" },
+  { value: "₮10M", label: "prize pool" },
+  { value: "8", label: "shortlisted teams" },
+  { value: "4", label: "workflows" },
+  { value: "100", label: "point scorecard" },
 ];
+
+// The registration block at the end of /hackathon.
+export const hackKeyDates = [
+  { label: "Registration", when: "Open now" },
+  { label: "Shortlist", when: "29 Nov" },
+  { label: "Demo Day", when: "2 Dec" },
+  { label: "Final Pitch Day", when: "3 Dec" },
+];
+
+export const hackChallenge =
+  "A laboratory issues a corrected assay report after the first version has reached a project reviewer. How does the reviewer know which result to use, who approved the correction and which sample it belongs to? Build a prototype that answers a question like this for someone working with Mongolian mining data.";
+
+export const hackWhy = [
+  "A sample passes through several hands before its result informs a project decision. Each handover creates a question about identity, custody or authority. A digital record becomes useful when the next person can trace a claim back to its source and see what has changed.",
+  "Global MPC describes its approach to mining real-world assets (RWAs) as connecting field evidence, professional verification, digital registries and applications. Its first reference case, Tsagaan Tolgoi in Mongolia, includes exploration and laboratory records. Global MPC states that it has published no mineral resource or reserve estimate for this case. Teams using the case should preserve that distinction in their interfaces.",
+];
+
+// Choose one workflow. `build` = what to help the user do, `demo` = what to show.
+export const hackWorkflows = [
+  { no: "01", title: "Exploration and assays", user: "Geologist",
+    build: "Follow one sample from collection to laboratory receipt and assay.",
+    demo: "A mismatched identifier or a corrected result, and how the geologist resolves it." },
+  { no: "02", title: "Project review", user: "Reviewer",
+    build: "Assemble a dated evidence pack. Link each claim to a document, issuer and review status.",
+    demo: "What happens when a document expires or a reviewer withdraws approval." },
+  { no: "03", title: "Mineral shipments", user: "Buyer",
+    build: "Trace a batch through dispatch and receipt. The UN Transparency Protocol’s Digital Product Passport is a reference for batch identifiers and origin data.",
+    demo: "How a split shipment keeps its link to the original lot." },
+  { no: "04", title: "Environmental reporting", user: "Mine operator or community reviewer",
+    build: "Trace a water measurement to a place, date, method and responsible party.",
+    demo: "How a correction reaches someone who saw the earlier reading." },
+];
+
+export const hackTech = [
+  { title: "Keep it simple", text: "Choose the simplest architecture that lets the intended user check the claim. A signed record can identify the issuer. A hash can show whether a file matches an earlier version. A registry can link revisions, while an API or oracle can deliver a dated result to another application." },
+  { title: "Own the source", text: "Explain who takes responsibility for the original measurement and how a reviewer can challenge it. Teams proposing a digital token should specify the record it references, the issuer and what a holder can verify." },
+  { title: "For example", text: "Keep a sample report off-chain, record its identifier and hash, and let a reviewer check an uploaded copy. Then change one value and repeat the check. If verification fails, the screen should tell the reviewer what to do next." },
+  { title: "Data", text: "Public records, permissioned data or clearly labelled synthetic fixtures are acceptable. Identify simulated integrations. Global MPC’s Registry dApp is under development and its token is pre-issuance, so designs may use a local registry or test network. Access to a sponsor API, a particular chain or a token earns no points by itself." },
+];
+
+// Final scorecard, 100 points (proposed in the brief).
+export const hackScore = [
+  { pts: 20, title: "Problem and user evidence", q: "Who makes the decision today?", full: "A specific workflow and evidence of friction, such as a user interview, a sample form or a documented handover." },
+  { pts: 25, title: "Impact in Mongolia", q: "Who would use this locally and what would improve?", full: "A plausible local user, a baseline or a plan to measure it, and a measurable outcome such as time to identify the current report." },
+  { pts: 25, title: "Technical design", q: "Can another person trace the claim to its source?", full: "Clear identifiers, issuer authority, access rules and correction handling, with a reason for each technology choice." },
+  { pts: 20, title: "Working prototype", q: "Can a judge repeat the core check?", full: "A working end-to-end demonstration with inspectable inputs, an expected result and a handled exception." },
+  { pts: 10, title: "Pilot feasibility", q: "What would it take to run a first trial?", full: "A pilot owner or prospective user, data dependencies and a test with a clear success condition." },
+];
+
+export const hackJudging = "Each judge scores independently: zero for missing evidence, roughly half for a partially supported claim, full marks when the stated evidence is demonstrated. A judge with a direct interest in a team recuses themselves from scoring that team. Teams are ranked by their mean total; ties go to the prototype score, then local impact, then a recorded panel decision.";
 
 export const hackTracks = [
   {
@@ -49,14 +106,14 @@ export const hackTracks = [
   },
 ];
 
-// Owner, 13 Nov 2026: ten places, ₮15.5M in total (5 + 2×2 + 3×1.5 + 4×0.5). `share` = the tier's part of the pool.
-export const hackPool = "₮15,500,000";
+// Owner, 18 Nov 2026: ₮10M in four prizes (5 + 3 + 1 + 1). `share` = the prize's part of the pool.
+export const hackPool = "₮10,000,000";
 export const hackPrizes = [
 // `amount` is per team, without the ₮ (the page sets the sign apart: the brand fonts don't draw it well).
-  { tier: "Gold", place: "1st Place", amount: "5M", share: 32, teams: "1 team" },
-  { tier: "Silver", place: "2nd Place", amount: "2M", share: 26, teams: "2 teams" },
-  { tier: "Bronze", place: "3rd Place", amount: "1.5M", share: 29, teams: "3 teams" },
-  { tier: "Special", place: "Special Awards", amount: "500K", share: 13, teams: "4 teams" },
+  { tier: "#1", place: "1st Place", amount: "5M", share: 50, teams: "1 team" },
+  { tier: "#2", place: "2nd Place", amount: "3M", share: 30, teams: "1 team" },
+  { tier: "Award", place: "Best Local Impact", amount: "1M", share: 10, teams: "1 team" },
+  { tier: "Award", place: "Best Technical Excellence", amount: "1M", share: 10, teams: "1 team" },
 ];
 
 export const hackAwards = [
@@ -66,30 +123,36 @@ export const hackAwards = [
   { no: "04", title: "Best Rookie Team", sub: "Students & first-time builders", text: "The highest-scoring team of students or first-time hackathon builders." },
 ];
 
-// Owner, 13 Nov 2026: three stages. Register and submit (15–23 Nov) → the 20 selected teams pitch online
-// (27 Nov) → the final 10 build and compete at UBBW (30 Nov – 4 Dec). Tabs on phones (HackDays.tsx).
-export const hackDays = [
+// The brief's schedule (owner chose it, 18 Nov): one-page proposals → 8 shortlisted 29 Nov → Demo Day 2 Dec
+// (all 8 continue) → Final Pitch Day 3 Dec. Tabs on phones (HackDays.tsx).
+// Each step: a short headline (`what`), its parts (`items`), score weights (`scores`) and an outcome (`note`).
+export type HackSlot = { time: string; what: string; items?: string[]; scores?: { label: string; pts: number }[]; note?: string; link?: { href: string; label: string } };
+export const hackDays: { date: string; day: string; title: string; slots: HackSlot[] }[] = [
   {
-    date: "15–23 Nov", day: "Stage 1", title: "Register and submit your project",
+    date: "29 Nov", day: "Stage 1", title: "Proposal and shortlist",
     slots: [
-      { time: "Sun, Nov 15", what: "Registration opens" },
-      { time: "Mon, Nov 23", what: "Last day to submit your project" },
+      // Owner, 18 Nov: teams submit through the attendee app (/app/hack)
+      { time: "Before Nov 29", what: "Submit a one-page proposal in the attendee app",
+        items: ["The user and the decision they make", "The evidence they need", "The technology you propose", "One workflow you can demo by 2 December"],
+        link: { href: "/app/hack", label: "Submit in the attendee app" } },
+      { time: "Sun, Nov 29", what: "Eight teams shortlisted",
+        scores: [{ label: "Problem and user evidence", pts: 40 }, { label: "Relevance and feasibility in Mongolia", pts: 35 }, { label: "Demo plan", pts: 25 }] },
     ],
   },
   {
-    date: "27 Nov", day: "Stage 2", title: "Top 20: online pitch",
+    date: "2 Dec", day: "Stage 2", title: "Demo Day",
     slots: [
-      { time: "After Nov 23", what: "20 teams selected for the online pitch" },
-      { time: "Fri, Nov 27", what: "Pitch your idea online; the final 10 teams are announced" },
+      { time: "Wed, Dec 2", what: "Run one workflow, live",
+        items: ["5 minutes: the normal case and one exception", "3 minutes: technical questions"],
+        note: "All eight teams advance to Pitch Day." },
     ],
   },
   {
-    date: "30 Nov – 4 Dec", day: "Stage 3", title: "Final 10: build and compete",
+    date: "3 Dec", day: "Stage 3", title: "Final Pitch Day",
     slots: [
-      { time: "Mon, Nov 30", what: "Online meeting with mentors" },
-      { time: "Tue, Dec 1", what: "Kickoff" },
-      { time: "Wed, Dec 2 – Thu, Dec 3", what: "Two build days" },
-      { time: "Fri, Dec 4", what: "Pitch day and awards" },
+      { time: "Thu, Dec 3", what: "Pitch to the judges",
+        items: ["5 minutes: the first pilot user, the data needed and one measurable outcome", "5 minutes: questions"],
+        note: "One final scorecard from both days, then the awards." },
     ],
   },
 ];

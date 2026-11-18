@@ -18,7 +18,7 @@ const revealDay = (ms: number) => new Date(ms).toLocaleDateString("en-GB", { day
 export function ProjectsView({ data, onBack }: { data: Projects; onBack: () => void }) {
   return (
     <>
-      <button className="back-link game-back" onClick={onBack}><ChevronLeft size={18} /> Hackathon</button>
+      <button type="button" className="back-link game-back hk-back" onClick={onBack}><ChevronLeft size={18} /> Hackathon</button>
       <h1 className="app-h1">Top 20 projects</h1>
       <p className="app-sub">
         {data.revealed ? "The teams that passed stage 1." : `The teams that passed stage 1. Projects are revealed on ${revealDay(data.revealAt)}, when stage 3 starts.`}
