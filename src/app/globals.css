@@ -656,7 +656,7 @@ em { font-style: normal; color: var(--clay-deep); }
 .pstats b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1; color: var(--clay-deep); }
 .pstats span { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
 /* Achievements. A medal: earned = brass ring round brand green; locked = grey, with a progress ring when it's
-   earned by number (5+ events, Networker, Ambassador), else a small lock. */
+   earned by number (7+ events, Networker, Ambassador), else a small lock. */
 .medal { position: relative; display: grid; place-items: center; flex: none; }
 /* the body is cut to the medal's own shape (inline clip-path): a frame, and the enamel inset in it */
 .medal-body { position: absolute; inset: 0; background: #3a4150; }
@@ -3781,3 +3781,88 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .where-actions .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .bm-me { width: 16px; height: 16px; border-radius: 50%; background: #1c1c1e; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
 .mini .mini-place > span { color: var(--label); }
+
+/* App Home: partner wheel under the countdown (src/components/PartnerWheel.tsx, owner's reference video 18 Nov).
+   Adjust sizes here: --pw-card = card width/height, --pw-gap = space between cards (the ring radius follows). */
+.pwheel { --pw-card: 116px; --pw-gap: 10px; margin: 16px -16px 0; overflow: hidden; }
+.pwheel-stage { position: relative; height: calc(var(--pw-card) + 20px); perspective: 900px; perspective-origin: 50% 50%; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; outline: none; }
+.pwheel-stage.is-dragging { cursor: grabbing; }
+.pwheel-ring { position: absolute; inset: 0; transform-style: preserve-3d; transform: translateZ(calc(var(--pw-r, 300px) * -1)); }
+.pwheel-card { --w: var(--pw-card); position: absolute; left: 50%; top: 10px; width: var(--w); height: var(--pw-card); margin-left: calc(var(--w) / -2);
+  display: flex; flex-direction: column; justify-content: space-between; padding: 12px; border-radius: var(--r); background: var(--cell); color: var(--label);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform, filter, opacity; -webkit-tap-highlight-color: transparent; }
+.pwheel-card:focus-visible { outline: 2px solid var(--label); outline-offset: 2px; }
+.pwheel-mark { display: grid; place-items: center; width: 40px; height: 40px; overflow: hidden; border-radius: var(--r); background: #fff; }
+.pwheel-mark img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.pwheel-mark[style] img { width: 64%; height: 64%; }
+.pwheel-mark.is-wide { width: auto; max-width: 100%; padding: 0 8px; }
+.pwheel-mark.is-wide img { width: auto; height: 18px; }
+.pwheel-mark.is-word { width: auto; padding: 0 8px; background: var(--cell-2); }
+.pwheel-mark.is-word img { width: auto; height: 18px; }
+.pwheel-text { display: grid; gap: 2px; min-width: 0; }
+.pwheel-text b { font-size: 14px; line-height: 1.15; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pwheel-tag { justify-self: start; max-width: 100%; padding: 2px 6px; border-radius: var(--r); background: color-mix(in srgb, var(--label) 12%, transparent);
+  font-size: 11px; line-height: 1.25; color: var(--label-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  /* Host / Powered by / Media partner / Partner, right above the name */
+/* card background (dot texture + wash) strength by importance (owner, 18 Nov): Powered by and Host full,
+   Media partner 65%, Partner 40% */
+.pwheel-card.is-powered .pwheel-dots { opacity: 1; }
+.pwheel-card.is-host .pwheel-dots { opacity: 1; }
+.pwheel-card.is-media .pwheel-dots { opacity: .65; }
+.pwheel-card.is-plain .pwheel-dots { opacity: .4; }
+/* partner marks as SVGs in their own colours (partners/svg/): no tile. Dark mode is the default theme. */
+.pwheel-mark.is-svg { display: flex; align-self: flex-start; justify-content: flex-start; width: auto; height: auto; max-width: 100%; padding: 0; border-radius: 0; background: none; overflow: visible; }
+.pwheel-mark.is-svg img { display: block; width: auto; height: 34px; max-width: 100%; object-fit: contain; object-position: left center; }
+.pwheel-mark.is-svg.is-wide img { height: 22px; }
+.pwheel-mark.is-svg .on-light { display: none; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .pwheel-mark.is-svg .on-light { display: block; }
+  :root:not([data-theme="dark"]) .pwheel-mark.is-svg .on-dark { display: none; }
+  :root:not([data-theme="dark"]) .pwheel-mark.is-on-dark { padding: 6px 8px; border-radius: var(--r); background: var(--navy, #010d58); }
+}
+:root[data-theme="light"] .pwheel-mark.is-svg .on-light { display: block; }
+:root[data-theme="light"] .pwheel-mark.is-svg .on-dark { display: none; }
+:root[data-theme="light"] .pwheel-mark.is-on-dark { padding: 6px 8px; border-radius: var(--r); background: var(--navy, #010d58); }
+/* dot texture on each partner card, in the partner's colour (--tint): a dot grid seen through drifting smoke-like
+   noise, strongest at the top and gone under the name. The layer moves by transform only (one 240px noise tile, so it loops). */
+.pwheel-card { overflow: hidden; isolation: isolate; }
+.pwheel-card > :not(.pwheel-dots) { position: relative; z-index: 1; }
+.pwheel-dots { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit;
+  background: color-mix(in srgb, var(--tint) 22%, transparent);
+  -webkit-mask: linear-gradient(to bottom, #000 0%, #000 30%, transparent 88%); mask: linear-gradient(to bottom, #000 0%, #000 30%, transparent 88%); }
+.pwheel-dots::before { content: ""; position: absolute; top: -240px; left: -240px; right: 0; bottom: 0;
+  background: radial-gradient(circle, var(--tint) 0.85px, transparent 1.2px) 0 0 / 3px 3px;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.018' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 3.4 0 0 0 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 240px 240px repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.018' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 3.4 0 0 0 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 240px 240px repeat;
+  animation: pw-drift 48s linear infinite; animation-delay: calc(var(--i, 0) * -7s); will-change: transform; }
+@keyframes pw-drift { to { transform: translate3d(240px, 240px, 0); } }
+@media (prefers-reduced-motion: reduce) { .pwheel-dots::before { animation: none; } }
+
+/* Host + Powered by pinned side by side in the countdown card (same card look, not in 3D) */
+/* inside the Home countdown card: a full-width row under the clock */
+.pwheel-pinned { --pw-gap: 10px; position: relative; z-index: 1; grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: var(--pw-gap); }
+/* Countdown card rework (owner, 18 Nov): smaller date, an open clock instead of three boxes,
+   and the Host / Powered by cards on a recessed base so they read apart from the card. */
+.countdown { row-gap: 20px; }
+.countdown > div > p { font-size: 14px; line-height: 1.4; margin-top: 6px; }
+.countdown .countdown-nums { gap: 20px; flex-wrap: wrap; }
+.countdown .countdown-nums div { display: flex; align-items: baseline; gap: 5px; background: none; padding: 0; min-width: 0; flex: none; border-radius: 0; }
+.countdown .countdown-nums b { font-size: 40px; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.countdown .countdown-nums span { font-size: 13px; }
+.countdown > div > p { max-width: none; }
+@media (max-width: 640px) { .countdown > div > p { padding-right: 0; } }  /* only the title needs to clear the stopwatch */
+/* tablet: the clock gets its own row under the title so the stopwatch art never sits behind the numbers */
+@media (min-width: 641px) and (max-width: 860px) { .countdown { grid-template-columns: 1fr; } .countdown h2 { padding-right: 150px; } }
+@media (min-width: 861px) { .countdown .countdown-nums { gap: 28px; } .countdown .countdown-nums b { font-size: 52px; } }
+.pwheel-card.is-pinned { background: var(--bg); margin-top: 2px; }
+@media (min-width: 641px) { .pwheel-pinned { grid-column: 1; max-width: 480px; } }  /* wider screens: under the title, clear of the stopwatch art */
+.pwheel-card.is-pinned { position: relative; left: auto; top: auto; width: auto; margin: 0; height: 56px; will-change: auto;
+  flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 8px 10px; }
+/* slim row: logo left, label + name right, the dot background reads across the whole strip */
+.pwheel-card.is-pinned .pwheel-mark.is-svg { align-self: center; flex: none; }
+.pwheel-card.is-pinned .pwheel-mark.is-svg img { height: 28px; }
+.pwheel-card.is-pinned .pwheel-mark.is-svg.is-wide img { height: 20px; }
+.pwheel-card.is-pinned .pwheel-mark.is-on-dark { padding: 4px 6px; }
+.pwheel-card.is-pinned .pwheel-text { gap: 3px; }
+.pwheel-card.is-pinned .pwheel-text b { font-size: 13px; }
+.pwheel-card.is-pinned .pwheel-tag { padding: 1px 5px; font-size: 10px; }
+.pwheel-card.is-pinned .pwheel-dots { -webkit-mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); }
+@media (min-width: 1100px) { .pwheel { --pw-card: 136px; margin: 16px 0 0; } }

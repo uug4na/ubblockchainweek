@@ -26,7 +26,7 @@ export type Badges = {
     | "berkh" | "flipStreak" | "jackpot" | "oracle" | "quizWins", number>>; // when earned (own badges only)
 };
 
-export const EVENTS_GOAL = 5;
+export const EVENTS_GOAL = 7; // owner, 18 Nov: a little harder (was 5); keep in step with supabase/migrations/0054
 
 export type Badge = { id: string; label: string; icon: LucideIcon };
 
@@ -56,13 +56,13 @@ export type Achievement = Badge & {
   link?: { href: string; label: string }; // where to go to earn it
 };
 
-// the bar is set high on purpose: these are meant to be earned
-export const ONLINE_GOAL = 3;
-export const NETWORK_GOAL = 20;
-export const INVITE_GOAL = 5;
-export const STREAK_GOAL = 5;
-export const ORACLE_GOAL = 3;
-export const QUIZ_GOAL = 3;
+// the bar is set high on purpose: these are meant to be earned (raised 18 Nov; 0054 moves the database's "earned on" dates to match)
+export const ONLINE_GOAL = 5;
+export const NETWORK_GOAL = 30;
+export const INVITE_GOAL = 7;
+export const STREAK_GOAL = 6;
+export const ORACLE_GOAL = 5;
+export const QUIZ_GOAL = 5;
 const WEEK_START = Date.parse(`${days[0].date}T00:00:00+08:00`); // Ulaanbaatar
 
 // which sections are open, so a locked achievement only links somewhere that works
@@ -104,7 +104,7 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
   const ev = counted(b.events, EVENTS_GOAL);
   list.push({
     id: "events", label: `${EVENTS_GOAL}+ events`, icon: CalendarCheck, ...ev, at: at.events,
-    note: ev.done ? `${b.events} sessions attended` : "Attend 5 sessions",
+    note: ev.done ? `${b.events} sessions attended` : `Attend ${EVENTS_GOAL} sessions`,
     about: ev.done ? `You've been to ${b.events} sessions this week, in the room or online.` : `You've been to ${b.events} of ${EVENTS_GOAL} sessions so far.`,
     how: "Scan the poster at a session's door, or finish its Watch live task when you follow online. Each session counts once.",
     link: ev.done ? undefined : { href: "/app/agenda", label: "See the agenda" },

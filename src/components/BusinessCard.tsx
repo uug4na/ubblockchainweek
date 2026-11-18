@@ -12,7 +12,7 @@ import { networks, type Socials } from "@/lib/socials";
 import { days, site } from "@/data/site";
 import { earned, type Badges } from "@/data/badges";
 
-// badges: what kind of participant they are (speaker, crew, hacker, researcher, 5+ events; otherwise Attendee).
+// badges: what kind of participant they are (speaker, crew, hacker, researcher, 7+ events; otherwise Attendee).
 // Left out where the card is shown without them (e.g. a contact in Messages).
 export type CardPerson = { id: string; name: string; about: string; interests: string[]; socials?: Socials; badges?: Badges | null };
 
