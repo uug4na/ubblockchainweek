@@ -3866,3 +3866,23 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .pwheel-card.is-pinned .pwheel-tag { padding: 1px 5px; font-size: 10px; }
 .pwheel-card.is-pinned .pwheel-dots { -webkit-mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); mask: linear-gradient(to right, #000 0%, #000 35%, transparent 100%); }
 @media (min-width: 1100px) { .pwheel { --pw-card: 136px; margin: 16px 0 0; } }
+/* Flappy Bird (Ardcoin's game, full screen): one quiet way out, clear of the hearts and the score. */
+.flappy-exit { position: absolute; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 4; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 999px; background: rgba(0, 0, 0, .45); color: #fff; cursor: pointer; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+
+/* Crew → Games → Flappy dashboard */
+.fl-days { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 0 12px; }
+.fl-days::-webkit-scrollbar { display: none; }
+.fl-days .chip-btn { flex: none; }
+.fl-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 12px; margin-bottom: 16px; }
+.fl-charts .panel { margin: 0; }
+.fl-best { display: grid; justify-items: end; line-height: 1.1; }
+.fl-best b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fl-best small { font-size: 11px; color: var(--label-2); }
+.fl-runs { display: grid; }
+.fl-run { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 8px 0; border-top: .5px solid var(--sep); font-size: 14px; }
+.fl-run time { font-size: 13px; color: var(--label-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fl-run span { color: var(--label-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fl-run b { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.fl-run b.is-flag { color: var(--label-3); text-decoration: line-through; }
+.fl-note { margin-top: 12px; }
+.fl-find { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
