@@ -62,13 +62,16 @@ export class SeededPipeGenerator {
   ): number {
     const halfGap = gapSize / 2
 
+    // UBBW: the canvas grows taller on phones (PhaserGame), so the gap range keeps its place relative to the
+    // ground instead of bunching in the top of the screen.
+    const tall = this.sceneHeight / GameConfig.Canvas.Height
     const minCenterY = Math.max(
-      GameConfig.Pipe.MinGapCenterY,
+      GameConfig.Pipe.MinGapCenterY * tall,
       halfGap + GameConfig.Pipe.CapHeight,
     )
 
     const maxCenterY = Math.min(
-      GameConfig.Pipe.MaxGapCenterY,
+      GameConfig.Pipe.MaxGapCenterY * tall,
       this.sceneHeight - halfGap - GameConfig.Pipe.CapHeight,
     )
 

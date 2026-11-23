@@ -36,11 +36,16 @@ export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
       setError(message)
     }
 
+    // UBBW: fill the phone. The game is 720 wide; its height follows the screen's shape (from the designed 9:16 up
+    // to a tall 9:21 phone), so there are no black bars above and below. Wider screens keep 9:16 with bars at the sides.
+    const box = gameContainerRef.current.getBoundingClientRect()
+    const height = Math.round(Phaser.Math.Clamp((GameConfig.Canvas.Width * box.height) / Math.max(1, box.width), GameConfig.Canvas.Height, 1680))
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: gameContainerRef.current,
       width: GameConfig.Canvas.Width,
-      height: GameConfig.Canvas.Height,
+      height,
       transparent: true,
       physics: {
         default: 'arcade',
@@ -111,7 +116,8 @@ export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
             textShadow: '0 3px 8px rgba(0,0,0,0.9)',
           }}
         >
-          {error || 'Loading...'}
+          {/* the loading artwork already says "Loading", so the words are for screen readers only */}
+          {error || <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clipPath: 'inset(50%)' }}>Loading</span>}
         </div>
       )}
       {children}
