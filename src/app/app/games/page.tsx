@@ -89,7 +89,7 @@ export default function GamesPage() {
             href={g.href}
             className={`game-card ${g.glass ? "is-glass" : ""}`}
             style={{ ["--tone" as string]: g.tone }}
-            onClick={gameOpen(g.href) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
+            onClick={gameOpen(g.href, me.user.email) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
           >
             {/* Each game shows its card artwork on the right . */}
             {/* Glass cards: one continuous panorama fills the card; the text side is frosted with a progressive blur
@@ -98,7 +98,7 @@ export default function GamesPage() {
             {g.image ? <img className="game-photo" src={withBase(g.image)} alt="" aria-hidden /> : <g.icon className="game-art" aria-hidden strokeWidth={1.5} />}
             <span className="game-text">
               <span className="game-tag">{g.tag}</span>
-              <b>{g.title}{!gameOpen(g.href) && <span className="soon-tag">Coming soon</span>}</b>
+              <b>{g.title}{!gameOpen(g.href, me.user.email) && <span className="soon-tag">Coming soon</span>}</b>
               <span>{g.body}</span>
             </span>
             <ChevronRight size={20} className="game-go" />

@@ -60,12 +60,18 @@ export const LOOKS: Record<string, Look> = {
   network: { shape: "scallop", ...C.magenta },
   invite: { shape: "decagon", ...C.lime },
   hack: { shape: "hexagon", ...C.klein },
+  hackTop: { shape: "octagon", ...C.lime },
+  hackFinal: { shape: "scallop", ...C.violet },
   research: { shape: "scallop", ...C.cyan },
   berkh: { shape: "decagon", ...C.violet },
   flip: { shape: "circle", ...C.cyan },
   jackpot: { shape: "octagon", ...C.lime },
   oracle: { shape: "squircle", ...C.green },
   quiz: { shape: "scallop", ...C.klein },
+  // partners
+  tenger: { shape: "squircle", ...C.magenta },
+  miner: { shape: "decagon", ...C.green },
+  devee: { shape: "hexagon", ...C.cyan },
 };
 export const lookFor = (id: string): Look => LOOKS[id] ?? { shape: "circle", ...C.green };
 

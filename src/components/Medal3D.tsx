@@ -18,12 +18,18 @@ const css = (name: string, fb: string) => getComputedStyle(document.documentElem
 
 function arc(g: CanvasRenderingContext2D, text: string, r: number, size: number, font: string, bottom: boolean) {
   g.save();
-  g.font = `700 ${size}px ${font}`;
   g.textAlign = "center";
   g.textBaseline = "middle";
   const chars = [...text];
-  const w = chars.map((ch) => g.measureText(ch).width + size * 0.2);
-  const total = w.reduce((a, b) => a + b, 0);
+  let w: number[] = [], total = 0;
+  // readable first (owner, 20 Nov: "the texts are hard to read"); shrink only if it would run past half the ring
+  for (;;) {
+    g.font = `800 ${size}px ${font}`;
+    w = chars.map((ch) => g.measureText(ch).width + size * 0.14);
+    total = w.reduce((a, b) => a + b, 0);
+    if (total / r <= Math.PI * 0.92 || size <= 30) break;
+    size -= 2;
+  }
   let a = bottom ? Math.PI / 2 + total / r / 2 : -Math.PI / 2 - total / r / 2;
   chars.forEach((ch, i) => {
     a += ((bottom ? -1 : 1) * w[i]) / r / 2;
@@ -35,6 +41,35 @@ function arc(g: CanvasRenderingContext2D, text: string, r: number, size: number,
     a += ((bottom ? -1 : 1) * w[i]) / r / 2;
   });
   g.restore();
+}
+
+// The holder's name on the medal's back (owner, 20 Nov: "what if the name is too long?"). Big on one line if it fits;
+// otherwise split over two, then three lines at spaces (as evenly as possible), shrinking a little at each step.
+// Only a single word too long for a whole line is ever cut short ("…").
+export function fitName(g: CanvasRenderingContext2D, name: string, room: number, font: string): { lines: string[]; size: number } {
+  const text = name.trim().replace(/\s+/g, " ") || "UBBW 2026";
+  const words = text.split(" ").slice(0, 9);
+  const w = (t: string, size: number) => { g.font = `700 ${size}px ${font}`; return g.measureText(t).width; };
+  // every way to break the words into n lines, the most even (narrowest widest line) first
+  const splits = (n: number): string[][] => {
+    if (n > words.length) return [];
+    const out: string[][] = [];
+    const go = (from: number, left: number, acc: string[]) => {
+      if (left === 1) { out.push([...acc, words.slice(from).join(" ")]); return; }
+      for (let i = from + 1; i <= words.length - left + 1; i++) go(i, left - 1, [...acc, words.slice(from, i).join(" ")]);
+    };
+    go(0, n, []);
+    return out.sort((a, b) => Math.max(...a.map((l) => l.length)) - Math.max(...b.map((l) => l.length)));
+  };
+  const tryFit = (n: number, from: number, to: number) => {
+    const opts = splits(n);
+    for (let size = from; size >= to; size -= 2) for (const ls of opts) if (ls.every((l) => w(l, size) <= room)) return { lines: ls, size };
+    return null;
+  };
+  const fit = tryFit(1, 66, 50) ?? tryFit(2, 58, 44) ?? tryFit(3, 50, 38) ?? tryFit(2, 42, 34) ?? tryFit(3, 36, 32) ?? tryFit(1, 48, 30);
+  if (fit) return fit;
+  // a word too long for any line: the most even split, smallest size; face() cuts the line that still overflows
+  return { lines: (splits(Math.min(3, words.length))[0] ?? [text]), size: 30 };
 }
 
 // one face, in one "ink", so colour / height / roughness-metalness maps line up
@@ -58,8 +93,8 @@ function face(g: CanvasRenderingContext2D, ink: Ink, shape: Shape, f: { top: str
     g.beginPath(); g.arc(C + Math.cos(a) * r, C + Math.sin(a) * r, 7, 0, TAU); g.fill();
   }
   g.fillStyle = ink.letters;
-  arc(g, f.top, 395 * k - 6, 36, mono, false);
-  arc(g, f.bottom, 395 * k - 6, 36, mono, true);
+  arc(g, f.top, 395 * k - 4, 46, mono, false);
+  arc(g, f.bottom, 395 * k - 4, 50, mono, true);
   disc(352 * k - 8, ink.rim);
   disc(336 * k - 8, ink.field);
   if (f.icon) {
@@ -75,16 +110,24 @@ function face(g: CanvasRenderingContext2D, ink: Ink, shape: Shape, f: { top: str
   if (f.lines) {
     g.fillStyle = ink.relief;
     g.textAlign = "center"; g.textBaseline = "middle";
-    f.lines.forEach((l, i) => {
-      // long names shrink to fit before they're cut
-      let size = i === 0 ? 60 : 36;
-      const set = () => (g.font = `${i === 0 ? 700 : 600} ${size}px ${i === 0 ? display : mono}`);
-      set();
-      const room = 560 * k;
-      while (i === 0 && size > 34 && g.measureText(l).width > room) { size -= 2; set(); }
-      let s = l;
-      while (g.measureText(s).width > room && s.length > 4) s = s.slice(0, -2) + "…";
-      g.fillText(s, C, C + (i - (f.lines!.length - 1) / 2) * 78);
+    const [name, ...rest] = f.lines;
+    const room = 560 * k;
+    const fit = fitName(g, name, room, display);
+    // the name (one or two lines) then the date, centred together on the field
+    const rows: { text: string; font: string; h: number }[] = [
+      ...fit.lines.map((text) => ({ text, font: `700 ${fit.size}px ${display}`, h: fit.size * 1.12 })),
+      ...rest.map((text) => ({ text, font: `600 44px ${mono}`, h: 44 })),
+    ];
+    const gap = 26; // between the name and the date
+    const total = rows.reduce((a, r) => a + r.h, 0) + (rest.length ? gap : 0);
+    let y = C - total / 2;
+    rows.forEach((r, i) => {
+      if (i === fit.lines.length && rest.length) y += gap;
+      g.font = r.font;
+      let t = r.text;
+      while (g.measureText(t).width > room && t.length > 4) t = t.slice(0, -2) + "…";
+      g.fillText(t, C, y + r.h / 2);
+      y += r.h;
     });
   }
 }
@@ -110,7 +153,7 @@ export function Medal3D({ label, icon, done, holder, when, look, size = 240 }: M
     camera.position.set(0, 0, 4.6);
     const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2, 3, 4); scene.add(key);
 
-    const metal = done ? { rim: "#e2b85c", band: "#c99a43", letters: "#7d5a1c" } : { rim: "#7c8494", band: "#646b7a", letters: "#3c414c" };
+    const metal = done ? { rim: "#e2b85c", band: "#c99a43", letters: "#3f2a06" } : { rim: "#7c8494", band: "#646b7a", letters: "#1d2027" };
     const color: Ink = { ...metal, field: done ? look.enamel : "#2a2f3a", relief: done ? look.relief : "#8a909c" };
     const height: Ink = { rim: "#fff", band: "#9a9a9a", letters: "#6a6a6a", field: "#3a3a3a", relief: "#d8d8d8" };
     // G = roughness, B = metalness: metal parts shiny metal, the enamel field glossy non-metal

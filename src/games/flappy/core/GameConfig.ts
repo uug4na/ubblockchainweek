@@ -1,0 +1,95 @@
+import { ASSETS } from './Paths'
+import { AssetKeys, type BackgroundAssetKey } from './AssetKeys'
+
+export const GameConfig = {
+  Canvas: {
+    Width: 720,
+    Height: 1280,
+    GravityY: 0,
+  },
+  Health: {
+    Max: 3,
+  },
+  Pipe: {
+    Width: 140,
+    CapHeight: 90,
+    StartX: 850,
+    Spacing: 800,
+    SpawnAheadDistance: 3000,
+    CleanupBehindDistance: 2000,
+    MinGapSize: 200,
+    MaxGapSize: 250,
+    GapVariation: 14,
+    MinGapCenterY: 210,
+    MaxGapCenterY: 1040,
+    TopExtraHeight: 140,
+    BottomExtraHeight: 140,
+    SegmentOverlap: 8,
+  },
+  Bird: {
+    SpawnXMultiplier: 0.25,
+    Width: 80,
+    Height: 64,
+    Body: {
+      Width: 110,
+      Height: 90,
+      OffsetX: 55,
+      OffsetY: 45,
+    },
+    GravityY: 2000,
+    DeadGravityY: 2400,
+    FlapVelocityY: -600,
+    DeadVelocityY: 500,
+    DeadFallExtraY: 120,
+    ForwardSpeed: 300,
+    OutOfBoundsPadding: 80,
+    StarInvincibilityDuration: 8000,
+    Rotation: {
+      VelocityDivider: 500,
+      Min: -0.45,
+      Max: 0.9,
+      DeadSpinSpeed: 0.12,
+    },
+    DamageBlink: {
+      Alpha: 0.05,
+      Duration: 60,
+      Repeat: 12,
+    },
+    StarBlink: {
+      Alpha: 0.05,
+      Duration: 80,
+      Repeat: 46,
+    },
+  },
+  Background: {
+    ParallaxSpeed: 0.25,
+    StartKey: AssetKeys.Background.Day1,
+    ScoreChangeEvery: 4,
+    TransitionDuration: 800,
+    Order: [
+      AssetKeys.Background.Day1,
+      AssetKeys.Background.Day2,
+      AssetKeys.Background.Day3,
+      AssetKeys.Background.Day2,
+    ] satisfies BackgroundAssetKey[],
+  },
+  GameOver: {
+    BirdAsset: ASSETS + '/gameover.png',
+    BackgroundAsset: ASSETS + '/gameover-background.png',
+    ButtonAsset: ASSETS + '/buttonbg.webp',
+    BestScoreStorageKey: 'flappy-sparky-best-score',
+  },
+  Font: {
+    Primary: 'Shantel',
+    Fallback: 'Arial',
+  },
+  Depth: {
+    Background: 0,
+    BackgroundTransition: 1,
+    PipeBody: 2,
+    PipeCap: 3,
+    Collectible: 3,
+    Bird: 5,
+    UI: 10,
+  },
+} as const
