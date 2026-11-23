@@ -11,12 +11,13 @@ import { GameOverScene } from './GameOverScene'
 type Props = {
   onRunStart?: () => void
   onRunOver?: (stats: FlappyStats) => void
+  onExit?: () => void
   children?: ReactNode
 }
 
-export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
-  const callbacks = useRef({ onRunStart, onRunOver })
-  callbacks.current = { onRunStart, onRunOver }
+export function PhaserGame({ onRunStart, onRunOver, onExit, children }: Props = {}) {
+  const callbacks = useRef({ onRunStart, onRunOver, onExit })
+  callbacks.current = { onRunStart, onRunOver, onExit }
   const gameContainerRef = useRef<HTMLDivElement | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +32,7 @@ export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
     const handleReady = () => setIsLoading(false)
     const handleRunStart = () => callbacks.current.onRunStart?.()
     const handleRunOver = (stats: FlappyStats) => callbacks.current.onRunOver?.(stats)
+    const handleExit = () => (callbacks.current.onExit ? callbacks.current.onExit() : window.history.back())
     const handleError = (message: string) => {
       setIsLoading(false)
       setError(message)
@@ -66,6 +68,7 @@ export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
           instance.events.on('game-error', handleError)
           instance.events.on('run-start', handleRunStart)
           instance.events.on('run-over', handleRunOver)
+          instance.events.on('exit', handleExit)
         },
       },
     })
@@ -76,6 +79,7 @@ export function PhaserGame({ onRunStart, onRunOver, children }: Props = {}) {
       game.events.off('game-error', handleError)
       game.events.off('run-start', handleRunStart)
       game.events.off('run-over', handleRunOver)
+      game.events.off('exit', handleExit)
       game.destroy(true)
     }
   }, [])

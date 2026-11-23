@@ -92,7 +92,9 @@ export class GameOverScene extends Phaser.Scene {
     button.on('pointerout', () => drawButton(hasButtonImage ? 0xffffff : 0xef5034))
     button.on('pointerdown', () => drawButton(hasButtonImage ? 0xd4b3a0 : 0xd94129))
     button.on('pointerup', () => {
-      window.history.back()
+      // UBBW: the page decides where "back" goes (Devee's start screen, with this run's stars)
+      if (this.game.events.listenerCount('exit')) this.game.events.emit('exit')
+      else window.history.back()
     })
     panel.add(button)
   }

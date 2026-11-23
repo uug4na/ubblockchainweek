@@ -7,6 +7,8 @@ import { usePolling } from "@/lib/usePolling";
 import { usePersisted } from "@/lib/store";
 import type { Market } from "@/lib/types";
 import { site } from "@/data/site";
+import { FlappyBoard } from "./FlappyBoard";
+import { PlayersBoard } from "./PlayersBoard";
 
 type Stats = {
   meet: { connections: number; today: number; bonus: number };
@@ -67,10 +69,12 @@ export function GamesView() {
   const { data: shagai, error: shagaiErr } = usePolling<Shagai>("/api/rpc/staff_shagai", 15_000);
   const tabs = [
     { id: "predict", label: "Predict" },
+    { id: "players", label: "Players" },
     { id: "meet", label: "Meet" },
     { id: "scratch", label: "Scratch" },
     { id: "coin", label: "Coin" },
     { id: "shagai", label: "Shagai" },
+    { id: "flappy", label: "Devee" },
   ];
   const [saved, setTab] = usePersisted<string>("ubbw.staff.games", "predict");
   const tab = tabs.some((x) => x.id === saved) ? saved : "predict";
@@ -209,7 +213,10 @@ export function GamesView() {
       )}
       </>)}
 
-      {s && tab !== "predict" && (
+      {tab === "players" && <PlayersBoard />}
+      {tab === "flappy" && <FlappyBoard />}
+
+      {s && tab !== "predict" && tab !== "players" && tab !== "flappy" && (
         <>
           <div className="gm-grid gm-one">
             {tab === "meet" && <GameCard icon={<Handshake size={20} />} tint="t-blue" name="Proof of Meet" what="Attendees scan each other to connect." big={s.meet.connections} bigLabel="connections made"
