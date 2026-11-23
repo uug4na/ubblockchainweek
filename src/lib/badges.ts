@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/me";
 import type { Me } from "@/lib/types";
-import type { Badges } from "@/data/badges";
+import { TENGER_PANELS, type Badges } from "@/data/badges";
 
 export function useBadges(me: Me | null | undefined): Badges | null {
   const [b, setB] = useState<Badges | null>(null);
@@ -15,15 +15,16 @@ export function useBadges(me: Me | null | undefined): Badges | null {
   const checkedIn = !!checkedAt;
   const joined = me?.user.createdAt;
   const invited = me?.invitedVerified ?? 0;
+  const tenger = me ? TENGER_PANELS.filter((id) => me.attended.includes(id)).length : 0;
   useEffect(() => {
     if (!id) return;
     let live = true;
     // what the app already knows; the database's answer fills in (and wins) where it has the field
-    const own: Badges = { speaker: false, crew: false, hack: null, research: false, events: attended, checkedIn, joined, invited };
+    const own: Badges = { speaker: false, crew: false, hack: null, research: false, events: attended, checkedIn, joined, invited, tenger };
     api<Badges>("/api/rpc/app_badges", {})
       .then((r) => live && setB({ ...own, ...r, at: { ...(checkedAt ? { checkedIn: checkedAt } : {}), ...r.at } }))
       .catch(() => live && setB(own));
     return () => { live = false; };
-  }, [id, attended, checkedIn, checkedAt, joined, invited]);
+  }, [id, attended, checkedIn, checkedAt, joined, invited, tenger]);
   return b;
 }

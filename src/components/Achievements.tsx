@@ -141,6 +141,7 @@ function AchievementSheet({ a, holder, onClose }: { a: Achievement; holder: stri
             </div>
           )}
           <dl>
+            {a.partner && <div><dt>Partner</dt><dd>{a.partner}</dd></div>}
             <div><dt>How it&apos;s earned</dt><dd>{a.how}</dd></div>
             <div><dt>Where it shows</dt><dd>{ON_PASSPORT.has(a.id) ? "On your UB Blockchain Passport, in Achievements, and on the card people see when they scan your QR." : "In Achievements on your profile, with the date you earned it."}</dd></div>
             {a.done && <div><dt>Yours to keep</dt><dd>It stays after the week ends. It can&apos;t be lost.</dd></div>}

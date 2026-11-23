@@ -3913,3 +3913,21 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .home-compete > a.is-special > svg:last-child { color: var(--label-2); }
 .compete-dots { background: color-mix(in srgb, var(--tint) 26%, transparent);
   -webkit-mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); }
+
+/* Achievements: easier to read (owner, 20 Nov). Same tiles and medals; bigger text, full contrast on the name,
+   a brighter line under it. Locked ones are told apart by the grey medal and lock, not by greyed-out text. */
+.ach-tile { gap: 4px; }
+.ach-tile b, .ach-tile:not(.is-done) b { font-size: 15px; line-height: 1.2; color: var(--label); }
+.ach-tile small { font-size: 13px; line-height: 1.3; color: color-mix(in srgb, var(--label) 72%, transparent); }
+.ach-tile small em { font-size: 13px; }
+.ach h2 { font-size: 14px; color: color-mix(in srgb, var(--label) 72%, transparent); }
+.ach-body > p { color: color-mix(in srgb, var(--label) 80%, transparent); font-size: 16px; }
+.ach-body dd { font-size: 15px; line-height: 1.45; }
+.ach-stage small { font-size: 12px; }
+@media (max-width: 560px) {
+  /* phones keep the three columns; only the text grows (13/11 px → 14/12.5 px) and gets brighter */
+  .ach-tile { padding: 14px 5px 12px; }
+  .ach-tile b, .ach-tile:not(.is-done) b { font-size: 14px; }
+  .ach-tile small { font-size: 12.5px; }
+  .ach-tile small em { font-size: 13px; }
+}

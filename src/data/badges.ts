@@ -1,8 +1,11 @@
 // What kind of participant someone is: shown on their Passport (and the public card) and as achievements on
 // Profile. The database works out the facts (supabase/migrations/0052_badges.sql); this file names them.
 import { hackPool } from "@/data/hackathon";
-import { CalendarCheck, Code2, Coins, Dices, DoorOpen, GraduationCap, Headset, Mic, MonitorPlay, Sunrise, Ticket, TrendingUp, Trophy, UserPlus, UserRound, Users, Zap, type LucideIcon } from "lucide-react";
+import { Award, CalendarCheck, Code2, Coins, Dices, DoorOpen, GraduationCap, Headset, Mic, MonitorPlay, Sunrise, Ticket, TrendingUp, Trophy, UserPlus, UserRound, Users, Zap, type LucideIcon } from "lucide-react";
 import { days } from "@/data/site";
+import { sessions } from "@/data/schedule";
+import { ArdcoinMark, GlobalMpcMark, TenGerMark } from "@/components/PartnerMarks";
+import type { ComponentType } from "react";
 
 export type Badges = {
   speaker: boolean;
@@ -22,13 +25,18 @@ export type Badges = {
   jackpot?: boolean; // scratched the 500-star jackpot
   oracle?: number; // predictions called right
   quizWins?: number; // Quiz Rush rounds won (first to answer)
+  // partners (0058; TenGer is counted from the app's own data until it's applied)
+  tenger?: number; // TenGer TV panels attended (of 3)
+  devee?: number; // best Devee run (Ardcoin's game)
   at?: Partial<Record<"speaker" | "crew" | "hack" | "research" | "events" | "checkedIn" | "online" | "connections" | "invited"
-    | "berkh" | "flipStreak" | "jackpot" | "oracle" | "quizWins", number>>; // when earned (own badges only)
+    | "berkh" | "flipStreak" | "jackpot" | "oracle" | "quizWins" | "tenger" | "devee", number>>; // when earned (own badges only)
 };
 
 export const EVENTS_GOAL = 7; // owner, 18 Nov: a little harder (was 5); keep in step with supabase/migrations/0054
 
-export type Badge = { id: string; label: string; icon: LucideIcon };
+// a lucide icon, or a partner's own mark (src/components/PartnerMarks.tsx) on partner achievements
+export type BadgeIcon = LucideIcon | ComponentType<{ size?: number | string; strokeWidth?: number | string; className?: string }>;
+export type Badge = { id: string; label: string; icon: BadgeIcon };
 
 const hackLabel = (s: Badges["hack"]) => (s === "final" ? "Hackathon finalist" : s === "top20" ? "Hackathon top 20" : "Hacker");
 
@@ -47,6 +55,7 @@ export function earned(b: Badges | null | undefined): Badge[] {
 // Profile → Achievements: the ones anyone can work towards, plus Speaker / Crew when they apply.
 // Tapping one opens its medal with the details below.
 export type Achievement = Badge & {
+  partner?: string; // partner achievements: whose, shown in the medal sheet
   done: boolean;
   note: string; // one line on the tile
   about: string; // what it is / what you did
@@ -63,6 +72,9 @@ export const INVITE_GOAL = 7;
 export const STREAK_GOAL = 6;
 export const ORACLE_GOAL = 5;
 export const QUIZ_GOAL = 5;
+// partner achievements (owner, 20 Nov). Keep in step with supabase/migrations/0058_partner_achievements.sql.
+export const TENGER_PANELS = sessions.filter((s) => s.title.startsWith("TenGer Panel")).map((s) => s.id); // a2, c3, e2
+export const DEVEE_GOAL = 25;
 const WEEK_START = Date.parse(`${days[0].date}T00:00:00+08:00`); // Ulaanbaatar
 
 // which sections are open, so a locked achievement only links somewhere that works
@@ -178,17 +190,26 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     link: qz.done ? undefined : g("/app/games/quiz", "Open Quiz Rush"),
   });
 
-  const hackDeep = b.hack === "final" || b.hack === "top20";
+  // Hackathon (owner, 23 Nov): one Global MPC achievement for joining, then two for the stage.
+  const top20 = b.hack === "top20" || b.hack === "final";
   list.push({
-    id: "hack", label: b.hack ? hackLabel(b.hack) : "Hackathon", icon: hackDeep ? Trophy : Code2, done: !!b.hack, at: at.hack,
-    note: b.hack === "final" ? "Team in the final" : b.hack === "top20" ? "Team in the top 20" : b.hack ? "On a hackathon team" : "Join a hackathon team",
-    about:
-      b.hack === "final" ? `Your team reached the final of the UBBW 2026 hackathon and pitched for the ${hackPool} prize pool.`
-      : b.hack === "top20" ? "Your team made the top 20 of the UBBW 2026 hackathon."
-      : b.hack ? "You're building in the UBBW 2026 hackathon, on stablecoins, DeFi or consumer apps."
-      : "Build something real in the UBBW 2026 hackathon: stablecoins, DeFi or consumer apps.",
-    how: "Every member of a hackathon team earns it. It upgrades to Hackathon top 20, then Hackathon finalist, as the team goes through.",
+    id: "miner", label: "Real World Miner", icon: GlobalMpcMark, partner: "Global MPC, powering the hackathon", done: !!b.hack, at: at.hack,
+    note: b.hack ? "Building with Global MPC" : "Join the hackathon",
+    about: b.hack ? "You're building for Real World Mining, the UBBW 2026 hackathon powered by Global MPC." : "This year's hackathon is Real World Mining, powered by Global MPC: apps for verifying and registering mined real-world assets.",
+    how: "Join a hackathon team. Every member earns it.",
     link: !b.hack && open.hack ? { href: "/app/hack", label: "Open the hackathon" } : undefined,
+  });
+  list.push({
+    id: "hackTop", label: "Top 20", icon: Award, done: top20,
+    note: top20 ? "Team in the top 20" : "Reach the hackathon top 20",
+    about: top20 ? "Your team made the top 20 of the UBBW 2026 hackathon." : "The best 20 hackathon teams go through to the next round.",
+    how: "Every member of a team that makes the hackathon top 20 earns it.",
+  });
+  list.push({
+    id: "hackFinal", label: "Finalist", icon: Trophy, done: b.hack === "final",
+    note: b.hack === "final" ? "Pitched on the final stage" : "Pitch on the final stage",
+    about: b.hack === "final" ? `Your team pitched on the final stage of the UBBW 2026 hackathon for the ${hackPool} prize pool.` : `The finalists pitch on stage for the ${hackPool} prize pool.`,
+    how: "Every member of a team in the hackathon final earns it.",
   });
 
   list.push({
@@ -197,6 +218,23 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     about: b.research ? "You submitted an academic paper to the UBBW 2026 research track." : "Share your academic work on blockchain, digital assets or the economy with the UBBW 2026 research track.",
     how: "Submit a paper in Research. It's matched by the email you sign in with, so use the same one.",
     link: b.research ? undefined : { href: "/app/research", label: "Submit a paper" },
+  });
+  // partners: one achievement each, tied to something people really do with that partner
+  const tg = counted(b.tenger ?? 0, TENGER_PANELS.length);
+  list.push({
+    id: "tenger", label: "TenGer regular", icon: TenGerMark, partner: "TenGer TV, host of UB Blockchain Week 2026", ...tg, at: at.tenger,
+    note: tg.done ? "All 3 TenGer panels" : "TenGer TV's 3 panels",
+    about: tg.done ? "You were at all three TenGer Panels, hosted by TenGer TV." : "TenGer TV, the host of the week, runs three panels: crypto in Mongolia, cyber attacks, and what's happening abroad.",
+    how: "Attend TenGer Panel 1, 2 and 3: scan the poster at the door, or follow online with the Watch live task. Each panel counts once.",
+    link: tg.done ? undefined : { href: "/app/agenda", label: "Find them in the Agenda" },
+  });
+  const dv = counted(b.devee ?? 0, DEVEE_GOAL);
+  list.push({
+    id: "devee", label: "High flyer", icon: ArdcoinMark, partner: "Ardcoin, maker of Devee", ...dv, at: at.devee,
+    note: dv.done ? `Best run ${b.devee}` : `Score ${DEVEE_GOAL} in Devee`,
+    about: dv.done ? `Your best Devee run reached ${b.devee}.` : `Devee is Ardcoin's game in the app. Your best run so far: ${b.devee ?? 0}.`,
+    how: `Score ${DEVEE_GOAL} in a single Devee run. Your best run counts; runs flagged as impossibly fast don't.`,
+    link: dv.done ? undefined : g("/app/games/devee", "Play Devee"),
   });
   return list;
 }
