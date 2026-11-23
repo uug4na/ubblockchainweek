@@ -38,12 +38,12 @@ export const applyForm = "https://docs.google.com/forms/d/e/1FAIpQLSeOBvLuWUCwRk
 export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string; allDay?: boolean };
 
 export const days: Day[] = [
-  { date: "2026-11-30", short: "30", month: "Nov", weekday: "Mon", label: "Roundtable", blurb: "Roundtable, the first TenGer panel and an AMA." },
-  { date: "2026-12-01", short: "1", month: "Dec", weekday: "Tue", label: "Research final", blurb: "The research conference final, the hackathon kickoff, the first workshop and an AMA." },
-  { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Hackathon build", blurb: "Hackathon build day 1, a workshop, a TenGer panel and an AMA." },
-  { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Hackathon build", blurb: "Hackathon build day 2 and a workshop." },
-  { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "Hackathon pitch day", blurb: "Hackathon pitch day and awards, the last TenGer panel and an AMA." },
-  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Full-day event.", allDay: true },
+  { date: "2026-11-30", short: "30", month: "Nov", weekday: "Mon", label: "TenGer Panel 1", blurb: "The first TenGer panel, two AMAs and UB Blockchain тойм EP1." },
+  { date: "2026-12-01", short: "1", month: "Dec", weekday: "Tue", label: "Roundtables", blurb: "Two roundtables at Монголбанк, the first workshop, two AMAs and the Demo Show." },
+  { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Hackathon Dev Day", blurb: "Hackathon Dev Day at IT Park, a workshop, a TenGer panel and two AMAs." },
+  { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Hackathon final", blurb: "The hackathon final, the research conference final at СЭЗИС and a workshop." },
+  { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "TenGer Panel 3", blurb: "The last TenGer panel, two AMAs and UB Blockchain тойм EP5." },
+  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Blue Sky Tower. Яагаад UBBW гэж?, Блокчэйн ирээдүй мөн үү?, ЭШХ-ын шагнал, Хакатоны шагнал.", allDay: true },
 ];
 
 export const pillars = [

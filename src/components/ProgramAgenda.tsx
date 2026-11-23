@@ -68,11 +68,11 @@ export function ProgramAgenda() {
             <ol>
               {sessions
                 .filter((s) => s.day === d.date)
-                .sort((a, b) => a.start.localeCompare(b.start))
+                .sort((a, b) => (!a.start ? 1 : 0) - (!b.start ? 1 : 0) || a.start.localeCompare(b.start))
                 .map((s) => (
                   <li key={s.id}>
                     <time>
-                      <b>{s.start}</b>
+                      <b>{s.start || "TBA"}</b>
                       <span>{s.end}</span>
                     </time>
                     <div>
