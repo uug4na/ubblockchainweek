@@ -81,7 +81,7 @@ export default function GamesPage() {
       <span className="eyebrow">Games</span>
       <h1 className="app-h1">Play for stars.</h1>
       <RewardsHead balance={me.balance} />
-      <QuizCard onSoon={gameOpen("/app/games/quiz") ? undefined : () => setSoon({ title: "Quiz Rush", tone: "var(--klein)" })} />
+      <QuizCard onSoon={gameOpen("/app/games/quiz", me.user.email) ? undefined : () => setSoon({ title: "Quiz Rush", tone: "var(--klein)" })} />
       <div className="game-list game-list-art">
         {games.map((g) => (
           <Link

@@ -9,9 +9,9 @@ import { GAMES_PLAYABLE } from "@/data/open";
 
 // Owner, 2026-11-17: the Games list is open, but every game (Proof of Meet too) says "Coming soon".
 // Flip GAMES_PLAYABLE in src/data/open.ts to bring them back.
-// Owner, 23 Nov: Devee can already be played by the owner's account, while it says "Coming soon" for everyone else.
+// Owner, 23 Nov: the owner's account can play every game (Devee too), while they all say "Coming soon" for everyone else.
 // The account is kept as a fingerprint of its email (cyrb53, lowercase) so the address isn't in the public code.
-const DEVEE_EARLY = new Set([5672356717117081]);
+const EARLY_PLAYERS = new Set([5672356717117081]);
 function fingerprint(str: string) {
   let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
   for (let i = 0; i < str.length; i++) {
@@ -23,8 +23,9 @@ function fingerprint(str: string) {
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
-export const gameOpen = (href: string, email?: string | null) =>
-  GAMES_PLAYABLE || (href.replace(/\/+$/, "") === "/app/games/devee" && !!email && DEVEE_EARLY.has(fingerprint(email.trim().toLowerCase())));
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const gameOpen = (_href: string, email?: string | null) =>
+  GAMES_PLAYABLE || (!!email && EARLY_PLAYERS.has(fingerprint(email.trim().toLowerCase())));
 
 const LINE = "Games open closer to the week.";
 
