@@ -37,7 +37,7 @@ export default function AgendaPage() {
 
       <div className="agenda-days">
       {days.map((d) => {
-        const list = sessions.filter((s) => s.day === d.date).sort((a, b) => a.start.localeCompare(b.start));
+        const list = sessions.filter((s) => s.day === d.date).sort((a, b) => (!a.start ? 1 : 0) - (!b.start ? 1 : 0) || a.start.localeCompare(b.start));
         return (
           <section className="panel agenda-panel" key={d.date}>
             <div className="panel-head">
@@ -65,10 +65,10 @@ export default function AgendaPage() {
                   const where = s.room || pl?.name;
                   return (
                     <div className={`mini ${live ? "is-live" : ""}`} key={s.id}>
-                      <time>{s.start}</time>
+                      <time>{s.start || "TBA"}</time>
                       <div>
                         <b>{s.title}</b>
-                        <span>{live ? "Now · " : ""}until {s.end}</span>
+                        {s.end && <span>{live ? "Now · " : ""}until {s.end}</span>}
                         {pl && (
                           pinned ? (
                             <button type="button" className="mini-place" onClick={() => setOpen({ title: s.title, when: `${d.weekday} ${d.short} ${d.month} · ${s.start}`, place: { lat: pl.lat!, lng: pl.lng!, name: where || null } })}>
@@ -77,11 +77,12 @@ export default function AgendaPage() {
                               {pl.mode === "both" && <em>· also online</em>}
                             </button>
                           ) : pl.mode === "online" ? (
-                            <span className="mini-place is-static"><Radio size={14} aria-hidden /> Online · code on the stream</span>
+                            <span className="mini-place is-static"><Radio size={14} aria-hidden /> Online</span>
                           ) : (
-                            <span className="mini-place is-static"><MapPin size={14} aria-hidden /> Place to be announced</span>
+                            <span className="mini-place is-static"><MapPin size={14} aria-hidden /> {where || "Place to be announced"}</span>
                           )
                         )}
+                        {!pl && where && <span className="mini-place is-static"><MapPin size={14} aria-hidden /> {where}</span>}
                       </div>
                     </div>
                   );
