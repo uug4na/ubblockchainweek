@@ -85,7 +85,7 @@ export default function DeveePage() {
 
       <div className="devee-hero" aria-hidden><img src={withBase("/games/flappy/devee.jpg")} alt="" /></div>
 
-      <p className={`flip-result ${last?.payout ? "won" : ""}`} aria-live="polite">{last ? won(last) : "Fly through the pipes. Every pipe pays."}</p>
+      <p className={`flip-result ${last?.payout ? "won" : ""}`} aria-live="polite">{last ? won(last) : "Далавчаа дэлгээд, тэнгэрийг эзэгнэ!"}</p>
 
       <button className="btn btn-clay btn-lg wide" disabled={!canPlay} onClick={play}>
         {!data ? "…" : left <= 0 ? "No runs left today" : me.balance < data.entry ? "Not enough stars" : busy ? "…" : `Play for ${data.entry}★`}
