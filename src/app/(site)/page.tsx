@@ -88,12 +88,16 @@ export default function Home() {
             </div>
             <p className="t-powered">
               <span>Hosted by</span>
-              <img src={img("partners/tenger-hd.png")} alt="TenGer TV" width={127} height={58} />
+              <img className="t-powered-tenger" src={img("partners/svg/tenger-white.svg")} alt="TenGer TV" width={75} height={34} />
               <i className="t-powered-sep" aria-hidden="true" />
               <span>Powered by</span>
               <a href="https://globalmpc.tech" target="_blank" rel="noopener noreferrer" className="t-powered-mpc">
                 <img src={img("partners/icons/globalmpc.svg")} alt="" width={22} height={22} />
                 Global MPC
+              </a>
+              <a href="https://tether.to" target="_blank" rel="noopener noreferrer" className="t-powered-mpc t-powered-tether">
+                <img src={img("partners/svg/tether.svg")} alt="" width={27} height={22} />
+                Tether
               </a>
             </p>
           </div>

@@ -1,51 +1,99 @@
-// Partners 2026 (owner's wireframe + the Arbitrum ecosystem cards as reference, 22 Oct): one 4-across
-// grid of cards — the partner's square mark and a "Learn more" box on top, name (with a tag such as
-// "Host" for anyone who isn't a plain partner) and one line below. Empty cards finish the last row.
+"use client";
 
-import { ArrowRight } from "lucide-react";
+// Partners 2026 as a spotlight (owner, 23 Nov: tag pills, grouped cards, a credits block and tiered tiles were
+// all rejected: "more stylish yet interactive"). Left: an index of every partner, grouped by tier
+// (Hosted by, Powered by, Partners, Media & supporters). Right: the chosen partner large on a white panel,
+// with its role, one line and a link. People pick a partner by clicking (or arrow keys); nothing
+// rotates on its own. Phones: the spotlight on top, the partners as a strip of marks under it.
+// New partners land in their tier from src/data/partners.ts: host → Hosted by, tag "Powered by" → Powered by,
+// media / sponsor / supporter (or app label "Media partner") → Media & supporters, everyone else → Partners.
+
+import { useState } from "react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Partner, PartnerType } from "@/data/partners";
 import { withBase } from "@/lib/base";
 
 const src = (f: string) => withBase(`/brand/${f}`);
 
-function Mark({ p }: { p: Partner }) {
-  if (p.icon) return <span className={`t-pcard-icon${p.wide ? " is-wide" : ""}`} style={p.iconBg ? { background: p.iconBg } : undefined}><img src={src(p.icon)} alt="" loading="lazy" /></span>;
-  if (p.logo) return <span className="t-pcard-icon is-word"><img src={src(p.logo)} alt="" loading="lazy" /></span>;
-  return <span className="t-pcard-icon is-letter">{p.name[0]}</span>;
-}
+const TIERS = [
+  { id: "host", label: "Hosted by" },
+  { id: "powered", label: "Powered by" },
+  { id: "partner", label: "Partners" },
+  { id: "media", label: "Media & supporters" },
+] as const;
+type TierId = (typeof TIERS)[number]["id"];
 
-function Card({ p, tag }: { p: Partner; tag?: string }) {
-  const body = (
-    <>
-      <span className="t-pcard-top">
-        <Mark p={p} />
-        {p.href && <span className="t-pcard-more">Learn more <i><ArrowRight size={13} /></i></span>}
-      </span>
-      <span className="t-pcard-text">
-        <b>{p.name}{tag && <em className="t-pcard-tag">{tag}</em>}</b>
-        {p.about && <span>{p.about}</span>}
-      </span>
-    </>
-  );
-  return (
-    <li className="t-pcard">
-      {p.href ? <a href={p.href} target="_blank" rel="noopener noreferrer">{body}</a> : <div>{body}</div>}
-    </li>
-  );
+const tierOf = (p: Partner): TierId =>
+  p.type === "host" ? "host"
+  : p.tag === "Powered by" ? "powered"
+  : p.type === "media" || p.type === "supporter" || p.type === "sponsor" || p.appTag === "Media partner" ? "media"
+  : "partner";
+
+const isWord = (p: Partner) => !!p.word || !!p.wide || p.type === "host";
+const domain = (href: string) => href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
+
+// big: the full wordmark when there is one, else the mark in its own colours. mini (index): the square icon;
+// a wordmark-only partner (TenGer, AI Group) shows its wordmark small.
+function Mark({ p, big }: { p: Partner; big?: boolean }) {
+  const word = isWord(p);
+  const f = big ? p.word ?? p.svg ?? p.icon ?? p.logo : word ? p.svg ?? p.logo ?? p.icon : p.icon ?? p.svg ?? p.logo;
+  const cls = `${big ? "t-spot-big" : "t-spot-mini"}${word ? " is-word" : ""}${p.onDark ? " is-ink" : ""}`;
+  return f ? <img className={cls} src={src(f)} alt="" /> : <i className={`${cls} is-letter`}>{p.name[0]}</i>;
 }
 
 export function PartnerCards({ types, partners }: { types: { id: PartnerType; label: string }[]; partners: Partner[] }) {
-  // in the order of `types` (host first), then as listed
-  const list = types.flatMap((t) => partners.filter((p) => p.type === t.id));
-  const tag = (p: Partner) => p.tag ?? (p.type === "partner" ? undefined : types.find((t) => t.id === p.type)?.label);
+  const shown = partners.filter((p) => types.some((t) => t.id === p.type));
+  const tiers = TIERS.map((t) => ({ ...t, list: shown.filter((p) => tierOf(p) === t.id) })).filter((t) => t.list.length);
+  const flat = tiers.flatMap((t) => t.list.map((p) => ({ p, tier: t.label })));
+  // open on the first "Powered by" partner, else the first one
+  const [at, setAt] = useState(() => Math.max(0, flat.findIndex((x) => tierOf(x.p) === "powered")));
+  if (!flat.length) return null;
+  const cur = flat[at] ?? flat[0];
+  const go = (d: number) => setAt((at + d + flat.length) % flat.length);
 
   return (
-    <ul className="t-pgrid">
-      {list.map((p) => <Card key={p.name} p={p} tag={tag(p)} />)}
-      {/* empty cards only finish the last row: four across, two on tablets (the rest hidden), none on phones */}
-      {Array.from({ length: Math.ceil(Math.max(list.length, 1) / 4) * 4 - list.length }, (_, i) => (
-        <li key={`open-${i}`} className={`t-pcard is-open${list.length + i >= Math.ceil(list.length / 2) * 2 ? " is-extra" : ""}`} aria-hidden="true"><span className="t-ptile-mark"><i /><i /><i /></span></li>
-      ))}
-    </ul>
+    <div className="t-spot" onKeyDown={(e) => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); go(1); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); go(-1); } }}>
+      <nav className="t-spot-index" aria-label="Partners">
+        {tiers.map((t) => (
+          <div className="t-spot-tier" key={t.id}>
+            <h3>{t.label}</h3>
+            <ul>
+              {t.list.map((p) => {
+                const i = flat.findIndex((x) => x.p === p);
+                return (
+                  <li key={p.name}>
+                    <button type="button" className={i === at ? "is-on" : undefined} aria-pressed={i === at} onClick={() => setAt(i)}>
+                      <Mark p={p} />
+                      <span>{p.name}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
+
+      <article className="t-spot-stage" style={{ ["--tint" as string]: cur.p.tint ?? "#1f2a6b" }} aria-live="polite">
+        <div className="t-spot-head">
+          <span>{cur.tier}</span>
+          <span className="t-spot-count">{String(at + 1).padStart(2, "0")} / {String(flat.length).padStart(2, "0")}</span>
+        </div>
+        <div className="t-spot-mark" key={cur.p.name}>
+          <Mark p={cur.p} big />
+        </div>
+        <div className="t-spot-foot">
+          <div className="t-spot-copy" key={cur.p.name}>
+            <h4>{cur.p.name}</h4>
+            {cur.p.about && <p>{cur.p.about}</p>}
+          </div>
+          <div className="t-spot-ctl">
+            {cur.p.href && <a className="t-spot-visit" href={cur.p.href} target="_blank" rel="noopener noreferrer">{domain(cur.p.href)} <ArrowUpRight size={16} /></a>}
+            <button type="button" aria-label="Previous partner" onClick={() => go(-1)}><ChevronLeft size={18} /></button>
+            <button type="button" aria-label="Next partner" onClick={() => go(1)}><ChevronRight size={18} /></button>
+          </div>
+        </div>
+      </article>
+    </div>
   );
 }
