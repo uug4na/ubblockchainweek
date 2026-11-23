@@ -25,7 +25,7 @@ export const partnerTypes: { id: PartnerType; label: string }[] = [
 export const partners2026: Partner[] = [
   { name: "TenGer TV", type: "host", about: "Host of UB Blockchain Week 2026.", logo: "partners/tenger-hd.png", svg: "partners/svg/tenger.svg", svgDark: "partners/svg/tenger-white.svg", tint: "#fe2434" }, // 23 Nov: vector logo from the TenGer brandbook 2021 (p.7), black / white letters + the colour dots
   // Ard (Ard Financial Group, ard.mn) removed 16 Nov 2026: old brand, replaced by AI Group and Ardcoin below
-  { name: "Unread", type: "partner", appTag: "Media partner", about: "Hybrid media company telling stories for the next generation.", icon: "partners/icons/unread.png", svg: "partners/svg/unread.svg", tint: "#0886fa", href: "https://unread.today" , word: "partners/unread-word.png" },
+  { name: "Unread", type: "partner", appTag: "Media partner", about: "Hybrid media company telling stories for the next generation.", icon: "partners/svg/unread-mark.svg", svg: "partners/svg/unread-mark.svg", tint: "#0886fa", href: "https://unread.today" , word: "partners/unread-word.png" },
   // 17 Nov 2026: second in line, tagged "Powered by" (owner's call)
   // 23 Nov 2026: Tether announced, "Powered by" next to Global MPC (owner). Logos from tether.to/en/media.
   { name: "Tether", type: "partner", tag: "Powered by", about: "Issuer of USDT, the most widely used stablecoin.", icon: "partners/icons/tether.svg", svg: "partners/svg/tether.svg", tint: "#009393", href: "https://tether.to" },

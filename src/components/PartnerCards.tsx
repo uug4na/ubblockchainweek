@@ -4,7 +4,7 @@
 // all rejected: "more stylish yet interactive"). Left: an index of every partner, grouped by tier
 // (Hosted by, Powered by, Partners, Media & supporters). Right: the chosen partner large on a white panel,
 // with its role, one line and a link. People pick a partner by clicking (or arrow keys); nothing
-// rotates on its own. Phones: the spotlight on top, the partners as a strip of marks under it.
+// rotates on its own. Phones: a compact panel on top and every partner's mark in one row under it.
 // New partners land in their tier from src/data/partners.ts: host → Hosted by, tag "Powered by" → Powered by,
 // media / sponsor / supporter (or app label "Media partner") → Media & supporters, everyone else → Partners.
 
@@ -62,7 +62,7 @@ export function PartnerCards({ types, partners }: { types: { id: PartnerType; la
                 const i = flat.findIndex((x) => x.p === p);
                 return (
                   <li key={p.name}>
-                    <button type="button" className={i === at ? "is-on" : undefined} aria-pressed={i === at} onClick={() => setAt(i)}>
+                    <button type="button" className={i === at ? "is-on" : undefined} aria-pressed={i === at} aria-label={p.name} onClick={() => setAt(i)}>
                       <Mark p={p} />
                       <span>{p.name}</span>
                     </button>
