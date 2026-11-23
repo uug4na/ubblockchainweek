@@ -16,7 +16,8 @@ import type { FlappyStats } from "@/games/flappy/types";
 // tapped; when the bird dies the server pays per pipe passed, up to a cap. Numbers come from the database.
 const PhaserGame = dynamic(() => import("@/games/flappy/scenes/PhaserGame").then((m) => m.PhaserGame), { ssr: false });
 
-type State = { entry: number; perPipe: number; maxPay: number; dailyLimit: number; usedToday: number; best: number };
+type Run = { id: string; at: number; score: number | null; entry: number; payout: number; flagged: boolean; done: boolean };
+type State = { entry: number; perPipe: number; maxPay: number; dailyLimit: number; usedToday: number; best: number; recent?: Run[] };
 type Result = { score: number; payout: number | null; flagged?: boolean };
 
 export default function DeveePage() {
@@ -93,14 +94,37 @@ export default function DeveePage() {
 
       {data && (
         <section className="panel devee-rules" style={{ marginTop: 20 }}>
-          <div className="panel-head"><h2>How it pays</h2></div>
+          <div className="panel-head"><h2>How to play</h2></div>
+          <ol className="devee-steps">
+            <li><b>Tap Play.</b> A run costs {data.entry}★. The bird takes off after a 3-second count.</li>
+            <li><b>Tap anywhere to flap.</b> Stop tapping and the bird drops.</li>
+            <li><b>Fly through the gaps.</b> Each pipe you pass is +{data.perPipe}★.</li>
+            <li><b>You have three hearts.</b> Hitting a pipe costs one; falling ends the run. Grab hearts and stars on the way.</li>
+          </ol>
           <dl>
             <div><dt>A run</dt><dd>{data.entry}★</dd></div>
             <div><dt>Every pipe you pass</dt><dd>+{data.perPipe}★</dd></div>
             <div><dt>Most back from one run</dt><dd>{data.maxPay}★</dd></div>
             <div><dt>Your best run</dt><dd>{data.best} pipes</dd></div>
           </dl>
-          <p className="muted">Tap to flap. You have three hearts; a pipe costs one. Runs scored faster than the pipes come pay nothing.</p>
+          <p className="muted">Runs scored faster than the pipes come pay nothing.</p>
+        </section>
+      )}
+
+      {data?.recent && data.recent.length > 0 && (
+        <section className="panel" style={{ marginTop: 16 }}>
+          <div className="panel-head"><h2>Your last runs</h2></div>
+          <div className="flip-history">
+            {data.recent.map((r) => {
+              const n = r.payout - r.entry;
+              return (
+                <span key={r.id} className={`flip-dot shagai-dot ${n > 0 ? "won" : n < 0 ? "lost" : ""}`}
+                  title={!r.done ? "Left mid-run" : r.flagged ? `${r.score} pipes, too fast to count` : `${r.score} pipes`}>
+                  {n > 0 ? `+${n}` : n === 0 ? "±0" : n}
+                </span>
+              );
+            })}
+          </div>
         </section>
       )}
     </>
