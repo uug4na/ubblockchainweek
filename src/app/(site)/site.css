@@ -788,7 +788,7 @@
   .t-powered-sep { height: 14px; margin: 0 2px; }
   /* 23 Nov: hero shows only "Powered by" (no Hosted by), label over the three logos in equal columns, no cell background */
   .t-hero-copy > .t-powered { align-self: stretch; margin-top: 22px; display: grid; grid-template-columns: 1fr; row-gap: 12px; font-size: 9.5px; letter-spacing: .14em; color: rgba(255, 255, 255, .55); }
-  .t-hero-copy > .t-powered .t-powered-row { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; align-items: center; gap: 12px; }
+  .t-hero-copy > .t-powered .t-powered-row { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; align-items: center; gap: 22px; }  /* owner: spread wide was "too much space" */
   .t-hero-copy > .t-powered .t-powered-mpc { font-size: 13px; gap: 7px; }
   .t-hero-copy > .t-powered .t-powered-mpc img { height: 22px; width: 22px; }
   .t-hero-copy > .t-powered .t-powered-tether img { width: auto; height: 20px; }
