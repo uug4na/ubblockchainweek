@@ -87,10 +87,8 @@ export default function Home() {
               <Link href="/program" className="t-btn t-btn-line">See the program</Link>
             </div>
             <p className="t-powered">
-              <span>Hosted by</span>
-              <img className="t-powered-tenger" src={img("partners/svg/tenger-white.svg")} alt="TenGer TV" width={75} height={34} />
-              <i className="t-powered-sep" aria-hidden="true" />
               <span>Powered by</span>
+              <span className="t-powered-row">
               <a href="https://globalmpc.tech" target="_blank" rel="noopener noreferrer" className="t-powered-mpc">
                 <img src={img("partners/icons/globalmpc.svg")} alt="" width={22} height={22} />
                 Global MPC
@@ -99,6 +97,10 @@ export default function Home() {
                 <img src={img("partners/svg/tether.svg")} alt="" width={27} height={22} />
                 Tether
               </a>
+              <a href="https://ardcoin.com" target="_blank" rel="noopener noreferrer" className="t-powered-mpc t-powered-ard" aria-label="Ardcoin">
+                <img src={img("partners/ardcoin-white.png")} alt="" width={97} height={20} />
+              </a>
+              </span>
             </p>
           </div>
           <div className="t-hero-art">
