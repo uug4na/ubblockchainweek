@@ -9,6 +9,7 @@ import { site } from "@/data/site";
 
 // UB Hack group chat (0037_hack_app.sql): every member of a team still in the hackathon, plus crew.
 // The attendee app uses app_hack_chat*, the crew console staff_hack_chat*. Polls every 4 s while visible.
+// room "research": the Research group (0070_research_chat.sql), same rules, app_research_chat* / staff_research_chat*.
 export type HackMsg = { id: number; name: string; team: string; crew: boolean; body: string; mine: boolean; at: number };
 // Pinned messages (0044_hack_chat_pins.sql), newest pin first. Only crew pin/unpin (console side).
 export type HackPin = { id: number; name: string; crew: boolean; body: string };
@@ -16,8 +17,8 @@ export type HackPin = { id: number; name: string; crew: boolean; body: string };
 const time = (ms: number) => new Date(ms).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
 
 /** header: the thread's header content (app side); the pinned bar joins it in one sticky strip. */
-export function HackChat({ side, header }: { side: "app" | "staff"; header?: React.ReactNode }) {
-  const fn = side === "app" ? "app_hack_chat" : "staff_hack_chat";
+export function HackChat({ side, header, room = "hack" }: { side: "app" | "staff"; header?: React.ReactNode; room?: "hack" | "research" }) {
+  const fn = `${side === "app" ? "app" : "staff"}_${room}_chat`;
   const [msgs, setMsgs] = useState<HackMsg[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [text, setText] = useState("");
@@ -166,7 +167,7 @@ export function HackChat({ side, header }: { side: "app" | "staff"; header?: Rea
   async function togglePin(id: number) {
     setPicked(0);
     try {
-      const r = await api<{ pinned: HackPin[] }>("/api/rpc/staff_hack_pin", { id, pin: !pinned.has(id) });
+      const r = await api<{ pinned: HackPin[] }>(`/api/rpc/staff_${room}_pin`, { id, pin: !pinned.has(id) });
       setPins(r.pinned);
       setPinAt(0);
       haptic.success();
@@ -198,7 +199,7 @@ export function HackChat({ side, header }: { side: "app" | "staff"; header?: Rea
         </header>
       ) : pinBar && <div className="hk-pin-solo">{pinBar}</div>}
       <div className="chat-log" role="log" aria-live="polite">
-        {loaded && msgs.length === 0 && !error && <p className="chat-empty muted small">No messages yet. Say hello to the other teams.</p>}
+        {loaded && msgs.length === 0 && !error && <p className="chat-empty muted small">{room === "research" ? "No messages yet. Ask the crew or say hello to the other research teams." : "No messages yet. Say hello to the other teams."}</p>}
         {msgs.map((m, i) => {
           const prev = msgs[i - 1];
           const head = !m.mine && (!prev || prev.name !== m.name || prev.team !== m.team || m.at - prev.at > 300_000);

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { GAMES_PLAYABLE } from "@/data/open";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
-import { ArrowUp, AtSign, Check, CheckCheck, ChevronLeft, ChevronRight, ExternalLink, Headset, ImageIcon, Info, Search, Trophy, UserPlus, X } from "lucide-react";
+import { ArrowUp, AtSign, Check, CheckCheck, ChevronLeft, ChevronRight, ExternalLink, GraduationCap, Headset, ImageIcon, Info, Search, Trophy, UserPlus, X } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { HackChat } from "@/components/HackChat";
 import { SendBurst } from "@/components/SendBurst";
@@ -91,13 +91,14 @@ function Threads() {
       {data?.inbox && <TeamInbox rows={data.inbox} />}
       {!!data?.featured?.length && <FeaturedCrew people={data.featured} />}
       {data && (
-        data.threads.length === 0 && !(HACK_SECTION_OPEN && data.hack) && !data.team ? (
+        data.threads.length === 0 && !(HACK_SECTION_OPEN && data.hack) && !data.research && !data.team ? (
           <p className="muted chat-threads-empty">Meet people to chat with them.{GAMES_PLAYABLE && <> <Link href="/app/games/meet" className="inline-link">Proof of Meet</Link></>}</p>
         ) : (
           // messenger-style list: no card around it, compact two-line rows; UBBW Team, then the UB Hack group, are pinned first
           <ul className="chat-threads">
             {data.team && <TeamRow t={data.team} />}
             {HACK_SECTION_OPEN && data.hack && <HackRow h={data.hack} />}
+            {data.research && <HackRow h={data.research} room="research" />}
             {data.threads.map((t) => (
               <li key={t.id}>
                 <Link href={`/app/chat/?p=${encodeURIComponent(t.id)}`} className={t.unread ? "chat-thread is-unread" : "chat-thread"}>
@@ -297,19 +298,25 @@ function TeamChat({ pass }: { pass: string | null }) {
 }
 
 const GROUP = "UB Hack";
+// the two group rooms: UB Hack (0043) and Research (0070)
+const ROOMS = {
+  hack: { name: GROUP, sub: "All teams and the crew", href: "/app/hack", open: "Open the hackathon", Icon: Trophy },
+  research: { name: "Research", sub: "All research teams and the crew", href: "/app/research", open: "Open Research", Icon: GraduationCap },
+};
 
-function HackRow({ h }: { h: HackThread }) {
+function HackRow({ h, room = "hack" }: { h: HackThread; room?: "hack" | "research" }) {
   const l = h.last;
+  const r = ROOMS[room];
   return (
     <li>
-      <Link href="/app/chat/?g=hack" className={h.unread ? "chat-thread is-unread" : "chat-thread"}>
-        <span className="chat-group-ava" aria-hidden><Trophy size={22} /></span>
+      <Link href={`/app/chat/?g=${room}`} className={h.unread ? "chat-thread is-unread" : "chat-thread"}>
+        <span className="chat-group-ava" aria-hidden><r.Icon size={22} /></span>
         <span className="chat-thread-top">
-          <b>{GROUP}</b>
+          <b>{r.name}</b>
           {l ? <small className="chat-when">{time(l.at)}</small> : <ChevronRight size={16} className="person-row-chev" />}
         </span>
         <span className="chat-thread-bottom">
-          <small>{l ? `${l.mine ? "You" : l.crew ? "Crew" : l.name.split(" ")[0]}: ${l.body}` : "All teams and the crew"}</small>
+          <small>{l ? `${l.mine ? "You" : l.crew ? "Crew" : l.name.split(" ")[0]}: ${l.body}` : r.sub}</small>
           {h.unread > 0 && <span className="chat-badge">{h.unread > 99 ? "99+" : h.unread}</span>}
         </span>
       </Link>
@@ -318,18 +325,20 @@ function HackRow({ h }: { h: HackThread }) {
 }
 
 // The hackathon group, opened from Messages: the same header as a 1:1 thread, the group chat below.
-function HackGroup() {
+function HackGroup({ room = "hack" }: { room?: "hack" | "research" }) {
   const router = useRouter();
+  const r = ROOMS[room];
   return (
     <div className="chat page-in">
       <HackChat
         side="app"
+        room={room}
         header={
           <>
             <button className="chat-back" aria-label="Back to messages" onClick={() => router.push("/app/chat")}><ChevronLeft size={26} /></button>
-            <Link href="/app/hack" className="chat-who" aria-label="Open the hackathon">
-              <span className="chat-group-ava is-small" aria-hidden><Trophy size={18} /></span>
-              <span><b>{GROUP}</b><small>All teams and the crew</small></span>
+            <Link href={r.href} className="chat-who" aria-label={r.open}>
+              <span className="chat-group-ava is-small" aria-hidden><r.Icon size={18} /></span>
+              <span><b>{r.name}</b><small>{r.sub}</small></span>
             </Link>
           </>
         }
@@ -745,6 +754,7 @@ export function Chat() {
   if (status === "loading") return null;
   if (status === "out" || !me) return <AuthPanel title="Messages" lead="Get your Passport to chat with the people you meet." />;
   if (q.get("g") === "hack" && HACK_SECTION_OPEN) return <HackGroup />;
+  if (q.get("g") === "research") return <HackGroup key="research" room="research" />;
   const team = q.get("t");
   if (team) return <TeamChat key={team} pass={team === "team" ? null : team} />;
   return pass ? <Thread key={pass} pass={pass} /> : <Threads />;
