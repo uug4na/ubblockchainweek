@@ -1,7 +1,7 @@
 // What kind of participant someone is: shown on their Passport (and the public card) and as achievements on
 // Profile. The database works out the facts (supabase/migrations/0052_badges.sql); this file names them.
 import { hackPool } from "@/data/hackathon";
-import { Award, CalendarCheck, Code2, Coins, Dices, DoorOpen, GraduationCap, Headset, Mic, MonitorPlay, Sunrise, Ticket, TrendingUp, Trophy, UserPlus, UserRound, Users, Zap, type LucideIcon } from "lucide-react";
+import { Award, CalendarCheck, CheckCheck, Code2, Coins, Crown, Dices, Gamepad2, Layers, DoorOpen, GraduationCap, Headset, Mic, MonitorPlay, Sunrise, Ticket, TrendingUp, Trophy, UserPlus, UserRound, Users, Zap, type LucideIcon } from "lucide-react";
 import { days } from "@/data/site";
 import { sessions } from "@/data/schedule";
 import { ArdcoinMark, GlobalMpcMark, TenGerMark } from "@/components/PartnerMarks";
@@ -25,11 +25,17 @@ export type Badges = {
   jackpot?: boolean; // scratched the 500-star jackpot
   oracle?: number; // predictions called right
   quizWins?: number; // Quiz Rush rounds won (first to answer)
+  // more games (0066)
+  gamesPlayed?: number; // of the six games, how many they've played
+  gamePeak?: number; // best running total of stars won in games
+  quizRight?: number; // Quiz Rush rounds answered right (any place)
+  scratched?: number; // scratch cards scratched
   // partners (0058; TenGer is counted from the app's own data until it's applied)
   tenger?: number; // TenGer TV panels attended (of 3)
   devee?: number; // best Devee run (Ardcoin's game)
   at?: Partial<Record<"speaker" | "crew" | "hack" | "research" | "events" | "checkedIn" | "online" | "connections" | "invited"
-    | "berkh" | "flipStreak" | "jackpot" | "oracle" | "quizWins" | "tenger" | "devee", number>>; // when earned (own badges only)
+    | "berkh" | "flipStreak" | "jackpot" | "oracle" | "quizWins" | "tenger" | "devee"
+    | "gamesPlayed" | "gamePeak" | "quizRight" | "scratched", number>>; // when earned (own badges only)
 };
 
 export const EVENTS_GOAL = 7; // owner, 18 Nov: a little harder (was 5); keep in step with supabase/migrations/0054
@@ -72,6 +78,11 @@ export const INVITE_GOAL = 7;
 export const STREAK_GOAL = 6;
 export const ORACLE_GOAL = 5;
 export const QUIZ_GOAL = 5;
+// more game achievements (owner, 24 Nov). Keep in step with supabase/migrations/0066_game_achievements.sql.
+export const GAMES_COUNT = 6; // coin flip, Shagai, scratch, predictions, Quiz Rush, Devee
+export const PEAK_GOAL = 200;
+export const QUIZ_RIGHT_GOAL = 10;
+export const SCRATCH_GOAL = 10;
 // partner achievements (owner, 20 Nov). Keep in step with supabase/migrations/0058_partner_achievements.sql.
 export const TENGER_PANELS = sessions.filter((s) => s.title.startsWith("TenGer Panel")).map((s) => s.id); // a2, c3, e2
 export const DEVEE_GOAL = 25;
@@ -188,6 +199,38 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     about: qz.done ? `You were first to answer in ${b.quizWins} Quiz Rush rounds.` : "Quick fingers, sharp mind: be first to the right answer.",
     how: `Be the first to answer right in ${QUIZ_GOAL} Quiz Rush rounds.`,
     link: qz.done ? undefined : g("/app/games/quiz", "Open Quiz Rush"),
+  });
+  const qr = counted(b.quizRight ?? 0, QUIZ_RIGHT_GOAL);
+  list.push({
+    id: "quizRight", label: "Quiz regular", icon: CheckCheck, ...qr, at: at.quizRight,
+    note: qr.done ? `${b.quizRight} rounds right` : `Answer ${QUIZ_RIGHT_GOAL} rounds right`,
+    about: qr.done ? `You answered ${b.quizRight} Quiz Rush rounds right.` : `Keep coming back to Quiz Rush. Right so far: ${b.quizRight ?? 0}.`,
+    how: `Answer ${QUIZ_RIGHT_GOAL} Quiz Rush rounds right. Any place counts, not only first.`,
+    link: qr.done ? undefined : g("/app/games/quiz", "Open Quiz Rush"),
+  });
+  const sc = counted(b.scratched ?? 0, SCRATCH_GOAL);
+  list.push({
+    id: "scratched", label: "Card collector", icon: Layers, ...sc, at: at.scratched,
+    note: sc.done ? `${b.scratched} cards scratched` : `Scratch ${SCRATCH_GOAL} cards`,
+    about: sc.done ? `You scratched ${b.scratched} scratch cards.` : `Every card hides a prize. Scratched so far: ${b.scratched ?? 0}.`,
+    how: `Scratch ${SCRATCH_GOAL} scratch cards.`,
+    link: sc.done ? undefined : g("/app/games/scratch", "Get a scratch card"),
+  });
+  const ar = counted(b.gamesPlayed ?? 0, GAMES_COUNT);
+  list.push({
+    id: "allround", label: "All-rounder", icon: Gamepad2, ...ar, at: at.gamesPlayed,
+    note: ar.done ? "Played every game" : `Play all ${GAMES_COUNT} games`,
+    about: ar.done ? "You've played every game in the app." : `Coin flip, Shagai, scratch cards, Predictions, Quiz Rush and Devee. Played so far: ${b.gamesPlayed ?? 0}.`,
+    how: "Play each game once: flip a coin, roll Shagai, scratch a card, make a prediction, join Quiz Rush and finish a Devee run.",
+    link: ar.done ? undefined : g("/app/games", "Open Games"),
+  });
+  const pk = counted(b.gamePeak ?? 0, PEAK_GOAL);
+  list.push({
+    id: "peak", label: "High roller", icon: Crown, ...pk, at: at.gamePeak,
+    note: pk.done ? `Up ${b.gamePeak}★ at best` : `Be ${PEAK_GOAL}★ up in games`,
+    about: pk.done ? `At your best you were ${b.gamePeak} stars up across the games.` : `Your best so far: ${b.gamePeak ?? 0} stars up across the games.`,
+    how: `Win ${PEAK_GOAL} stars more than you put in, across all games. Once you get there it stays, even if luck turns.`,
+    link: pk.done ? undefined : g("/app/games", "Open Games"),
   });
 
   // Hackathon (owner, 23 Nov): one Global MPC achievement for joining, then two for the stage.
