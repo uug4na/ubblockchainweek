@@ -14,7 +14,7 @@
 // Nothing runs with "reduce motion"; pointer moves only run with a mouse or trackpad.
 
 import { useLayoutEffect } from "react";
-import { animate as anime, createTimeline, splitText, stagger, utils, type JSAnimation } from "animejs";
+import { animate as anime, createTimeline, splitText, stagger } from "animejs";
 import { animate as motion, stagger as mStagger } from "motion";
 
 const CELL = 56; // matches the .t-hero::before grid
@@ -42,59 +42,85 @@ export function PowerFx() {
         .add(rest, { y: [14, 0], opacity: [0, 1], duration: 700, delay: stagger(80) }, 250);
       undo.push(() => { tl.revert(); });
 
-      // ── Anime.js: grid ripple ──
-      const layer = document.createElement("div");
-      layer.className = "pfx-grid";
-      layer.setAttribute("aria-hidden", "true");
-      hero.prepend(layer);
-      undo.push(() => layer.remove());
-      let cols = 0, rows = 0, cells: HTMLElement[] = [];
+      // ── grid ripple: a ripple of brand blocks runs out from the headline on load and from wherever you
+      //    click or tap; cells light up under the pointer. Drawn on one canvas in a single rAF loop that
+      //    stops when nothing is lit (24 Nov: the old version animated ~440 DOM cells and lagged). ──
+      const canvas = document.createElement("canvas");
+      canvas.className = "pfx-grid";
+      canvas.setAttribute("aria-hidden", "true");
+      hero.prepend(canvas);
+      undo.push(() => canvas.remove());
+      const ctx = canvas.getContext("2d")!;
+      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      let cols = 0, rows = 0, w = 0, h = 0;
+      let trail = new Float64Array(0);              // when each cell was last lit by the pointer (0 = never)
+      let ripple: { at: number; x: number; y: number } | null = null;
+      let raf = 0;
       const build = () => {
-        cols = Math.ceil(hero.offsetWidth / CELL);
-        rows = Math.ceil(hero.offsetHeight / CELL);
-        layer.replaceChildren();
-        cells = Array.from({ length: cols * rows }, (_, i) => {
-          const c = document.createElement("i");
-          c.style.cssText = `left:${(i % cols) * CELL}px;top:${Math.floor(i / cols) * CELL}px;background:${TONES[i % TONES.length]}`;
-          layer.append(c);
-          return c;
-        });
+        w = hero.offsetWidth; h = hero.offsetHeight;
+        cols = Math.ceil(w / CELL); rows = Math.ceil(h / CELL);
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+        trail = new Float64Array(cols * rows);
+        kick();
       };
-      build();
-      let ripple: JSAnimation | undefined;
-      const rippleFrom = (from: number) => {
-        ripple?.cancel();
-        ripple = anime(cells, {
-          opacity: [{ to: 0.3, duration: 240, ease: "outQuad" }, { to: 0, duration: 700, ease: "inOutQuad" }],
-          scale: [{ to: 1, from: 0.3, duration: 240 }, { to: 0.3, duration: 700 }],
-          delay: stagger(38, { grid: [cols, rows], from }),
-        });
+      const outQuad = (t: number) => t * (2 - t);
+      const inOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+      const frame = (now: number) => {
+        raf = 0;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        let busy = false;
+        for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+          const i = y * cols + x;
+          let o = 0, sc = 0.3;
+          if (ripple) {
+            const t = now - ripple.at - 38 * Math.hypot(x - ripple.x, y - ripple.y);
+            if (t < 0) busy = true;
+            else if (t < 240) { const k = outQuad(t / 240); o = 0.3 * k; sc = 0.3 + 0.7 * (t / 240); busy = true; }
+            else if (t < 940) { const k = inOutQuad((t - 240) / 700); o = 0.3 * (1 - k); sc = 1 - 0.7 * k; busy = true; }
+          }
+          if (trail[i]) {
+            const t = (now - trail[i]) / 900;
+            if (t < 1) { const k = outQuad(t); const to = 0.28 * (1 - k); if (to > o) { o = to; sc = 1 - 0.6 * k; } busy = true; }
+            else trail[i] = 0;
+          }
+          if (o < 0.005) continue;
+          const s = (CELL - 1) * sc;
+          ctx.globalAlpha = o;
+          ctx.fillStyle = TONES[i % TONES.length];
+          ctx.fillRect(x * CELL + 1 + (CELL - 1 - s) / 2, y * CELL + 1 + (CELL - 1 - s) / 2, s, s);
+        }
+        if (!busy) ripple = null;
+        if (busy) raf = requestAnimationFrame(frame);
       };
-      const cellAt = (x: number, y: number) => {
+      const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+      const cellXY = (cx: number, cy: number) => {
         const r = hero.getBoundingClientRect();
-        const cx = Math.min(cols - 1, Math.max(0, Math.floor((x - r.left) / CELL)));
-        const cy = Math.min(rows - 1, Math.max(0, Math.floor((y - r.top) / CELL)));
-        return cy * cols + cx;
+        return { x: Math.min(cols - 1, Math.max(0, Math.floor((cx - r.left) / CELL))), y: Math.min(rows - 1, Math.max(0, Math.floor((cy - r.top) / CELL))) };
       };
+      const rippleFrom = (cx: number, cy: number) => { ripple = { at: performance.now(), ...cellXY(cx, cy) }; kick(); };
+      build();
       const start = h1.getBoundingClientRect();
-      rippleFrom(cellAt(start.left + start.width * 0.3, start.top + start.height * 0.5));
+      rippleFrom(start.left + start.width * 0.3, start.top + start.height * 0.5);
       on(hero, "pointerdown", (e) => {
         if ((e.target as HTMLElement).closest("a, button")) return;
-        rippleFrom(cellAt(e.clientX, e.clientY));
+        rippleFrom(e.clientX, e.clientY);
       });
       if (fine) {
         let last = -1;
         on(hero, "pointermove", (e) => {
-          const i = cellAt(e.clientX, e.clientY);
-          if (i === last || !cells[i]) return;
+          const { x, y } = cellXY(e.clientX, e.clientY);
+          const i = y * cols + x;
+          if (i === last) return;
           last = i;
-          anime(cells[i], { opacity: [0.28, 0], scale: [1, 0.4], duration: 900, ease: "outQuad" });
+          trail[i] = performance.now();
+          kick();
         });
       }
       let t = 0;
       const onResize = () => { clearTimeout(t); t = window.setTimeout(build, 200); };
       addEventListener("resize", onResize);
-      undo.push(() => { removeEventListener("resize", onResize); clearTimeout(t); ripple?.cancel(); });
+      undo.push(() => { removeEventListener("resize", onResize); clearTimeout(t); cancelAnimationFrame(raf); });
     }
 
     // runs fn once for each element the first time it comes into view
@@ -188,9 +214,8 @@ export function PowerFx() {
   }, []);
   return (
     <style>{`
-      .pfx-grid { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+      .pfx-grid { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden;
         -webkit-mask-image: radial-gradient(90% 80% at 60% 40%, #000 25%, transparent 100%); mask-image: radial-gradient(90% 80% at 60% 40%, #000 25%, transparent 100%); }
-      .pfx-grid i { position: absolute; width: ${CELL - 1}px; height: ${CELL - 1}px; margin: 1px 0 0 1px; border-radius: 2px; opacity: 0; }
       .t-display .pfx-char, .t-display [data-char] { display: inline-block; }
     `}</style>
   );

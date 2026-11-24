@@ -37,8 +37,9 @@ export const partners2026: Partner[] = [
   // green marks on the white tile; padding and optical centring are baked into the PNGs
   // 16 Nov: full "aigroup" wordmark instead of the "ai" mark; links to the same site as Ardcoin (owner's call)
   { name: "AI Group", type: "partner", about: "Formerly Ard Financial Group.", icon: "partners/aigroup.png", svg: "partners/svg/aigroup.svg", svgDark: "partners/svg/aigroup-white.svg", tint: "#a4e678", wide: true, href: "https://ardcoin.com" },
-  // 23 Nov 2026: "Powered by", and its full wordmark everywhere (owner); white wordmark on dark
-  { name: "Ardcoin", type: "partner", tag: "Powered by", about: "Decentralized loyalty.", icon: "partners/icons/ardcoin.png", svg: "partners/ardcoin.png", svgDark: "partners/ardcoin-white.png", wide: true, tint: "#a4e77f", href: "https://ardcoin.com" , word: "partners/ardcoin.png" },
+  // 23 Nov 2026: "Powered by" (owner). Full wordmark (word) in the spotlight and hero; app cards and the list use
+  // the mark from that same wordmark, since their name sits beside it (24 Nov: the wordmark squeezed the app card)
+  { name: "Ardcoin", type: "partner", tag: "Powered by", about: "Decentralized loyalty.", icon: "partners/icons/ardcoin.png", svg: "partners/icons/ardcoin.png", tint: "#a4e77f", href: "https://ardcoin.com" , word: "partners/ardcoin.png" },
   { name: "CryptoRank", type: "partner", appTag: "Media partner", about: "Crypto market data, token stats and research.", icon: "partners/icons/cryptorank.svg", svg: "partners/icons/cryptorank.svg", tint: "#0587ff", href: "https://cryptorank.io" },
   { name: "UFE", type: "partner", about: "University of Finance and Economics, Ulaanbaatar.", icon: "partners/icons/ufe.svg", svg: "partners/icons/ufe.svg", tint: "#5a83f0", href: "https://ufe.edu.mn" },
   { name: "Paradise Capital", type: "media" }, // TODO: icon, one line and link
