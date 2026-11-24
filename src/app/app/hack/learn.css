@@ -331,13 +331,13 @@
 .hk-page .hk-form input, .hk-page .hk-form textarea { min-height: 48px; background: var(--cell); box-shadow: inset 0 0 0 1px var(--cell-3, rgba(127, 127, 127, .25)); }
 .hk-page .hk-form input:focus, .hk-page .hk-form textarea:focus { box-shadow: 0 0 0 2px var(--accent); }
 
-/* workflow choice: every card shows a radio circle, so it reads as "pick one" before anything is picked */
+/* workflow choice: every card shows a check box, so it reads as "pick any" before anything is picked (24 Nov: teams can combine) */
 .hk-page .hk-track-cards { gap: 8px; }
 .hk-page .hk-track-cards button { min-height: 64px; gap: 4px; padding: 14px 52px 14px 16px; background: var(--cell); transition: background-color .15s, box-shadow .15s; }
 .hk-page .hk-track-cards button small { font-size: 13.5px; color: var(--hk-2); }
 .hk-page .hk-track-cards button.is-on { background: var(--klein); color: #fff; }
 .hk-page .hk-track-cards button.is-on small { color: rgba(255, 255, 255, .86); }
-.hk-page .hk-track-cards button::after { content: ""; position: absolute; right: 16px; top: 50%; width: 22px; height: 22px; translate: 0 -50%; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--cell-3, rgba(127, 127, 127, .4)); }
+.hk-page .hk-track-cards button::after { content: ""; position: absolute; right: 16px; top: 50%; width: 22px; height: 22px; translate: 0 -50%; border-radius: 6px; box-shadow: inset 0 0 0 2px var(--cell-3, rgba(127, 127, 127, .4)); }
 .hk-page .hk-track-cards button.is-on::after { background: #fff; box-shadow: none; }
 .hk-page .hk-track-cards button svg { right: 20px; z-index: 1; width: 14px; height: 14px; color: var(--klein); stroke-width: 3; }
 .hk-page .hk-track-cards button:hover:not(.is-on):not(:disabled) { box-shadow: inset 0 0 0 1px var(--klein); }
