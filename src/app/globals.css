@@ -1965,13 +1965,27 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
   .passport-view { display: grid; grid-template-columns: 400px minmax(0, 300px); gap: 24px; align-items: start; }
   .passport-actions > :first-child { margin-top: 0 !important; } /* Share's button carries an inline 16px top margin */
 }
-/* ticket shape: round notches where the stub tears off and a scalloped bottom edge, cut with a mask so the page shows through */
+/* ticket shape: round notches where the stub tears off and ticket cuts along the bottom, cut with a mask so the
+   page shows through. Owner, 20 Nov: keep the cuts, lose the line. The cuts' centres sit 2px below the edge, so each
+   cut always opens onto the bottom; centred exactly on the edge, fractional zoom closed them into dots with a thin
+   white line underneath. */
 .bc.has-stub {
   --stub: 200px;
-  -webkit-mask: radial-gradient(circle 12px at 0 calc(100% - var(--stub)), #0000 98%, #000) , radial-gradient(circle 12px at 100% calc(100% - var(--stub)), #0000 98%, #000), radial-gradient(circle 5px at 50% 100%, #0000 98%, #000) bottom / 16px 100% repeat-x;
-  -webkit-mask-composite: source-in, source-in;
-  mask: radial-gradient(circle 12px at 0 calc(100% - var(--stub)), #0000 98%, #000) , radial-gradient(circle 12px at 100% calc(100% - var(--stub)), #0000 98%, #000), radial-gradient(circle 5px at 50% 100%, #0000 98%, #000) bottom / 16px 100% repeat-x;
-  mask-composite: intersect;
+  /* layers: the two side notches, cut out of (the bottom strip of cuts + everything above it). The strip is a small
+     fixed-height tile, so its last row of pixels rasterises cleanly at any zoom (a full-height tile left a faint
+     half-white row under the cuts at 125-150%). */
+  -webkit-mask:
+    radial-gradient(circle 12px at 0 calc(100% - var(--stub)), #0000 98%, #000),
+    radial-gradient(circle 12px at 100% calc(100% - var(--stub)), #0000 98%, #000),
+    radial-gradient(circle 7px at 50% calc(100% + 2px), #0000 98%, #000) left bottom / 16px 16px repeat-x,
+    linear-gradient(#000 0 0) left top / 100% calc(100% - 15px) no-repeat;
+  -webkit-mask-composite: source-in, source-in, source-over;
+  mask:
+    radial-gradient(circle 12px at 0 calc(100% - var(--stub)), #0000 98%, #000),
+    radial-gradient(circle 12px at 100% calc(100% - var(--stub)), #0000 98%, #000),
+    radial-gradient(circle 7px at 50% calc(100% + 2px), #0000 98%, #000) left bottom / 16px 16px repeat-x,
+    linear-gradient(#000 0 0) left top / 100% calc(100% - 15px) no-repeat;
+  mask-composite: intersect, intersect, add;
   border-radius: var(--r) var(--r) 0 0;
 }
 .bc-face { display: flex; flex-direction: column; padding: 20px 20px 22px; }
@@ -3886,6 +3900,11 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .fl-best { display: grid; justify-items: end; line-height: 1.1; }
 .fl-best b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .fl-best small { font-size: 11px; color: var(--label-2); }
+/* Crew → Leaderboard: place number before the avatar (owner, 23 Nov) */
+.att:has(.lb-rank) .att-row { grid-template-columns: 28px 40px minmax(0, 1fr) auto 18px; }
+.lb-rank { font-size: 15px; font-weight: 600; color: var(--label-2); text-align: center; font-variant-numeric: tabular-nums; }
+.lb-rank.is-top { color: var(--label); font-weight: 800; }
+.lb-tester { font-weight: 400; color: var(--label-2); }
 .fl-runs { display: grid; }
 .fl-run { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 8px 0; border-top: .5px solid var(--sep); font-size: 14px; }
 .fl-run time { font-size: 13px; color: var(--label-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -3919,6 +3938,38 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .home-compete > a.is-special > svg:last-child { color: var(--label-2); }
 .compete-dots { background: color-mix(in srgb, var(--tint) 26%, transparent);
   -webkit-mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); mask: linear-gradient(to left, #000 0%, #000 22%, transparent 78%); }
+
+/* Profile: numbers that are still loading stay invisible in their place, then fade in (no "–" swapping to a number). */
+.pstats b { transition: opacity .25s ease; }
+.pstats b.is-wait { opacity: 0; }
+.ach-strip.is-wait { cursor: default; }
+.ach-strip.is-wait > svg { opacity: .3; }
+
+/* Agenda: bookmark on each session (saves it to My agenda on Home). Icon only, 44px target, filled when saved. */
+.mini.has-save { grid-template-columns: 64px minmax(0, 1fr) auto; align-items: start; }
+.mini-save { display: grid; place-items: center; width: 44px; height: 44px; margin: -10px -10px -10px 0; padding: 0; border: 0; border-radius: 999px; background: none; color: var(--label-3); cursor: pointer; transition: color .15s, transform .15s; -webkit-tap-highlight-color: transparent; }
+.mini-save:hover { color: var(--label-2); }
+.mini-save.is-on { color: var(--accent); }
+.mini-save:active { transform: scale(.88); }
+.mini-save:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+/* Home: My agenda */
+.my-agenda .mini { grid-template-columns: 64px minmax(0, 1fr) auto; }
+.my-agenda-mark { color: var(--accent); margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .mini-save { transition: none; } .mini-save:active { transform: none; } }
+
+/* Home: How it works. Three tabs on the app's sliding segmented control, then Settings-style rows. */
+.app-guide .guide-switch { --n: 3; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; margin: 0 0 12px; }
+.app-guide .guide-switch:has(> button:nth-child(3).is-on) { --i: 2; }
+.app-guide .guide-switch button { font-size: 14px; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-guide .guide-rows { margin: 0; }
+.app-guide .guide-rows .soon-tag { margin-left: 8px; vertical-align: 1px; }
+.app-guide .guide-static { cursor: default; }
+.app-guide .guide-rows { background: transparent; border-radius: 0; }
+.app-guide .settings-row { padding: 10px 0; font-size: 16px; font-weight: 600; transition: opacity .15s; }
+.app-guide .settings-row::after { left: 42px !important; }
+.app-guide a.settings-row:active { opacity: .6; }
+.app-guide .settings-row > span small { display: block; margin-top: 1px; font-size: 13px; font-weight: 400; }
+.app-guide .settings-row > svg:last-child { color: var(--label-3); }
 
 /* Achievements: easier to read (owner, 20 Nov). Same tiles and medals; bigger text, full contrast on the name,
    a brighter line under it. Locked ones are told apart by the grey medal and lock, not by greyed-out text. */

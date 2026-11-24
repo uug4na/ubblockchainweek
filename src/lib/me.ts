@@ -5,6 +5,7 @@ import { useSyncExternalStore } from "react";
 import type { Me } from "@/lib/types";
 import { callApi } from "@/lib/supa/api";
 import { supabase, supabaseReady } from "@/lib/supa/client";
+import { forgetAll } from "@/lib/lastSeen";
 
 export type { Me };
 // offline: showing the last copy saved on this phone because the server can't be reached.
@@ -29,7 +30,7 @@ function emit(next: State) {
 function remember(me: Me | undefined) {
   try {
     if (me) localStorage.setItem(SAVED, JSON.stringify(me));
-    else localStorage.removeItem(SAVED);
+    else { localStorage.removeItem(SAVED); forgetAll(); }
   } catch {}
 }
 function saved(): Me | undefined {

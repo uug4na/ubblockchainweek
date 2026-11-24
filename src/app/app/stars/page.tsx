@@ -13,6 +13,7 @@ import { page } from "@/lib/base";
 import { haptic } from "@/lib/haptics";
 import { uploadShot } from "@/lib/shots";
 import { STARS_OPEN } from "@/data/open";
+import { useRemembered } from "@/lib/useRemembered";
 
 const when = (ms: number) =>
   new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
@@ -35,12 +36,13 @@ const asTask = (w: WatchTask): SocialTask => ({
 });
 
 function useWatchTasks() {
-  const [list, setList] = useState<WatchTask[]>([]);
+  const [saved, setList] = useRemembered<WatchTask[]>("watchtasks");
+  const list = saved ?? [];
   useEffect(() => {
     let on = true;
     api<WatchTask[]>("/api/rpc/app_watch_tasks").then((d) => on && setList(Array.isArray(d) ? d : [])).catch(() => {});
     return () => { on = false; };
-  }, []);
+  }, [setList]);
   return list;
 }
 

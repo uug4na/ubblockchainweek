@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/me";
+import { lastSeen, remember } from "@/lib/lastSeen";
 
 // Where each event happens (set by crew in staff Posters). Loaded once per page visit and shared.
 export type EventPlace = { mode: "in_person" | "online" | "both"; name: string | null; lat: number | null; lng: number | null };
 export type EventPlaces = Record<string, EventPlace>;
 
 let cache: Promise<EventPlaces> | null = null;
-const load = () => (cache ??= api<EventPlaces>("/api/rpc/app_event_places").catch((e) => { cache = null; throw e; }));
+let got: EventPlaces | null = null; // the answer once it's in, so screens opened later draw with it at once
+const load = () => (cache ??= api<EventPlaces>("/api/rpc/app_event_places")
+  .then((p) => { got = p; remember("eventplaces", p); return p; })
+  .catch((e) => { cache = null; throw e; }));
 
 export function useEventPlaces() {
-  const [places, setPlaces] = useState<EventPlaces | null>(null);
+  // this visit's answer, else the last one this phone saw (places rarely move), while the fresh one loads
+  const [places, setPlaces] = useState<EventPlaces | null>(() => got ?? lastSeen<EventPlaces>("eventplaces"));
   useEffect(() => {
     let on = true;
     load().then((p) => on && setPlaces(p)).catch(() => on && setPlaces({}));

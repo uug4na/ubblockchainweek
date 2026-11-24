@@ -8,6 +8,7 @@ import { Coin3D, type CoinHandle } from "@/components/Coin3D";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { burstFrom } from "@/lib/burst";
+import { useRemembered } from "@/lib/useRemembered";
 
 type Side = "heads" | "tails";
 type Flip = { id: string; pick: Side; result: Side; stake: number; won: boolean; at: number };
@@ -17,7 +18,7 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 export default function CoinFlipPage() {
   const { status, me } = useMe();
-  const [data, setData] = useState<State | null>(null);
+  const [data, setData] = useRemembered<State>("coinflip");
   const [pick, setPick] = useState<Side>("heads");
   const [stake, setStake] = useState(20);
   const [phase, setPhase] = useState<"idle" | "tossing" | "done">("idle");

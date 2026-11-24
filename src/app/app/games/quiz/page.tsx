@@ -8,6 +8,7 @@ import { QuizHint, QuizPlay, useTick } from "@/components/Quiz";
 import { api, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { clock, isPlayer, joinQuiz, secs, serverNow, startQuiz, useQuiz, type QuizMe, type QuizNow, type QuizRound } from "@/lib/quiz";
+import { useRemembered } from "@/lib/useRemembered";
 
 const ENTRY_FALLBACK = 100;
 
@@ -104,7 +105,7 @@ function Countdown({ at }: { at: number }) {
 export default function QuizPage() {
   const { status, me } = useMe();
   const q = useQuiz();
-  const [board, setBoard] = useState<Board | null>(null);
+  const [board, setBoard] = useRemembered<Board>("quizboard");
   useEffect(() => (status === "in" ? startQuiz() : undefined), [status]);
   const loadBoard = useCallback(() => api<Board>("/api/rpc/app_quiz_board", {}).then(setBoard).catch(() => {}), []);
   // the board moves when someone answers, and settles when the round closes

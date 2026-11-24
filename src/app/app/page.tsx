@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Gift, GraduationCap, ScanLine, Star, Trophy } from "lucide-react";
+import { Bookmark, ChevronRight, Gift, GraduationCap, ScanLine, Star, Trophy } from "lucide-react";
 import { site } from "@/data/site";
 import { sessions, sessionTime } from "@/data/schedule";
 import { useMe, type Me } from "@/lib/me";
@@ -13,9 +13,12 @@ import { HACK_DETAILS_PUBLIC, HACK_SECTION_OPEN } from "@/data/hackathon";
 import { useMerchCatalog } from "@/lib/merchCatalog";
 import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
 import { useNow } from "@/lib/time";
+import { useSaved } from "@/lib/saved";
+import { useEventPlaces } from "@/lib/eventPlaces";
 import { IsoArt } from "@/components/iso/IsoArt";
 import stopwatchArt from "@/components/iso/figures/minis/stopwatch";
 import { PartnerWheel, PinnedPartners } from "@/components/PartnerWheel";
+import { AppGuide } from "@/components/AppGuide";
 
 const start = new Date(site.startISO).getTime();
 const end = new Date(site.endISO).getTime();
@@ -90,6 +93,12 @@ export default function AppHome() {
   const firstName = me?.user.name.trim().split(" ")[0];
   // Home › Agenda: the next four sessions that haven't ended yet.
   const next = sessions.filter((s) => now == null || sessionTime(s).end > now).sort((a, b) => sessionTime(a).start - sessionTime(b).start).slice(0, 4);
+  // Home › My agenda: what you bookmarked in the Agenda that hasn't ended yet, soonest first.
+  const saved = useSaved();
+  const places = useEventPlaces();
+  const mine = sessions
+    .filter((s) => saved.ids.includes(s.id) && (now == null || sessionTime(s).end > now))
+    .sort((a, b) => sessionTime(a).start - sessionTime(b).start);
 
   return (
     <>
@@ -176,6 +185,33 @@ export default function AppHome() {
         </section>
       )}
 
+      {mine.length > 0 && (
+        <section className="panel my-agenda">
+          <div className="panel-head"><h2>My agenda</h2><Link href="/app/agenda" className="inline-link">Edit</Link></div>
+          <div className="mini-list">
+            {mine.map((s) => {
+              const t = sessionTime(s);
+              const isLive = now != null && t.start <= now && now < t.end;
+              const where = s.room || places?.[s.id]?.name || (places?.[s.id]?.mode === "online" ? "Online" : "");
+              return (
+                <div className={`mini ${isLive ? "is-live" : ""}`} key={s.id}>
+                  <time>{s.start}</time>
+                  <div>
+                    <b>{s.title}</b>
+                    <span>
+                      {isLive ? "Now" : dayLabel(s.day)}{where ? ` · ${where}` : ""}
+                      {isLive && !me?.attended.includes(s.id) && <> · <Link href="/app/scan" className="inline-link">scan for {starsFor(s)} stars</Link></>}
+                      {me?.attended.includes(s.id) && " · checked in"}
+                    </span>
+                  </div>
+                  <Bookmark size={16} fill="currentColor" className="my-agenda-mark" aria-hidden />
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       <section className="panel">
         <div className="panel-head"><h2>Agenda</h2><Link href="/app/agenda" className="inline-link">See all</Link></div>
         <div className="mini-list">
@@ -190,6 +226,8 @@ export default function AppHome() {
           ))}
         </div>
       </section>
+
+      <AppGuide />
       </div>
       </div>
     </>

@@ -15,6 +15,7 @@ import { haptic } from "@/lib/haptics";
 import { fireBurst } from "@/lib/burst";
 import type { Connection, MeetRules, Person } from "@/lib/types";
 import { site } from "@/data/site";
+import { useRemembered } from "@/lib/useRemembered";
 
 type Code = { code: string; refreshAt: number };
 type Conns = { shareEmail: boolean; connections: Connection[]; pendingOut: number; earned: number; rules: MeetRules };
@@ -206,7 +207,7 @@ function PersonSheet({ c, ice, onClose, onAnswered }: { c: Connection; ice: numb
 
 export default function MeetPage() {
   const { status, me } = useMe();
-  const [conns, setConns] = useState<Conns | null>(null);
+  const [conns, setConns] = useRemembered<Conns>("connections");
   const [mode, setMode] = useState<"code" | "scan">("code");
   const [open, setOpen] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
