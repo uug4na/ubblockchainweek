@@ -60,14 +60,15 @@ function Back({ to, label, go }: { to: View; label: string; go: (v: View) => voi
   return <button type="button" className="back-link game-back hk-back" onClick={() => go(to)}><ChevronLeft size={18} /> {label}</button>;
 }
 
-// Real World Mining: each team chooses one of the four workflows (stored in `tracks`, 0057).
+// Real World Mining: each team picks one or more of the four workflows and can combine any of them
+// (owner, 24 Nov; stored in `tracks`, 0068 allows 1–4).
 function TrackPicker({ value, onChange, disabled }: { value: Track[]; onChange: (v: Track[]) => void; disabled?: boolean }) {
   return (
     <fieldset className="field">
-      <legend>Workflow <small>choose one</small></legend>
-      <div className="hk-track-cards" role="radiogroup" aria-label="Workflow">
+      <legend>Workflows <small>pick one or combine</small></legend>
+      <div className="hk-track-cards" role="group" aria-label="Workflows">
         {tracks.map((t) => (
-          <button type="button" key={t.id} role="radio" aria-checked={value.includes(t.id)} className={value.includes(t.id) ? "is-on" : undefined} onClick={() => onChange([t.id])} disabled={disabled}>
+          <button type="button" key={t.id} role="checkbox" aria-checked={value.includes(t.id)} className={value.includes(t.id) ? "is-on" : undefined} onClick={() => onChange(value.includes(t.id) ? value.filter((x) => x !== t.id) : tracks.map((x) => x.id).filter((id) => id === t.id || value.includes(id)))} disabled={disabled}>
             <b>{t.label}</b><small>{t.text}</small>
             {value.includes(t.id) && <Check size={18} />}
           </button>

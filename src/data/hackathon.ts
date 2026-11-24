@@ -49,7 +49,7 @@ export const hackWhy = [
   "Global MPC describes its approach to mining real-world assets (RWAs) as connecting field evidence, professional verification, digital registries and applications. Its first reference case, Tsagaan Tolgoi in Mongolia, includes exploration and laboratory records. Global MPC states that it has published no mineral resource or reserve estimate for this case. Teams using the case should preserve that distinction in their interfaces.",
 ];
 
-// Choose one workflow. `build` = what to help the user do, `demo` = what to show.
+// Choose a workflow or combine them (24 Nov). `build` = what to help the user do, `demo` = what to show.
 export const hackWorkflows = [
   { no: "01", title: "Exploration and assays", user: "Geologist",
     build: "Follow one sample from collection to laboratory receipt and assay.",

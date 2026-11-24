@@ -67,7 +67,7 @@ export default function HackathonPage() {
             <h3>Why mining?</h3>
             {hackWhy.map((t) => <p key={t.slice(0, 20)}>{t}</p>)}
           </div>
-          <h3 className="hk-list-title">Choose one workflow</h3>
+          <h3 className="hk-list-title">Choose a workflow, or combine them</h3>
           <div className="hk-track-list is-four">
             {hackWorkflows.map((w) => (
               <article key={w.no} className="hk-track">
