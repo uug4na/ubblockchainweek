@@ -4,6 +4,7 @@
 // doesn't know app_badges yet, and until 0053 it doesn't send the newer fields: those come from what the app already has.
 import { useEffect, useState } from "react";
 import { api } from "@/lib/me";
+import { lastSeen, remember } from "@/lib/lastSeen";
 import type { Me } from "@/lib/types";
 import { TENGER_PANELS, type Badges } from "@/data/badges";
 
@@ -21,10 +22,12 @@ export function useBadges(me: Me | null | undefined): Badges | null {
     let live = true;
     // what the app already knows; the database's answer fills in (and wins) where it has the field
     const own: Badges = { speaker: false, crew: false, hack: null, research: false, events: attended, checkedIn, joined, invited, tenger };
+    const done = (v: Badges) => { remember(`${id}.badges`, v); if (live) setB(v); };
     api<Badges>("/api/rpc/app_badges", {})
-      .then((r) => live && setB({ ...own, ...r, at: { ...(checkedAt ? { checkedIn: checkedAt } : {}), ...r.at } }))
-      .catch(() => live && setB(own));
+      .then((r) => done({ ...own, ...r, at: { ...(checkedAt ? { checkedIn: checkedAt } : {}), ...r.at } }))
+      .catch(() => live && setB((prev) => prev ?? lastSeen<Badges>(`${id}.badges`) ?? own));
     return () => { live = false; };
   }, [id, attended, checkedIn, checkedAt, joined, invited, tenger]);
-  return b;
+  // Until this visit's answer arrives, show the last one (Profile shouldn't pop its achievements in).
+  return b ?? (id ? lastSeen<Badges>(`${id}.badges`) : null);
 }

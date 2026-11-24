@@ -18,6 +18,7 @@ import { BusinessCard } from "@/components/BusinessCard";
 import { ShareStory } from "@/components/PassStory";
 import { PixelAvatar, ProfileCover } from "@/components/ProfileArt";
 import { usePolling } from "@/lib/usePolling";
+import { lastSeen, remember } from "@/lib/lastSeen";
 import type { Chats } from "@/lib/types";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import { replayTour } from "@/components/AppTour";
@@ -97,9 +98,12 @@ type View = "main" | "pass" | "edit" | "achievements";
 const msgUnread = (c: Chats) => c.unread - (HACK_SECTION_OPEN ? 0 : c.hack?.unread ?? 0);
 
 // Network size + unread messages, only fetched once signed in.
-function useNetwork(on: boolean) {
+// Until this visit's answer arrives, the last one shows, so the numbers don't change in front of you.
+function useNetwork(on: boolean, id?: string) {
   const { data } = usePolling<Chats>(on ? "/api/rpc/app_chats" : "", 15_000);
-  return on ? data : null;
+  useEffect(() => { if (data && id) remember(`${id}.chats`, data); }, [data, id]);
+  if (!on) return null;
+  return data ?? (id ? lastSeen<Chats>(`${id}.chats`) : null);
 }
 
 // Apple devices only: the Passport as a Wallet pass (same QR as the card above).
@@ -129,7 +133,7 @@ function WalletButton() {
 
 export default function ProfilePage() {
   const { status, me } = useMe();
-  const net = useNetwork(status === "in");
+  const net = useNetwork(status === "in", me?.user.id);
   const badges = useBadges(status === "in" ? me : null);
   const router = useRouter();
   const [view, setView] = useState<View>("main");
@@ -206,12 +210,15 @@ export default function ProfilePage() {
       </header>
 
       <div className="pstats">
-        <Link href="/app/chat"><b>{net?.network ?? "–"}</b><span>Network</span></Link>
+        <Link href="/app/chat"><b className={net ? "is-in" : "is-wait"}>{net?.network ?? 0}</b><span>Network</span></Link>
         <Link href="/app/stars"><b>{me.attended.length}</b><span>Sessions</span></Link>
         <Link href="/app/stars"><b>{tasksDone}</b><span>Tasks</span></Link>
         <Link href="/app/merch"><b>{me.claims.filter((c) => c.status !== "cancelled" && c.source !== "seat").length}</b><span>Merch</span></Link>
       </div>
-      {badges && <AchievementsStrip b={badges} onOpen={() => { setView("achievements"); window.scrollTo({ top: 0 }); }} />}
+      {/* First visit only (nothing remembered yet): an empty strip holds the space, so nothing below it jumps. */}
+      {badges
+        ? <AchievementsStrip b={badges} onOpen={() => { setView("achievements"); window.scrollTo({ top: 0 }); }} />
+        : <div className="ach-strip is-wait" aria-hidden="true"><span className="ach-strip-text"><b>Achievements</b><small>&nbsp;</small></span><span className="ach-strip-medals" style={{ height: 34 }} /><ChevronRight size={18} /></div>}
       </div>
 
       <div className="desk-rail">

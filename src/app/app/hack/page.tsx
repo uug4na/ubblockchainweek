@@ -10,6 +10,7 @@ import { ProjectsView, type Projects } from "./Projects";
 import { InfoTabs, Learn, Prizes, Timeline, type InfoTab } from "./HackInfo";
 import { HACK_DETAILS_PUBLIC } from "@/data/hackathon";
 import { HACK_BUCKET, stepOf, steps, tracks, trackNames, type Hack, type Team, type Track } from "@/lib/hack";
+import { useRemembered } from "@/lib/useRemembered";
 
 // Attendee app › Hackathon (UB Hack). One overview screen; each part opens on its own screen, like Profile:
 //   no team → Create a team | Join with a code
@@ -347,12 +348,12 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
 export default function HackPage() {
   const router = useRouter();
   const { status } = useMe();
-  const [data, setData] = useState<Hack | null>(null);
+  const [data, setData] = useRemembered<Hack>("hack");
   const [error, setError] = useState("");
   const [view, setView] = useState<View>("home");
   const [tab, setTab] = useState<InfoTab>("team");
   const go = (v: View) => { setView(v); window.scrollTo({ top: 0 }); };
-  const [projects, setProjects] = useState<Projects | null>(null);
+  const [projects, setProjects] = useRemembered<Projects>("hackprojects");
   const load = useCallback(() => {
     api<Hack>("/api/rpc/app_hack").then((h) => { setData(h); setError(""); }).catch((e) => setError(e.message));
     api<Projects>("/api/rpc/app_hack_projects").then(setProjects).catch(() => setProjects(null));

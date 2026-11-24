@@ -1,20 +1,25 @@
 "use client";
 
-// Agenda: the week as one plain list, a card per day. Time, title, place. No search, tracks or saving.
+// Agenda: the week as one plain list, a card per day. Time, title, place. No search or tracks.
+// The bookmark on each session saves it to My agenda on Home (owner, 20 Nov).
 // Every event is somewhere else: the place under each title opens a map with directions.
 import { useEffect, useState } from "react";
-import { MapPin, Radio } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Bookmark, MapPin, Radio } from "lucide-react";
 import { days } from "@/data/site";
 import { farText, metres, useEventPlaces } from "@/lib/eventPlaces";
 import { bestSpot, ROUGH_M, type Spot } from "@/lib/geo";
 import { PlaceSheet } from "@/components/map/PlaceSheet";
 import { sessions, sessionTime } from "@/data/schedule";
 import { useNow, ubDate } from "@/lib/time";
+import { useSaved } from "@/lib/saved";
 
 export default function AgendaPage() {
   const now = useNow();
   const today = now == null ? null : ubDate(now);
   const places = useEventPlaces();
+  const saved = useSaved();
+  const router = useRouter();
   const [open, setOpen] = useState<{ title: string; when: string; place: { lat: number; lng: number; name: string | null } } | null>(null);
   // How far each venue is from you (owner, 18 Nov). Only reads the location when it's already allowed: no prompt
   // on page load. Otherwise the first map you open asks, and its answer fills in every item.
@@ -63,8 +68,9 @@ export default function AgendaPage() {
                   const pl = places?.[s.id];
                   const pinned = pl && pl.mode !== "online" && pl.lat != null && pl.lng != null;
                   const where = s.room || pl?.name;
+                  const on = saved.ids.includes(s.id);
                   return (
-                    <div className={`mini ${live ? "is-live" : ""}`} key={s.id}>
+                    <div className={`mini has-save ${live ? "is-live" : ""}`} key={s.id}>
                       <time>{s.start || "TBA"}</time>
                       <div>
                         <b>{s.title}</b>
@@ -84,6 +90,15 @@ export default function AgendaPage() {
                         )}
                         {!pl && where && <span className="mini-place is-static"><MapPin size={14} aria-hidden /> {where}</span>}
                       </div>
+                      <button
+                        type="button"
+                        className={`mini-save ${on ? "is-on" : ""}`}
+                        aria-pressed={on}
+                        aria-label={on ? `Remove ${s.title} from My agenda` : `Save ${s.title} to My agenda`}
+                        onClick={() => (saved.signedIn ? saved.toggle(s.id) : router.push("/app/profile"))}
+                      >
+                        <Bookmark size={20} fill={on ? "currentColor" : "none"} aria-hidden />
+                      </button>
                     </div>
                   );
                 })}

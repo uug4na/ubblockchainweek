@@ -8,12 +8,13 @@ import { ScratchCard, BlankTicket, MerchIcon } from "@/components/ScratchCard";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import type { Ticket } from "@/lib/types";
+import { useRemembered } from "@/lib/useRemembered";
 
 type State = { cost: number; dailyLimit: number; usedToday: number; unrevealed: Ticket[]; recent: Ticket[]; prizes: { label: string; kind: string }[] };
 
 export default function ScratchPage() {
   const { status, me } = useMe();
-  const [data, setData] = useState<State | null>(null);
+  const [data, setData] = useRemembered<State>("scratch");
   const [current, setCurrent] = useState<Ticket | null>(null);
   const [revealed, setRevealed] = useState<Ticket | null>(null);
   const [revealAll, setRevealAll] = useState(false);

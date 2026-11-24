@@ -13,11 +13,12 @@ import { merch, merchById, OWN, seatGroups, type MerchItem, type Seat, type Seat
 import { haptic } from "@/lib/haptics";
 import { useMerchCatalog } from "@/lib/merchCatalog";
 import { useNow } from "@/lib/time";
+import { useRemembered } from "@/lib/useRemembered";
 
 type Stock = Record<string, number>;
 
 function useStock() {
-  const [stock, setStock] = useState<Stock | null>(null);
+  const [stock, setStock] = useRemembered<Stock>("merchstock", "all");
   useEffect(() => {
     let live = true;
     const load = () => api<{ stock: Stock }>("/api/merch").then((r) => live && setStock(r.stock)).catch(() => {});

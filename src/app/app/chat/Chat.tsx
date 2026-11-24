@@ -20,6 +20,7 @@ import { haptic } from "@/lib/haptics";
 import { site } from "@/data/site";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import type { ChatMsg, Chats, HackThread, Person, TeamInboxRow, TeamMsg, TeamThread } from "@/lib/types";
+import { useRemembered } from "@/lib/useRemembered";
 
 const time = (ms: number) => {
   const d = new Date(ms);
@@ -72,7 +73,7 @@ function FeaturedCrew({ people }: { people: NonNullable<Chats["featured"]> }) {
 }
 
 function Threads() {
-  const [data, setData] = useState<Chats | null>(null);
+  const [data, setData] = useRemembered<Chats>("chats");
   const [error, setError] = useState("");
   const load = useCallback(() => api<Chats>("/api/rpc/app_chats", {}).then((d) => { setData(d); setError(""); }).catch((e) => setError(e.message)), []);
   useEffect(() => {

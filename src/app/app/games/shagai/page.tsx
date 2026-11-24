@@ -9,6 +9,7 @@ import { api, setMe, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { burstFrom } from "@/lib/burst";
 import { BONES, COMBOS, combo, type ShagaiRoll } from "@/data/shagai";
+import { useRemembered } from "@/lib/useRemembered";
 
 type State = { min: number; max: number; dailyLimit: number; usedToday: number; recent: ShagaiRoll[] };
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -25,7 +26,7 @@ function Pattern({ lucky }: { lucky: number }) {
 
 export default function ShagaiPage() {
   const { status, me } = useMe();
-  const [data, setData] = useState<State | null>(null);
+  const [data, setData] = useRemembered<State>("shagai");
   const [stake, setStake] = useState(20);
   const [phase, setPhase] = useState<"idle" | "shaking" | "done">("idle");
   const [last, setLast] = useState<ShagaiRoll | null>(null);

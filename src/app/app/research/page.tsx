@@ -7,6 +7,7 @@ import { api, useMe } from "@/lib/me";
 import { supabase } from "@/lib/supa/client";
 import { rcFinal } from "@/data/researchCall";
 import { Call, Final, Guidelines, ResearchTabs, type ResearchTab } from "./ResearchInfo";
+import { useRemembered } from "@/lib/useRemembered";
 
 // Attendee app › Research: The Future of Money research conference (Эрдэм шинжилгээний хурал).
 // Not registered → one short form. Registered → a confirmation with what happens next.
@@ -172,7 +173,7 @@ function Mine({ r, open, onEdit, onDone }: { r: Item; open: boolean; onEdit: () 
 
 export default function ResearchPage() {
   const { status } = useMe();
-  const [data, setData] = useState<Data | null>(null);
+  const [data, setData] = useRemembered<Data>("research");
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<Item | null>(null);

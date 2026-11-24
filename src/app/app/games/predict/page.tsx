@@ -9,6 +9,7 @@ import { haptic } from "@/lib/haptics";
 import { burstFrom } from "@/lib/burst";
 import type { Market } from "@/lib/types";
 import { site } from "@/data/site";
+import { useRemembered } from "@/lib/useRemembered";
 
 type Res = { min: number; max: number; markets: Market[] };
 
@@ -103,7 +104,7 @@ function MarketCard({ m, min, max, balance, onBet }: { m: Market; min: number; m
 
 export default function PredictPage() {
   const { status, me } = useMe();
-  const [data, setData] = useState<Res | null>(null);
+  const [data, setData] = useRemembered<Res>("markets");
   const load = useCallback(() => api<Res>("/api/rpc/app_markets", {}).then(setData).catch(() => {}), []);
   useEffect(() => {
     if (status !== "in") return;
