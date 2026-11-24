@@ -110,6 +110,8 @@ export async function callApi(input: string, init: RequestInit = {}): Promise<Re
     const { action, userId, ...payload } = b;
     return rpc("staff_act", { action, pass_code: userId, payload });
   }
+  if (method === "GET" && path === "staff/social") return rpc("staff_social");
+  if (method === "POST" && path === "staff/social") return rpc("staff_social_act", { action: b.action, payload: b.payload ?? {} });
   if (method === "GET" && path === "staff/rewards") return rpc("staff_rewards");
   if (method === "POST" && path === "staff/rewards") {
     const { action, ...payload } = b;

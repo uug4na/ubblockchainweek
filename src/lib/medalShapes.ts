@@ -72,6 +72,10 @@ export const LOOKS: Record<string, Look> = {
   tenger: { shape: "squircle", ...C.magenta },
   miner: { shape: "decagon", ...C.green },
   devee: { shape: "hexagon", ...C.cyan },
+  quizRight: { shape: "squircle", ...C.cyan },
+  scratched: { shape: "decagon", ...C.magenta },
+  allround: { shape: "hexagon", ...C.lime },
+  peak: { shape: "octagon", ...C.violet },
 };
 export const lookFor = (id: string): Look => LOOKS[id] ?? { shape: "circle", ...C.green };
 

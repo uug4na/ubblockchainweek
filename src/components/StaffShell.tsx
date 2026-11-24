@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, ScanLine, Inbox, Gift, Printer, ChartColumn, Users, ShieldCheck, UserRound, Menu, Sparkles, Dices, DoorOpen, GraduationCap, Trophy } from "lucide-react";
+import { Home, ScanLine, Inbox, Gift, Printer, ChartColumn, Users, ShieldCheck, UserRound, Menu, Sparkles, Dices, DoorOpen, GraduationCap, Trophy, Medal, Megaphone } from "lucide-react";
 import { Logo } from "./Toono";
 import { OfflineBar } from "./Pwa";
 import { api } from "@/lib/me";
@@ -27,6 +27,8 @@ export const staffNav: Item[] = [
   { href: "/staff/merch", label: "Merch", icon: Gift, min: "lead" },
   { href: "/staff/rewards", label: "Rewards", icon: Sparkles, min: "lead" },
   { href: "/staff/games", label: "Games", icon: Dices, min: "lead" },
+  { href: "/staff/leaderboard", label: "Leaderboard", icon: Medal, min: "lead" },
+  { href: "/staff/social", label: "Social", icon: Megaphone, min: "lead" },
   { href: "/staff/posters", label: "Posters", icon: Printer, min: "lead" },
   { href: "/staff/hack", label: "Hackathon", icon: Trophy, min: "lead" },
   { href: "/staff/research", label: "Research", icon: GraduationCap, min: "lead", also: ["reviewer"] },
