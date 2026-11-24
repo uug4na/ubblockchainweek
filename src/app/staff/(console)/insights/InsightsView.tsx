@@ -277,7 +277,14 @@ const tabs = [
 type Tab = (typeof tabs)[number]["id"];
 
 export function InsightsView() {
-  const { data: d, error } = usePolling<Insights>("/api/staff/insights", 20_000);
+  const { data: raw, error } = usePolling<Insights>("/api/staff/insights", 20_000);
+  // the database sends null (not []) for a list with nothing in it; with no tasks the People tab crashed
+  // the page ("This page couldn't load", 24 Nov). Every list falls back to empty.
+  const d: Insights | null = raw && {
+    ...raw,
+    daily: raw.daily ?? [], byEventDay: raw.byEventDay ?? [], topSessions: raw.topSessions ?? [], tasks: raw.tasks ?? [],
+    merch: raw.merch ?? [], interests: raw.interests ?? [], referrers: raw.referrers ?? [], crew: raw.crew ?? [], log: raw.log ?? [],
+  };
   const [saved, setTab] = usePersisted<string>("ubbw.staff.insights", "overview");
   const tab: Tab = tabs.some((x) => x.id === saved) ? (saved as Tab) : "overview";
 
