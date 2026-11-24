@@ -42,7 +42,6 @@ export const sessions: Session[] = [
   // Tue 1 Dec
   add("a1", "2026-12-01", "10:30", "12:00", "Roundtable #1: 1072 токен", "Policy & Finance", "Panel", "Монголбанк"),
   add("b1", "2026-12-01", "12:00", "13:30", "Workshop 1", "Builders", "Workshop", "IT Park"),
-  add("b5", "2026-12-01", "15:00", "16:30", "Roundtable #2 · Partnered with SGX exchange", "Policy & Finance", "Panel", "Монголбанк"),
   add("c4", "2026-12-01", "15:30", "16:30", "AMA 3", "Ecosystem", "Talk"),
   add("e3", "2026-12-01", "15:30", "16:30", "AMA 4", "Ecosystem", "Talk"),
   add("b6", "2026-12-01", "19:00", "21:00", "Demo Show тэмцээн", "Culture & Community", "Social", "Kryptos"),
