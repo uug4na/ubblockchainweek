@@ -3,6 +3,7 @@
 // Agenda: the week as one plain list, a card per day. Time, title, place. No search or tracks.
 // The bookmark on each session saves it to My agenda on Home (owner, 20 Nov).
 // Every event is somewhere else: the place under each title opens a map with directions.
+// Tapping an event opens its sheet (owner, 24 Nov): what, when, where on a map, how far, directions, Save.
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark, MapPin, Radio } from "lucide-react";
@@ -13,6 +14,7 @@ import { PlaceSheet } from "@/components/map/PlaceSheet";
 import { sessions, sessionTime } from "@/data/schedule";
 import { useNow, ubDate } from "@/lib/time";
 import { useSaved } from "@/lib/saved";
+import { starsFor } from "@/data/rewards";
 
 export default function AgendaPage() {
   const now = useNow();
@@ -20,7 +22,7 @@ export default function AgendaPage() {
   const places = useEventPlaces();
   const saved = useSaved();
   const router = useRouter();
-  const [open, setOpen] = useState<{ title: string; when: string; place: { lat: number; lng: number; name: string | null } } | null>(null);
+  const [open, setOpen] = useState<string | null>(null);   // the session whose sheet is open
   // How far each venue is from you (owner, 18 Nov). Only reads the location when it's already allowed: no prompt
   // on page load. Otherwise the first map you open asks, and its answer fills in every item.
   const [spot, setSpot] = useState<Spot | null>(null);
@@ -73,11 +75,11 @@ export default function AgendaPage() {
                     <div className={`mini has-save ${live ? "is-live" : ""}`} key={s.id}>
                       <time>{s.start || "TBA"}</time>
                       <div>
-                        <b>{s.title}</b>
+                        <button type="button" className="mini-open" onClick={() => setOpen(s.id)} aria-haspopup="dialog"><b>{s.title}</b></button>
                         {s.end && <span>{live ? "Now · " : ""}until {s.end}</span>}
                         {pl && (
                           pinned ? (
-                            <button type="button" className="mini-place" onClick={() => setOpen({ title: s.title, when: `${d.weekday} ${d.short} ${d.month} · ${s.start}`, place: { lat: pl.lat!, lng: pl.lng!, name: where || null } })}>
+                            <button type="button" className="mini-place" onClick={() => setOpen(s.id)}>
                               <MapPin size={14} aria-hidden /> <span>{where || "See on map"}</span>
                               {spot && <em className="mini-far">· {spot.acc > ROUGH_M ? "~" : ""}{farText(metres(spot, { lat: pl.lat!, lng: pl.lng! }))} away</em>}
                               {pl.mode === "both" && <em>· also online</em>}
@@ -108,7 +110,38 @@ export default function AgendaPage() {
         );
       })}
       </div>
-      {open && <PlaceSheet title={open.title} when={open.when} place={open.place} onClose={() => setOpen(null)} onSpot={setSpot} />}
+      {(() => {
+        const s = open ? sessions.find((x) => x.id === open) : null;
+        if (!s) return null;
+        const d = days.find((x) => x.date === s.day)!;
+        const pl = places?.[s.id];
+        const pinned = pl && pl.mode !== "online" && pl.lat != null && pl.lng != null;
+        const where = s.room || pl?.name || "";
+        const t = sessionTime(s);
+        const hours = s.start ? `${s.start}${s.end ? `–${s.end}` : ""}` : "Time to be announced";
+        return (
+          <PlaceSheet
+            key={s.id}
+            title={s.title}
+            place={pinned ? { lat: pl.lat!, lng: pl.lng!, name: where || null } : null}
+            event={{
+              kind: `${s.kind} · ${s.track}`,
+              when: `${d.weekday} ${d.short} ${d.month} · ${hours}`,
+              live: now != null && !!s.start && t.start <= now && now < t.end,
+              lang: s.lang,
+              stars: pl?.stars ?? starsFor(s),
+              topic: s.description,
+              speakers: s.speakers,
+              where: pl?.mode === "online" ? "Online" : where || "Place to be announced",
+              mode: pl?.mode ?? null,
+              saved: saved.ids.includes(s.id),
+              onSave: () => (saved.signedIn ? saved.toggle(s.id) : router.push("/app/profile")),
+            }}
+            onClose={() => setOpen(null)}
+            onSpot={setSpot}
+          />
+        );
+      })()}
     </>
   );
 }
