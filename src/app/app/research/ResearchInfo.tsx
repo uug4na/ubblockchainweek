@@ -10,7 +10,7 @@ import "./guide.css";
 export type ResearchTab = "paper" | "call" | "guide" | "final";
 
 const tabs: { id: ResearchTab; label: string }[] = [
-  { id: "paper", label: "My paper" },
+  { id: "paper", label: "My team" },
   { id: "call", label: "Call" },
   { id: "guide", label: "Guidelines" },
   { id: "final", label: "Final" },

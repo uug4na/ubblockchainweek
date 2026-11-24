@@ -5,15 +5,18 @@ import { FileText, Search, X, GraduationCap } from "lucide-react";
 import { usePolling } from "@/lib/usePolling";
 import { supabase } from "@/lib/supa/client";
 import { site } from "@/data/site";
+import { rcThemes } from "@/data/researchCall";
 
 // The Future of Money research conference: every registration from /program (0036_research.sql).
 // Open to reviewers, leads and admins. PDFs open through a 10-minute signed link.
 type Item = {
   id: number; name: string; email: string; phone: string; school: string; degree: string;
   coauthors: string; title: string; abstract: string; file: string | null; at: number;
+  team: { name: string; code: string; themes: number[]; members: string[] | null } | null;   // research team (0069)
 };
 
 const when = (ms: number) => new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
+const topic = (i: number) => (i === 6 ? "Related topic" : rcThemes[i - 1]?.title ?? "");
 const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 
 export function ResearchView() {
@@ -24,7 +27,7 @@ export function ResearchView() {
     const all = data?.items ?? [];
     const t = q.trim().toLowerCase();
     if (!t) return all;
-    return all.filter((r) => [r.name, r.email, r.school, r.title, r.coauthors].some((v) => v.toLowerCase().includes(t)));
+    return all.filter((r) => [r.name, r.email, r.school, r.title, r.coauthors, r.team?.name ?? "", r.team?.code ?? ""].some((v) => v.toLowerCase().includes(t)));
   }, [data, q]);
   const pdfs = (data?.items ?? []).filter((r) => r.file).length;
 
@@ -56,7 +59,7 @@ export function ResearchView() {
 
       <div className="search" style={{ marginBottom: 16 }}>
         <Search size={18} />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, school or title" aria-label="Search registrations" inputMode="search" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, team, school or title" aria-label="Search registrations" inputMode="search" />
         {q && <button className="att-clear" aria-label="Clear search" onClick={() => setQ("")}><X size={16} /></button>}
       </div>
 
@@ -70,6 +73,8 @@ export function ResearchView() {
                 <small>#{r.id} · {when(r.at)}</small>
                 <h2>{r.title}</h2>
                 <p className="rs-who"><b>{r.name}</b>{r.degree && ` · ${r.degree}`} · {r.school}</p>
+                {r.team && <p className="rs-meta">Team <b>{r.team.name}</b> · {r.team.code}{r.team.members && r.team.members.length > 1 && ` · ${r.team.members.join(", ")}`}</p>}
+                {r.team && r.team.themes.length > 0 && <p className="rs-meta">{r.team.themes.map(topic).join(" · ")}</p>}
                 {r.coauthors && <p className="rs-meta">With {r.coauthors}</p>}
                 <p className="rs-meta"><a href={`mailto:${r.email}`}>{r.email}</a>{r.phone && <> · <a href={`tel:${r.phone}`}>{r.phone}</a></>}</p>
               </header>
