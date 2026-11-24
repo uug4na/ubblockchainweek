@@ -3810,6 +3810,23 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .where-actions .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .bm-me { width: 16px; height: 16px; border-radius: 50%; background: #1c1c1e; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
 .mini .mini-place > span { color: var(--label); }
+/* Agenda › event sheet (PlaceSheet.tsx): the title opens it; facts as icon rows, then directions and Save */
+.mini-open { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.mini-open:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.where-sheet.is-nomap .where-body { padding-top: 22px; }
+.where-sheet.is-nomap .where-body h2 { padding-right: 40px; }
+.ev-kind { font-size: 13px; font-weight: 600; color: var(--label-2); }
+.ev-facts { display: grid; gap: 10px; margin: 8px 0 4px; padding: 0; list-style: none; }
+.ev-facts li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 15px; line-height: 1.4; color: var(--label-2); }
+.ev-facts li svg { margin-top: 2px; color: var(--label-2); }
+.ev-facts b { font-weight: 600; color: var(--label); }
+.ev-live { color: var(--good, var(--label)); }
+.ev-topic { color: var(--label); }
+.ev-speaker { display: block; color: var(--label); }
+.ev-speaker + .ev-speaker { margin-top: 6px; }
+.where-actions.is-three { grid-template-columns: 1fr 1fr auto; }
+.where-actions.is-two { grid-template-columns: 1fr auto; }
+.ev-save.is-on { color: var(--label); }
 
 /* App Home: partner wheel under the countdown (src/components/PartnerWheel.tsx, owner's reference video 18 Nov).
    Adjust sizes here: --pw-card = card width/height, --pw-gap = space between cards (the ring radius follows). */
