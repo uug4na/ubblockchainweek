@@ -16,9 +16,13 @@ const load = () => (cache ??= api<EventPlaces>("/api/rpc/app_event_places")
 
 export function useEventPlaces() {
   // this visit's answer, else the last one this phone saw (places rarely move), while the fresh one loads
-  const [places, setPlaces] = useState<EventPlaces | null>(() => got ?? lastSeen<EventPlaces>("eventplaces"));
+  // (read after the first render, not in it: the page is pre-rendered without them, and reading this phone's
+  // copy during hydration made React throw #418)
+  const [places, setPlaces] = useState<EventPlaces | null>(null);
   useEffect(() => {
     let on = true;
+    const known = got ?? lastSeen<EventPlaces>("eventplaces");
+    if (known) setPlaces(known);
     load().then((p) => on && setPlaces(p)).catch(() => on && setPlaces({}));
     return () => { on = false; };
   }, []);
