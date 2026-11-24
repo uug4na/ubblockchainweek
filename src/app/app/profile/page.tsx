@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound, Wallet as WalletIcon } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, CalendarDays, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound, Wallet as WalletIcon } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
@@ -18,6 +18,8 @@ import { BusinessCard } from "@/components/BusinessCard";
 import { ShareStory } from "@/components/PassStory";
 import { PixelAvatar, ProfileCover } from "@/components/ProfileArt";
 import { usePolling } from "@/lib/usePolling";
+import { LinkGlyph, ubbwLinks } from "@/components/UbbwLinks";
+import { site } from "@/data/site";
 import { lastSeen, remember } from "@/lib/lastSeen";
 import type { Chats } from "@/lib/types";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
@@ -231,6 +233,16 @@ export default function ProfilePage() {
       <div className="settings-group">
         <div className="settings-row"><i className="tile t-gray"><SunMoon size={18} /></i><span>Appearance</span><ThemeSwitch /></div>
         <button onClick={() => { window.scrollTo({ top: 0 }); replayTour(); }}><i className="tile t-gray"><Compass size={18} /></i><span>App guide</span><small>Replay</small><ChevronRight size={18} /></button>
+      </div>
+
+      {/* UBBW's channels (owner, 24 Nov): the Luma event, then one row of the socials */}
+      <div className="settings-group">
+        <a className="settings-row" href={site.lumaEvent} target="_blank" rel="noreferrer"><i className="tile t-klein"><CalendarDays size={18} /></i><span>Event on Luma</span><small>luma.com</small><ArrowUpRight size={18} className="settings-out" /></a>
+        <div className="settings-row ubbw-follow"><span>Follow UBBW</span>
+          <nav aria-label="UBBW on social media">
+            {ubbwLinks.map((s) => <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"><LinkGlyph d={s.d} size={18} /></a>)}
+          </nav>
+        </div>
       </div>
 
       <div className="settings-group">

@@ -7,9 +7,10 @@
 //   backgrounds only (white parts), so in light mode it keeps a navy tile. PNGs are traced with scripts/trace-logo.py.
 // appTag: the label on their app wheel card only (the landing keeps its own tags), e.g. "Media partner".
 // word: their full wordmark (mark + name) for the website's partner spotlight, e.g. partners/ardcoin.png.
+// appSvg / appSvgDark: a different SVG for the app wheel card only (e.g. the full wordmark), light / dark mode.
 // tint: the partner's brand colour (taken from their logo), for the dot texture on their app wheel card.
 export type PartnerType = "partner" | "media" | "host" | "sponsor" | "supporter" | "collaboration";
-export type Partner = { name: string; type: PartnerType; about?: string; icon?: string; iconBg?: string; wide?: boolean; tag?: string; logo?: string; svg?: string; svgDark?: string; onDark?: boolean; tint?: string; appTag?: string; href?: string; word?: string };
+export type Partner = { name: string; type: PartnerType; about?: string; icon?: string; iconBg?: string; wide?: boolean; tag?: string; logo?: string; svg?: string; svgDark?: string; onDark?: boolean; tint?: string; appSvg?: string; appSvgDark?: string; appTag?: string; href?: string; word?: string };
 
 // tabs on the landing, left to right; the first is open by default, types with nobody yet are hidden
 export const partnerTypes: { id: PartnerType; label: string }[] = [
@@ -41,6 +42,10 @@ export const partners2026: Partner[] = [
   // the mark from that same wordmark, since their name sits beside it (24 Nov: the wordmark squeezed the app card)
   { name: "Ardcoin", type: "partner", tag: "Powered by", about: "Decentralized loyalty.", icon: "partners/icons/ardcoin.png", svg: "partners/icons/ardcoin.png", tint: "#a4e77f", href: "https://ardcoin.com" , word: "partners/ardcoin.png" },
   { name: "CryptoRank", type: "partner", appTag: "Media partner", about: "Crypto market data, token stats and research.", icon: "partners/icons/cryptorank.svg", svg: "partners/icons/cryptorank.svg", tint: "#0587ff", href: "https://cryptorank.io" },
+  // 24 Nov 2026: IDAX, Mongolian crypto exchange (owner). Logo from idax.exchange: full wordmark (word) for the
+  // spotlight, the "x" mark (as their favicon) for the website list; white versions for dark mode.
+  // 24 Nov: the app card shows the full "idax" wordmark, the x alone wasn't enough (owner)
+  { name: "IDAX", type: "partner", about: "Crypto exchange in Mongolia to trade BTC, ETH and more.", icon: "partners/icons/idax.png", svg: "partners/svg/idax.svg", svgDark: "partners/svg/idax-white.svg", appSvg: "partners/svg/idax-word.svg", appSvgDark: "partners/svg/idax-word-white.svg", tint: "#0ecc82", href: "https://www.idax.exchange", word: "partners/idax.png" },
   { name: "UFE", type: "partner", about: "University of Finance and Economics, Ulaanbaatar.", icon: "partners/icons/ufe.svg", svg: "partners/icons/ufe.svg", tint: "#5a83f0", href: "https://ufe.edu.mn" },
   { name: "Paradise Capital", type: "media" }, // TODO: icon, one line and link
 ];
