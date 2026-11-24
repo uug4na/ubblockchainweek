@@ -71,4 +71,4 @@ export type TeamMsg = { id: number; body: string; at: number; mine: boolean; tea
 export type TeamThread = { last: TeamMsg | null; unread: number };
 export type TeamInboxRow = Person & { last: TeamMsg; unread: number };
 // featured: crew pinned at the top of Messages that anyone can message (0051_featured_crew_chat.sql)
-export type Chats = { network: number; unread: number; featured?: Omit<ChatThread, "met">[]; threads: ChatThread[]; hack?: HackThread | null; team?: TeamThread | null; inbox?: TeamInboxRow[] | null };
+export type Chats = { network: number; unread: number; featured?: Omit<ChatThread, "met">[]; threads: ChatThread[]; hack?: HackThread | null; research?: HackThread | null; team?: TeamThread | null; inbox?: TeamInboxRow[] | null };

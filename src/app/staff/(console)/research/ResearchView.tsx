@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { FileText, Search, X, GraduationCap } from "lucide-react";
 import { usePolling } from "@/lib/usePolling";
+import { HackChat } from "@/components/HackChat";
 import { supabase } from "@/lib/supa/client";
 import { site } from "@/data/site";
 import { rcThemes } from "@/data/researchCall";
@@ -21,6 +22,7 @@ const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 
 export function ResearchView() {
   const { data, error } = usePolling<{ items: Item[] }>("/api/rpc/staff_research", 60_000);
+  const [tab, setTab] = useState<"list" | "chat">("list");
   const [q, setQ] = useState("");
   const [err, setErr] = useState("");
   const items = useMemo(() => {
@@ -51,6 +53,13 @@ export function ResearchView() {
       <h1 className="app-h1">Research</h1>
       <p className="app-sub">Registrations and abstracts for the research conference. Final: Tue 1 Dec, 11:00–17:00.</p>
       {(error || err) && <p className="form-error" role="alert">{err || error}</p>}
+
+      <div className="segmented" role="tablist" aria-label="View" style={{ marginBottom: 16 }}>
+        <button type="button" role="tab" aria-selected={tab === "list"} className={`seg ${tab === "list" ? "is-on" : ""}`} onClick={() => setTab("list")}>Registrations</button>
+        <button type="button" role="tab" aria-selected={tab === "chat"} className={`seg ${tab === "chat" ? "is-on" : ""}`} onClick={() => setTab("chat")}>Group chat</button>
+      </div>
+
+      {tab === "chat" ? <HackChat side="staff" room="research" /> : (<>
 
       <div className="shift" style={{ marginBottom: 16 }}>
         <div><b>{data?.items.length ?? "–"}</b><span>registered</span></div>
@@ -89,6 +98,7 @@ export function ResearchView() {
           ))}
         </div>
       )}
+      </>)}
     </>
   );
 }

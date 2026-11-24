@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Copy, FileText, Pencil, Plus, Share2, Tags, Trash2, Users, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, ChevronLeft, ChevronRight, Copy, FileText, MessageCircle, Pencil, Plus, Share2, Tags, Trash2, Users, X } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { api, useMe } from "@/lib/me";
 import { supabase } from "@/lib/supa/client";
@@ -17,7 +18,7 @@ import { useRemembered } from "@/lib/useRemembered";
 type Item = { id: number; title: string; school: string; degree: string; coauthors: string; abstract: string; file: string | null; at: number; by: string | null; mine: boolean };
 type Member = { id: string; name: string; leader: boolean; me: boolean };
 type RTeam = { id: number; code: string; name: string; themes: number[]; leader: boolean; members: Member[] };
-type Data = { open: boolean; team: RTeam | null; items: Item[] };
+type Data = { open: boolean; chat?: boolean; team: RTeam | null; items: Item[] };   // chat: the Research group in Messages (0070)
 type View = "home" | "create" | "join" | "team" | "topics" | "papers";
 
 const MAX_WORDS = 300;
@@ -352,6 +353,7 @@ function TeamView({ team, open, onChange, go }: { team: RTeam; open: boolean; on
 }
 
 export default function ResearchPage() {
+  const router = useRouter();
   const { status } = useMe();
   const [data, setData] = useRemembered<Data>("research");
   const [error, setError] = useState("");
@@ -452,6 +454,7 @@ export default function ResearchPage() {
           <button onClick={() => go("topics")}><i className="tile t-fushia"><Tags size={18} /></i><span>Topics</span><small className={t.themes.length ? undefined : "is-todo"}>{t.themes.length ? t.themes.length : "To do"}</small><ChevronRight size={18} /></button>
         )}
         <button onClick={() => go("papers")}><i className="tile t-klein"><FileText size={18} /></i><span>Papers</span><small className={data.items.length ? undefined : "is-todo"}>{data.items.length ? `${data.items.length} of ${MAX_PAPERS}` : "To do"}</small><ChevronRight size={18} /></button>
+        {data.chat && <button onClick={() => router.push("/app/chat/?g=research")}><i className="tile t-aqua"><MessageCircle size={18} /></i><span>Group chat</span><small>In Messages</small><ChevronRight size={18} /></button>}
       </nav>
       </div>
       </div>
