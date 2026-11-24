@@ -1662,6 +1662,13 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
 .settings-group small { color: var(--label-2); font-size: 15px; font-family: var(--font-body); }
 .settings-group > button > svg:last-child { color: var(--label-3); }
 .settings-group .is-danger span, .settings-group > .is-danger { color: var(--bad); }
+/* Profile › UBBW links (UbbwLinks.tsx): the Luma row opens outside, the socials sit in one row of round buttons */
+a.settings-row { text-decoration: none; }
+.settings-row .settings-out { color: var(--label-3); }
+.settings-row.ubbw-follow { grid-template-columns: minmax(0, 1fr) auto; }
+.ubbw-follow nav { display: flex; gap: 6px; }
+.ubbw-follow nav a { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--cell-2); color: var(--label); }
+.ubbw-follow nav a:active { opacity: .6; }
 .settings-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--label-2); font-size: 15px; }
 .tile { width: 30px; height: 30px; border-radius: var(--r); display: grid; place-items: center; color: #fff; font-style: normal; }
 .t-klein { background: var(--klein); } .t-fushia { background: var(--fushia); } .t-aqua { background: #30b0a0; }

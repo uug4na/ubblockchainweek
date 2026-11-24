@@ -13,15 +13,19 @@ export const site = {
   endISO: "2026-12-05T23:59:00+08:00",
   tz: "Asia/Ulaanbaatar",
   email: "hello@example.com",
-  // TODO: real handles and links. Social tasks in the app point here.
   handle: "@ubbw2026",
   hashtag: "#UBBW2026",
+  // UBBW's channels (owner, 24 Nov 2026), shown in the website footer and the app's Profile (components/UbbwLinks.tsx).
+  // telegram: no channel yet, so it isn't shown anywhere.
   social: {
-    x: "https://x.com/",
+    instagram: "https://www.instagram.com/ubblockchainweek",
+    facebook: "https://www.facebook.com/ubblockchainweek/",
+    threads: "https://www.threads.com/@ubblockchainweek",
+    x: "https://x.com/UBBlockchainWk",
     telegram: "https://t.me/",
-    instagram: "https://instagram.com/",
-    facebook: "https://facebook.com/",
   },
+  luma: "https://luma.com/ubbw",          // the UBBW calendar on Luma
+  lumaEvent: "https://luma.com/eg5oarf5", // the UB Blockchain Week 2026 event page on Luma
 };
 
 // The public UB Hack page (/hackathon) is temporarily hidden. While false: it's out of the header,

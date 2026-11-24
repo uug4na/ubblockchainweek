@@ -40,7 +40,9 @@ const IDLE_MS = 5000;  // wait after a drag / tap / key before moving on its own
 // The SVG mark (p.svg) in its own colours sits straight on the card, no tile. In dark mode the brand's
 // dark-background version (p.svgDark) is used when there is one; marks made for dark backgrounds only
 // (p.onDark) keep a navy tile in light mode.
-function Mark({ p }: { p: Partner }) {
+// appSvg / appSvgDark: a wordmark for this card only (the website keeps p.svg), shown wide.
+function Mark({ p: base }: { p: Partner }) {
+  const p = base.appSvg ? { ...base, svg: base.appSvg, svgDark: base.appSvgDark, wide: true } : base;
   if (p.svg) {
     const cls = `pwheel-mark is-svg${p.wide || (!p.icon && p.logo) ? " is-wide" : ""}${p.onDark ? " is-on-dark" : ""}`;
     return (
