@@ -14,7 +14,7 @@ import { PlaceSheet } from "@/components/map/PlaceSheet";
 import { sessions, sessionTime } from "@/data/schedule";
 import { useNow, ubDate } from "@/lib/time";
 import { useSaved } from "@/lib/saved";
-import { starsFor } from "@/data/rewards";
+import { firstNFor, starsFor } from "@/data/rewards";
 
 export default function AgendaPage() {
   const now = useNow();
@@ -130,6 +130,7 @@ export default function AgendaPage() {
               live: now != null && !!s.start && t.start <= now && now < t.end,
               lang: s.lang,
               stars: pl?.stars ?? starsFor(s),
+              firstN: pl?.firstN !== undefined ? pl.firstN : firstNFor(s),
               topic: s.description,
               speakers: s.speakers,
               where: pl?.mode === "online" ? "Online" : where || "Place to be announced",

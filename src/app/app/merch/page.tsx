@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Check, ChevronDown, Code2, Landmark, Mic, QrCode as QrCodeIcon, Star, X } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { RewardsHead } from "@/components/RewardsHead";
+import { ArdcoinSwap } from "@/components/ArdcoinSwap";
 import { MerchArt } from "@/components/MerchArt";
 import { QrCode } from "@/components/QrCode";
 import { api, setMe, useMe, type Me } from "@/lib/me";
@@ -225,7 +226,7 @@ export default function MerchPage() {
   const rowRef = useRef<HTMLDivElement>(null);
 
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Spend your stars" lead="Sign in to join events and get merch." />;
+  if (status === "out" || !me) return <AuthPanel title="Spend your stars" lead="Sign in to get merch." />;
 
   const list = merch.filter((m) => filter === "all" || (filter === "ours" ? m.by === OWN : m.by !== OWN));
   // Everything they hold, one row per item and state (×N when there are several), ready to
@@ -254,7 +255,9 @@ export default function MerchPage() {
 
       <RewardsHead balance={me.balance} />
 
-      <section className="held">
+      <ArdcoinSwap me={me} />
+
+      {seatGroups.length > 0 && <section className="held">
         <div className="held-head">
           <h2>Events</h2>
           <span className="event-dots" aria-hidden="true">
@@ -275,7 +278,7 @@ export default function MerchPage() {
             <EventCard key={g.id} group={g} stock={stock} me={me} now={now} onBought={setStock} onPass={() => setPassOpen(true)} />
           ))}
         </div>
-      </section>
+      </section>}
 
       {held.length > 0 && (
         <section className="held">

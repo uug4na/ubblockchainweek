@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { ChevronLeft, Gift } from "lucide-react";
-import { MERCH_OPEN } from "@/data/open";
+import { useOpen } from "@/lib/open";
 
 // Spend (merch) is closed for now (src/data/open.ts): direct links land on a Coming soon page.
 export default function MerchLayout({ children }: { children: React.ReactNode }) {
-  if (MERCH_OPEN) return <>{children}</>;
+  const open = useOpen();
+  if (open.merch) return <>{children}</>;
   return (
     <>
       <Link href="/app/games" className="back-link game-back"><ChevronLeft size={18} /> Games</Link>

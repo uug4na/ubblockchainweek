@@ -60,7 +60,7 @@ export function BusinessCard({ person: u, qr, checkedIn }: { person: CardPerson;
       <div className="bc-face">
         <div className="bc-top">
           <Logo />
-          {checkedIn ? <span className="bc-status"><BadgeCheck size={14} /> Checked in</span> : <span>2026</span>}
+          {checkedIn ? <span className="bc-status"><BadgeCheck size={14} /> Registered</span> : <span>2026</span>}
         </div>
         <svg className="bc-field" viewBox={`0 0 ${COLS} ${ROWS}`} aria-hidden="true">
           {field.map((p) => (

@@ -76,6 +76,11 @@ export const LOOKS: Record<string, Look> = {
   scratched: { shape: "decagon", ...C.magenta },
   allround: { shape: "hexagon", ...C.lime },
   peak: { shape: "octagon", ...C.violet },
+  // the sheet's achievements (0072)
+  workshops: { shape: "hexagon", ...C.magenta },
+  amas: { shape: "octagon", ...C.green },
+  engaged: { shape: "scallop", ...C.lime },
+  follows: { shape: "squircle", ...C.klein },
 };
 export const lookFor = (id: string): Look => LOOKS[id] ?? { shape: "circle", ...C.green };
 

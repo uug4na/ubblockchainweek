@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PixelStar } from "@/components/PixelStar";
 import { IsoArt } from "@/components/iso/IsoArt";
-import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
+import { useOpen } from "@/lib/open";
 import coinsArt from "@/components/iso/figures/minis/coins";
 import giftArt from "@/components/iso/figures/minis/gift";
 
@@ -21,6 +21,7 @@ let lastTab = -1;
 
 export function RewardsHead({ balance }: { balance: number }) {
   const path = usePathname();
+  const open = useOpen();
   const at = Math.max(0, tabs.findIndex((t) => path.startsWith(t)));
   const [i, setI] = useState(lastTab < 0 ? at : lastTab);
   useLayoutEffect(() => {
@@ -50,9 +51,9 @@ export function RewardsHead({ balance }: { balance: number }) {
         )}
       </section>
       <nav className="rewards-switch" aria-label="Rewards" style={{ ["--i" as string]: i }}>
-        {STARS_OPEN ? <Link href="/app/stars" className={path.startsWith("/app/stars") ? "is-on" : undefined}>Earn</Link> : <Locked label="Earn" />}
+        {open.stars ? <Link href="/app/stars" className={path.startsWith("/app/stars") ? "is-on" : undefined}>Earn</Link> : <Locked label="Earn" />}
         <Link href="/app/games" className={path.startsWith("/app/games") ? "is-on" : undefined}>Games</Link>
-        {MERCH_OPEN ? <Link href="/app/merch" className={path.startsWith("/app/merch") ? "is-on" : undefined}>Spend</Link> : <Locked label="Spend" />}
+        {open.merch ? <Link href="/app/merch" className={path.startsWith("/app/merch") ? "is-on" : undefined}>Spend</Link> : <Locked label="Spend" />}
       </nav>
     </>
   );

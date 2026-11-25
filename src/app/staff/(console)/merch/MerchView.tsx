@@ -10,6 +10,7 @@ import { usePolling } from "@/lib/usePolling";
 import { usePersisted } from "@/lib/store";
 import { merch, merchById, seatById, seats, MERCH_COST } from "@/data/rewards";
 import { site } from "@/data/site";
+import { ArdcoinSwaps } from "./ArdcoinSwaps";
 
 type Shelf = {
   stock: Record<string, number>;
@@ -221,7 +222,7 @@ export function MerchView() {
   }
   const [removed, setRemoved] = useState("");
 
-  const items = tab === "seats" ? seatItems : merchItems;
+  const items = tab === "seats" ? seatItems : merchItems; // ARDCoin has its own list (ArdcoinSwaps)
   const left = (id: string) => data?.stock[id] ?? 0;
   const sum = (list: Item[], counts?: Record<string, number>) => list.reduce((n, m) => n + (counts?.[m.id] ?? 0), 0);
   const needle = q.trim().toLowerCase();
@@ -265,8 +266,11 @@ export function MerchView() {
 
       <div className="ins-tabs mx-tabs" role="tablist" aria-label="Stock">
         <button role="tab" aria-selected={tab !== "seats"} className={tab !== "seats" ? "is-on" : ""} onClick={() => { setTab("merch"); setOpenId(null); setFilter("all"); }}>Merch</button>
-        <button role="tab" aria-selected={tab === "seats"} className={tab === "seats" ? "is-on" : ""} onClick={() => { setTab("seats"); setOpenId(null); setFilter("all"); }}>Event seats</button>
+        {seats.length > 0 && <button role="tab" aria-selected={tab === "seats"} className={tab === "seats" ? "is-on" : ""} onClick={() => { setTab("seats"); setOpenId(null); setFilter("all"); }}>Event seats</button>}
+        <button role="tab" aria-selected={tab === "ardcoin"} className={tab === "ardcoin" ? "is-on" : ""} onClick={() => { setTab("ardcoin"); setOpenId(null); }}>ARDCoin</button>
       </div>
+
+      {tab === "ardcoin" ? <ArdcoinSwaps /> : <>
 
       <div className="mx-tools">
         <label className="cw-search"><Search size={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={tab === "seats" ? "Find an event" : "Find an item"} aria-label="Find" />{q && <button className="icon-btn" aria-label="Clear" onClick={() => setQ("")}><X size={15} /></button>}</label>
@@ -283,6 +287,7 @@ export function MerchView() {
         ))}
         {data && !shown.length && <p className="muted cw-none">Nothing here.</p>}
       </div>
+      </>}
 
       <h2 className="mx-h">Recently handed over</h2>
       {!data || recent.length === 0 ? (

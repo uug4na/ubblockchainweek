@@ -145,13 +145,6 @@ export default function ScanPage() {
       <h1 className="app-h1">Point it at a poster.</h1>
       <p className="app-sub">Entrance, session posters, rewards, friends.</p>
 
-      {me && !me.user.verifiedAt && (
-        <div className="notice-card">
-          <CircleAlert size={20} />
-          <p>Scan the <b>entrance QR</b> first.</p>
-        </div>
-      )}
-
       {/* At the door the green screen is the whole point — show it first, camera tucked away. */}
       {result?.kind === "entry" && me && (
         <div className="entry-view">
@@ -202,8 +195,9 @@ export default function ScanPage() {
           {result?.kind === "checkin" && (
             <div className={`scan-result ${result.already ? "" : "is-win"}`}>
               <CircleCheck size={30} />
-              {result.already ? <h2>{result.room === "Reward" ? "Already claimed" : "Already checked in"}</h2> : <h2><Star size={26} fill="currentColor" /> +{result.stars} stars</h2>}
+              {result.already ? <h2>{result.room === "Reward" ? "Already claimed" : "Already checked in"}</h2> : result.stars > 0 ? <h2><Star size={26} fill="currentColor" /> +{result.stars} stars</h2> : <h2>Checked in</h2>}
               <p><b>{result.title}</b><br />{result.room}</p>
+              {!result.already && result.stars === 0 && result.room !== "Reward" && <p className="muted">The first 30 people already took this one&apos;s stars. It still counts for your achievements.</p>}
               <div className="scan-result-actions">
                 <Link href="/app/stars" className="btn btn-primary">See my stars</Link>
                 <button className="btn btn-ghost" onClick={() => setResult(null)}>Scan another</button>

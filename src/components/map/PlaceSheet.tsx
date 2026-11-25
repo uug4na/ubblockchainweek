@@ -13,7 +13,7 @@ type Place = { lat: number; lng: number; name: string | null };
 // One agenda event (owner, 24 Nov: "when I click the event on agenda I wanna see event information with location").
 // kind: e.g. "Panel · Ecosystem"; when: day and hours; where: the place's name (or "Online", "To be announced").
 export type EventInfo = {
-  kind: string; when: string; live: boolean; lang: string; stars: number;
+  kind: string; when: string; live: boolean; lang: string; stars: number; firstN: number | null;
   topic: string; speakers: string[];   // the sheet's Сэдэв and Илтгэгч (schedule.ts), may be empty
   where: string; mode: "in_person" | "online" | "both" | null;
   saved: boolean; onSave: () => void;
@@ -115,7 +115,7 @@ export function PlaceSheet({ title, event, place, onClose, onSpot }: { title: st
               </span>
             </li>
             <li><Languages size={16} aria-hidden /><span>{event.lang === "EN/MN" ? "English and Mongolian" : event.lang === "MN" ? "Mongolian" : "English"}</span></li>
-            <li><Star size={16} aria-hidden /><span>{event.stars} stars for checking in</span></li>
+            <li><Star size={16} aria-hidden /><span>{event.stars} stars for checking in{event.firstN ? ` · first ${event.firstN} people` : ""}</span></li>
           </ul>
           {place && far != null && acc > ROUGH_M && (
             <p className="where-rough">

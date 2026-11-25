@@ -593,7 +593,7 @@ em { font-style: normal; color: var(--clay-deep); }
 .platform { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: var(--r); background: var(--paper); color: var(--ink-2); }
 .p-instagram { background: rgba(240,55,165,.18); color: #ff8fcf; }
 .p-facebook { background: rgba(65,0,245,.28); color: #c9bcff; }
-.p-x { background: rgba(255,255,255,.12); color: var(--ink); }
+.p-x, .p-threads { background: rgba(255,255,255,.12); color: var(--ink); }
 .p-telegram { background: rgba(19, 239, 253,.14); color: #13effd; }
 .task-stars { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: var(--saffron-deep); white-space: nowrap; }
 .task-actions, .task-proof { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -4110,3 +4110,39 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
   .so-thread { padding-left: 12px; }
   .so-actions .btn-lg { flex: 1; justify-content: center; }
 }
+
+/* Achievements → the 1,000-star reward for earning them all (0072) */
+.ach-bonus { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; margin: 12px 0 4px; padding: 14px 16px; border-radius: var(--r, 14px); background: var(--fill); }
+.ach-bonus b { display: block; font-size: 15px; color: var(--label); }
+.ach-bonus small { display: block; font-size: 13px; color: var(--label-2); }
+.ach-bonus-stars { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: var(--label); }
+.ach-bonus.is-done .ach-bonus-stars { color: var(--label-2); }
+
+/* ARDCoin swap on Spend (0074): one quiet card, the coin mark is the only colour */
+.aco { margin: 16px 0 20px; padding: 16px; border-radius: var(--r, 14px); background: var(--fill); display: grid; gap: 14px; }
+.aco-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.aco-mark { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: #000; color: #a4e77f; }
+.aco-head b { display: block; font-size: 17px; color: var(--label); }
+.aco-head small, .aco-done small { display: block; font-size: 13px; color: var(--label-2); overflow-wrap: anywhere; }
+.aco-left { font-size: 13px; font-weight: 600; color: var(--label-2); white-space: nowrap; }
+.aco-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.aco-togo { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; color: var(--label-2); }
+.aco-togo.is-ready { color: var(--label); font-weight: 600; }
+.aco-form { display: grid; gap: 12px; }
+.aco-note { margin: 0; font-size: 13px; color: var(--label-2); }
+.aco-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.aco-done { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; color: var(--label); }
+.aco-done b { display: block; font-size: 15px; }
+.aco-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
+.aco-sum span { padding: 12px; border-radius: var(--r, 14px); background: var(--fill); }
+.aco-sum b { display: block; font-size: 22px; color: var(--label); font-variant-numeric: tabular-nums; }
+.aco-sum small { font-size: 12px; color: var(--label-2); }
+.aco-list { display: grid; gap: 8px; margin-top: 12px; }
+.aco-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--r, 14px); background: var(--fill); }
+.aco-row.is-cancelled { opacity: .55; }
+.aco-row-main b { display: block; font-size: 15px; color: var(--label); }
+.aco-row-main small { display: block; font-size: 13px; color: var(--label-2); }
+.aco-row-main code { display: block; margin-top: 4px; font-size: 12px; color: var(--label); overflow-wrap: anywhere; }
+.aco-row-act { display: grid; gap: 6px; }
+.aco-row-state { font-style: normal; font-size: 13px; color: var(--label-2); white-space: nowrap; }
+@media (max-width: 560px) { .aco-row { grid-template-columns: 1fr; } .aco-row-act { grid-template-columns: 1fr 1fr; } }

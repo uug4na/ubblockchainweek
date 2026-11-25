@@ -6,22 +6,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  CalendarDays, ChevronRight, Dices, Gift, Handshake, MapPin, MessageCircle, QrCode, Radio, ScanLine, Star, UsersRound,
+  CalendarDays, ChevronRight, Dices, Gift, Handshake, MapPin, MessageCircle, QrCode, Radio, Star, UsersRound,
   type LucideIcon,
 } from "lucide-react";
 import { DESK_STARS, MERCH_COST } from "@/data/rewards";
-import { GAMES_PLAYABLE, MERCH_OPEN, STARS_OPEN } from "@/data/open";
+import { useOpen, type Open } from "@/lib/open";
 
 type Row = { icon: LucideIcon; tile: string; title: string; line: string; href?: string; soon?: boolean };
 type Tab = { id: string; label: string; rows: Row[] };
 
-const TABS: Tab[] = [
+const tabsFor = (open: Open): Tab[] => [
   {
     id: "take-part",
     label: "Take part",
     rows: [
-      { icon: QrCode, tile: "t-klein", title: "Your Passport", line: "One QR for the door, merch and contacts", href: "/app/profile" },
-      { icon: ScanLine, tile: "t-aqua", title: "Check in at the door", line: `Scan the entrance QR · +${DESK_STARS}★`, href: "/app/scan" },
+      { icon: QrCode, tile: "t-klein", title: "Your Passport", line: `+${DESK_STARS}★ for signing up · one QR for merch and contacts`, href: "/app/profile" },
       { icon: CalendarDays, tile: "t-fushia", title: "Pick your sessions", line: "Bookmark them in the Agenda", href: "/app/agenda" },
       { icon: Star, tile: "t-citric", title: "Scan the session poster", line: "Stars for being in the room", href: "/app/scan" },
     ],
@@ -30,10 +29,10 @@ const TABS: Tab[] = [
     id: "stars",
     label: "Stars & games",
     rows: [
-      { icon: Star, tile: "t-citric", title: "Earn stars", line: "Check-ins, sessions and tasks", href: "/app/stars", soon: !STARS_OPEN },
-      { icon: Handshake, tile: "t-fushia", title: "Proof of Meet", line: "Scan someone new, earn together", href: "/app/games/meet", soon: !GAMES_PLAYABLE },
-      { icon: Dices, tile: "t-klein", title: "Play games", line: "Shagai, Coin flip, Scratch, Devee", href: "/app/games", soon: !GAMES_PLAYABLE },
-      { icon: Gift, tile: "t-aqua", title: "Spend them", line: `Merch for ${MERCH_COST}★, AMA and workshop seats`, href: "/app/merch", soon: !MERCH_OPEN },
+      { icon: Star, tile: "t-citric", title: "Earn stars", line: "Check-ins, sessions and tasks", href: "/app/stars", soon: !open.stars },
+      { icon: Handshake, tile: "t-fushia", title: "Proof of Meet", line: "Scan someone new, earn together", href: "/app/games/meet", soon: !open.games },
+      { icon: Dices, tile: "t-klein", title: "Play games", line: "Shagai, Coin flip, Scratch, Devee", href: "/app/games", soon: !open.games },
+      { icon: Gift, tile: "t-aqua", title: "Spend them", line: `Merch for ${MERCH_COST}★, AMA and workshop seats`, href: "/app/merch", soon: !open.merch },
     ],
   },
   {
@@ -50,6 +49,7 @@ const TABS: Tab[] = [
 
 export function AppGuide() {
   const [tab, setTab] = useState(0);
+  const TABS = tabsFor(useOpen());
   const t = TABS[tab];
   return (
     <section className="panel app-guide" aria-labelledby="app-guide-h">

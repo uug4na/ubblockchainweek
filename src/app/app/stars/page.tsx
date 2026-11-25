@@ -12,7 +12,7 @@ import { site } from "@/data/site";
 import { page } from "@/lib/base";
 import { haptic } from "@/lib/haptics";
 import { uploadShot } from "@/lib/shots";
-import { STARS_OPEN } from "@/data/open";
+import { useOpen } from "@/lib/open";
 import { useRemembered } from "@/lib/useRemembered";
 
 const when = (ms: number) =>
@@ -153,8 +153,8 @@ function Invite({ me }: { me: Me }) {
   }
   return (
     <section className="panel invite">
-      <div className="panel-head"><h2>Bring friends</h2><span className="task-stars"><Star size={13} fill="currentColor" /> {REFERRAL_STARS} each</span></div>
-      <p className="muted">Friend signs up and checks in: +{REFERRAL_STARS}★</p>
+      <div className="panel-head"><h2>Bring friends</h2>{REFERRAL_STARS > 0 && <span className="task-stars"><Star size={13} fill="currentColor" /> {REFERRAL_STARS} each</span>}</div>
+      <p className="muted">{REFERRAL_STARS > 0 ? <>Friend signs up and checks in: +{REFERRAL_STARS}★</> : "A friend who signs up with your link and checks in earns you the Ambassador achievement."}</p>
       <div className="invite-code">
         <code>{me.user.id}</code>
         <button className="btn btn-clay" onClick={share}>{copied ? <><Copy size={16} /> Link copied</> : <><Share2 size={16} /> Share invite</>}</button>
@@ -167,7 +167,8 @@ function Invite({ me }: { me: Me }) {
 // Owner, 2026-11-13: the Stars section shows "Coming soon" for now. Flip STARS_OPEN (src/data/open.ts) to bring the full page back.
 
 export default function StarsPage() {
-  return STARS_OPEN ? <StarsLive /> : <StarsSoon />;
+  const open = useOpen();
+  return open.stars ? <StarsLive /> : <StarsSoon />;
 }
 
 function StarsSoon() {
@@ -188,7 +189,7 @@ function StarsLive() {
   const { status, me } = useMe();
   const watchTasks = useWatchTasks();
   if (status === "loading") return null;
-  if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead="Get your Passport, scan the entrance QR, and every session and social task adds up." />;
+  if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead={`Sign up for your Passport and get ${DESK_STARS}★ straight away. Every session and social task adds up.`} />;
 
   const verified = !!me.user.verifiedAt;
   // events already attended (in person or approved online) drop out of the list
@@ -209,8 +210,8 @@ function StarsLive() {
           <div className={`earn-row ${verified ? "is-done" : ""}`}>
             <MapPin size={20} />
             <div>
-              <b>Entrance check-in</b>
-              <span>{verified ? `Done · ${when(me.user.verifiedAt!)}` : "Unlocks posters, rewards and merch"}</span>
+              <b>Registration</b>
+              <span>{verified ? `Done · ${when(me.user.verifiedAt!)}` : "Paid when you sign up"}</span>
             </div>
             {verified ? <Check size={20} className="earn-tick" /> : <span className="task-stars"><Star size={13} fill="currentColor" /> {DESK_STARS}</span>}
           </div>
@@ -218,7 +219,7 @@ function StarsLive() {
             <ScanLine size={20} />
             <div>
               <b>Session posters</b>
-              <span>15–40★ per session</span>
+              <span>20★ talk or panel · 40★ AMA and hackathon · 100★ workshop. AMA and workshop: first 30 only</span>
             </div>
             <Link href="/app/scan" className="btn btn-primary">Scan</Link>
           </div>
@@ -268,7 +269,7 @@ function StarsLive() {
       <section className="panel">
         <div className="panel-head"><h2>Recent activity</h2></div>
         {me.ledger.length === 0 ? (
-          <p className="muted">Scan the entrance QR for your first {DESK_STARS}★.</p>
+          <p className="muted">Your stars show up here.</p>
         ) : (
           <div className="ledger">
             {me.ledger.slice(0, 10).map((e) => (
