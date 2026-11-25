@@ -6,7 +6,7 @@ import { Check, Clock, ExternalLink, ImagePlus, ScanLine, Share2, Copy, Star, Ma
 import { AuthPanel } from "@/components/AuthPanel";
 import { RewardsHead } from "@/components/RewardsHead";
 import { api, setMe, useMe, type Me } from "@/lib/me";
-import { socialTasks, DESK_STARS, REFERRAL_STARS, type SocialTask } from "@/data/rewards";
+import { socialTasks, DESK_STARS, REFERRAL_STARS, SOCIAL_GROUP_STARS, type SocialTask } from "@/data/rewards";
 import { sessionById } from "@/data/schedule";
 import { site } from "@/data/site";
 import { page } from "@/lib/base";
@@ -47,7 +47,8 @@ function useWatchTasks() {
   return list;
 }
 
-function TaskCard({ task, status }: { task: SocialTask; status?: "pending" | "approved" | "rejected" }) {
+// `auto`: the social steps send the linked Instagram account themselves (0082), so no username field
+function TaskCard({ task, status, auto }: { task: SocialTask; status?: "pending" | "approved" | "rejected"; auto?: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [proof, setProof] = useState("");
@@ -94,7 +95,7 @@ function TaskCard({ task, status }: { task: SocialTask; status?: "pending" | "ap
     <article className={`task ${done ? "is-done" : ""}`}>
       <div className="task-top">
         <span className={`platform p-${task.platform.toLowerCase()}`}>{task.platform}</span>
-        <span className="task-stars"><Star size={13} fill="currentColor" /> {task.stars}</span>
+        {task.stars > 0 && <span className="task-stars"><Star size={13} fill="currentColor" /> {task.stars}</span>}
       </div>
       <h3>{task.title}</h3>
       <p>{task.body}</p>
@@ -116,8 +117,10 @@ function TaskCard({ task, status }: { task: SocialTask; status?: "pending" | "ap
                   <button type="button" className="link-btn" onClick={clear} disabled={busy}>Remove</button>
                 </div>
               </div>
-              <label htmlFor={`proof-${task.id}`}>{task.proofLabel} <i>optional</i></label>
-              <input id={`proof-${task.id}`} value={proof} onChange={(e) => setProof(e.target.value)} placeholder={task.proofPlaceholder} maxLength={200} />
+              {!auto && <>
+                <label htmlFor={`proof-${task.id}`}>{task.proofLabel} <i>optional</i></label>
+                <input id={`proof-${task.id}`} value={proof} onChange={(e) => setProof(e.target.value)} placeholder={task.proofPlaceholder} maxLength={200} />
+              </>}
               {error && <span className="form-error">{error}</span>}
               <button className="btn btn-tint wide" type="submit" disabled={busy}>{busy ? "Sending…" : "Send for review"}</button>
             </form>
@@ -187,6 +190,52 @@ function StarsSoon() {
   );
 }
 
+// Which Instagram account the social steps are done with (owner, 25 Nov; 0082). Required first; the crew check this
+// account against UBBW's followers and the reel's likes and comments. One account per Passport.
+function IgAccount({ me, locked }: { me: Me; locked: boolean }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(me.user.igHandle ? `@${me.user.igHandle}` : "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const has = !!me.user.igHandle;
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      setMe(await api<Me>("/api/rpc/app_set_instagram", { handle: value }));
+      setEditing(false);
+      haptic.success();
+    } catch (err) {
+      setError((err as Error).message);
+      haptic.error();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (has && !editing)
+    return (
+      <div className="ig-account">
+        <span>Your Instagram <b>@{me.user.igHandle}</b></span>
+        {!locked && <button type="button" className="link-btn" onClick={() => setEditing(true)}>Change</button>}
+      </div>
+    );
+  return (
+    <form className="ig-form" onSubmit={save}>
+      <label htmlFor="ig-handle">Your Instagram username</label>
+      <p>The crew check this account for every step. One account per Passport.</p>
+      <div className="ig-row">
+        <input id="ig-handle" value={value} onChange={(e) => setValue(e.target.value)} placeholder="@username" maxLength={60} autoCapitalize="off" autoCorrect="off" spellCheck={false} required />
+        <button className="btn btn-primary" type="submit" disabled={busy || value.replace(/^@/, "").trim().length === 0}>{busy ? "…" : "Save"}</button>
+      </div>
+      {error && <span className="form-error" role="alert">{error}</span>}
+      {has && <button type="button" className="link-btn" onClick={() => { setEditing(false); setError(""); }}>Cancel</button>}
+    </form>
+  );
+}
+
 function StarsLive() {
   const { status, me } = useMe();
   const watchTasks = useWatchTasks();
@@ -196,15 +245,17 @@ function StarsLive() {
   const verified = !!me.user.verifiedAt;
   // events already attended (in person or approved online) drop out of the list
   const watch = watchTasks.filter((w) => w.open && !me.attended.includes(w.sessionId));
-  // follows first, then the posts that share the week
-  const quick = socialTasks.filter((t) => t.id.startsWith("follow-") || t.id.startsWith("join-"));
-  const review = socialTasks.filter((t) => !quick.includes(t));
+  // the social group: four steps, one reward when every step is approved (0080)
+  const stepsDone = socialTasks.filter((t) => me.tasks[t.id] === "approved").length;
+  const groupDone = stepsDone === socialTasks.length;
 
   return (
     <>
       <span className="eyebrow">Stars</span>
       <h1 className="app-h1">Earn stars.</h1>
       <RewardsHead balance={me.balance} />
+
+      <Invite me={me} />
 
       <section className="panel">
         <div className="panel-head"><h2>At the venue</h2></div>
@@ -221,7 +272,7 @@ function StarsLive() {
             <ScanLine size={20} />
             <div>
               <b>Session posters</b>
-              <span>20★ talk or panel · 40★ AMA and hackathon · 100★ workshop. AMA and workshop: first 30 only</span>
+              <span>20–100★ each session</span>
             </div>
             <Link href="/app/scan" className="btn btn-primary">Scan</Link>
           </div>
@@ -250,23 +301,18 @@ function StarsLive() {
         <div className="tasks">{watch.map((w) => <TaskCard key={w.id} task={asTask(w)} status={me.tasks[w.id]} />)}</div>
       </section>}
 
-      {quick.length > 0 && <section className="tasks-section">
+      <section className={`tasks-section group-task ${groupDone ? "is-done" : ""}`}>
         <div className="section-mini-head">
-          <h2>Follow us</h2>
-          <span>Screenshot · crew checks</span>
+          <h2>Social tasks</h2>
+          <span className="task-stars"><Star size={13} fill="currentColor" /> {SOCIAL_GROUP_STARS} for all {socialTasks.length}</span>
         </div>
-        <div className="tasks">{quick.map((t) => <TaskCard key={t.id} task={t} status={me.tasks[t.id]} />)}</div>
-      </section>}
-
-      {review.length > 0 && <section className="tasks-section">
-        <div className="section-mini-head">
-          <h2>Share the week</h2>
-          <span>Screenshot · crew checks</span>
+        <div className="group-progress" role="progressbar" aria-valuemin={0} aria-valuemax={socialTasks.length} aria-valuenow={stepsDone} aria-label="Social tasks done">
+          <span style={{ ["--p" as string]: stepsDone / socialTasks.length }} />
         </div>
-        <div className="tasks">{review.map((t) => <TaskCard key={t.id} task={t} status={me.tasks[t.id]} />)}</div>
-      </section>}
-
-      <Invite me={me} />
+        <p className="group-note">{groupDone ? `All done · +${SOCIAL_GROUP_STARS}★` : `${stepsDone} of ${socialTasks.length} approved · a screenshot for each, the crew check`}</p>
+        <IgAccount me={me} locked={socialTasks.some((t) => me.tasks[t.id] === "pending" || me.tasks[t.id] === "approved")} />
+        {me.user.igHandle && <div className="tasks">{socialTasks.map((t) => <TaskCard key={t.id} task={t} status={me.tasks[t.id]} auto />)}</div>}
+      </section>
 
       <section className="panel">
         <div className="panel-head"><h2>Recent activity</h2></div>

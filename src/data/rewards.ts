@@ -35,20 +35,20 @@ export type SocialTask = {
   proofPlaceholder: string;
 };
 
-// Social tasks, 100 stars each, once (owner's sheet, 24 Nov). The same ids are rows in ubbw.tasks (0072), which is
-// what pays them when the crew approve the screenshot. Follow tasks = the "Follower" achievement (all four),
-// like-comment = "Like & comment".
+// Social tasks as one group (owner, 25 Nov 2026; supabase/migrations/0080_social_group.sql): no stars for a single
+// interaction. Four Instagram steps, each proved with its own screenshot and approved by the crew; when the last one is
+// approved the person gets SOCIAL_GROUP_STARS once. Step ids = rows in ubbw.tasks (stars 0) = ubbw.social_group().
+export const SOCIAL_GROUP_STARS = 100;
 const IG = "https://www.instagram.com/ubblockchainweek";
-const task = (id: string, platform: SocialTask["platform"], title: string, body: string, href: string, cta: string): SocialTask =>
-  ({ id, platform, title, body, href, cta, stars: 100, verify: "review", proofLabel: "Your username", proofPlaceholder: "@username" });
+// The post the like / comment / story steps are about (owner, 25 Nov 2026)
+export const SOCIAL_POST = "https://www.instagram.com/reel/DgHIOywB2gd/";
+const step = (id: string, title: string, body: string, cta: string, href = SOCIAL_POST): SocialTask =>
+  ({ id, platform: "Instagram", title, body, href, cta, stars: 0, verify: "review", proofLabel: "Your username", proofPlaceholder: "@username" });
 export const socialTasks: SocialTask[] = [
-  task("follow-instagram", "Instagram", "Follow UBBW on Instagram", "Follow @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
-  task("follow-facebook", "Facebook", "Follow UBBW on Facebook", "Follow the UB Blockchain Week page, then send a screenshot.", "https://www.facebook.com/ubblockchainweek/", "Open Facebook"),
-  task("follow-threads", "Threads", "Follow UBBW on Threads", "Follow @ubblockchainweek, then send a screenshot.", "https://www.threads.com/@ubblockchainweek", "Open Threads"),
-  task("follow-x", "X", "Follow UBBW on X", "Follow @UBBlockchainWk, then send a screenshot.", "https://x.com/UBBlockchainWk", "Open X"),
-  task("like-comment", "Instagram", "Like and comment", "Like a UBBW post and leave a comment, then send a screenshot.", IG, "Open Instagram"),
-  task("post-ubbw", "Instagram", "Post about UBBW", "Post about UB Blockchain Week and tag @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
-  task("story-ubbw", "Instagram", "Share a story", "Share UBBW in your story and tag @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
+  step("follow-instagram", "Follow", "Follow @ubblockchainweek.", "Open Instagram", IG),
+  step("like-post", "Like the reel", "Like our UBBW reel.", "Open the reel"),
+  step("comment-post", "Comment", "Comment on our UBBW reel.", "Open the reel"),
+  step("story-ubbw", "Share in your story", "Share our UBBW reel in your story.", "Open the reel"),
 ];
 
 export const taskById = Object.fromEntries(socialTasks.map((t) => [t.id, t]));
