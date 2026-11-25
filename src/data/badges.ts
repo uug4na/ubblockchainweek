@@ -89,7 +89,7 @@ export const DEVEE_GOAL = 25;
 export const AMA_GOAL = 6;
 // "Workshop 2": two workshops, or every workshop on the agenda while there are fewer than two
 export const WORKSHOP_GOAL = Math.min(2, sessions.filter((s) => s.kind === "Workshop").length);
-export const FOLLOW_TASKS = 4; // Instagram, Facebook, Threads, X
+export const FOLLOW_TASKS = 1; // the Instagram follow step (0080)
 export const BONUS_STARS = 1000;
 // the ones the 1,000 stars need: all of the sheet's, except Hackathon (only hackathon teams can earn it)
 export const BONUS_NEEDS = ["devee", "oracle", "flip", "berkh", "network", "quiz", "workshops", "amas", "engaged", "follows", "invite"];
@@ -208,15 +208,15 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     id: "engaged", label: "Like & comment", icon: Heart, done: en, at: at.engaged,
     note: en ? "Liked and commented" : "Like and comment on a post",
     about: en ? "You liked and commented on a UBBW post." : "Show some love to a UBBW post.",
-    how: "Do the Like and comment task in Stars: like a UBBW post, comment, and send a screenshot. It counts once the crew approve it.",
+    how: "Do the Like and Comment steps of the social tasks in Stars, with a screenshot each. It counts once the crew approve both.",
     link: en ? undefined : toStars("Open Stars"),
   });
   const fo = counted(b.follows ?? 0, FOLLOW_TASKS);
   list.push({
     id: "follows", label: "Follower", icon: UserCheck, ...fo, at: at.follows,
-    note: fo.done ? "Following UBBW everywhere" : "Follow UBBW on 4 channels",
-    about: fo.done ? "You follow UBBW on Instagram, Facebook, Threads and X." : "Follow UBBW on Instagram, Facebook, Threads and X.",
-    how: "Do the four Follow tasks in Stars and send a screenshot of each. It counts once the crew approve all four.",
+    note: fo.done ? "Following UBBW" : "Follow UBBW on Instagram",
+    about: fo.done ? "You follow UBBW on Instagram." : "Follow @ubblockchainweek on Instagram.",
+    how: "Do the Follow step of the social tasks in Stars and send a screenshot. It counts once the crew approve it.",
     link: fo.done ? undefined : toStars("Open Stars"),
   });
   const inv = counted(b.invited ?? 0, INVITE_GOAL);

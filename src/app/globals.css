@@ -4185,3 +4185,20 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 @media (prefers-reduced-motion: reduce) { .install-float { animation: none; } }
 /* room under the page while the floating install bar shows, so nothing stays hidden behind it */
 .app-inner:has(.install-float .install) { padding-bottom: 92px; }
+
+/* Social tasks as one group (0080): a progress line, then the four steps */
+.group-progress { height: 6px; margin: 4px 0 6px; border-radius: 999px; background: var(--fill-2, rgba(120, 120, 128, .14)); overflow: hidden; }
+.group-progress span { display: block; height: 100%; width: calc(var(--p) * 100%); border-radius: inherit; background: var(--label); transition: width .3s var(--ease-out, ease-out); }
+.group-note { margin: 0 0 10px; font-size: 13px; color: var(--label-2); }
+
+/* Social tasks: the linked Instagram account (0082) */
+.ig-account { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; background: var(--fill-2, rgba(120, 120, 128, .12)); font-size: 14px; color: var(--label-2); }
+.ig-account b { color: var(--label); }
+.ig-form { display: grid; gap: 6px; margin: 0 0 12px; padding: 14px; border-radius: 14px; background: var(--fill-2, rgba(120, 120, 128, .12)); }
+.ig-form label { font-size: 15px; font-weight: 600; color: var(--label); }
+.ig-form p { margin: 0 0 4px; font-size: 13px; color: var(--label-2); }
+.ig-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.ig-row input { min-width: 0; }
+.ig-form .link-btn { justify-self: start; }
+.ig-row input { height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: var(--cell, #fff); color: var(--label); font: inherit; font-size: 16px; }
+.ig-row input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent, var(--label)); }

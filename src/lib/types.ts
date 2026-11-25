@@ -14,6 +14,7 @@ export type Me = {
     about: string;
     interests: string[];
     socials?: Socials; // optional handles, shown on the business card
+    igHandle?: string | null; // the Instagram account linked for the social tasks (0082), without @
     createdAt: number;
     verifiedAt: number | null;
     verifiedBy: string | null;

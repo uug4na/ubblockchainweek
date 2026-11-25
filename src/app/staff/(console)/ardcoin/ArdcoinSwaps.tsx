@@ -8,7 +8,7 @@ import { api } from "@/lib/me";
 import { site } from "@/data/site";
 
 type Swap = {
-  id: string; fullName: string; ardPhone: string; acoAddress: string; stars: number; coins: number;
+  id: string; fullName: string; ardPhone: string; acoAddress: string | null; stars: number; coins: number;
   status: "pending" | "sent" | "cancelled"; at: number; doneAt: number | null; pass: string; email: string; name: string;
 };
 type Data = { stock: number; left: number; swaps: Swap[] };
@@ -20,8 +20,8 @@ function csv(rows: Swap[]) {
     const s = String(v ?? "");
     return `"${(/^[=+\-@]/.test(s) ? "'" + s : s).replace(/"/g, '""')}"`;
   };
-  const head = ["Swap", "Full name", "ARD app phone", "ACO address", "ARDCoin", "Pass", "Email", "Swapped at", "Status"];
-  const body = rows.map((r) => [r.id, r.fullName, r.ardPhone, r.acoAddress, r.coins, r.pass, r.email, new Date(r.at).toISOString(), r.status].map(cell).join(","));
+  const head = ["Swap", "Full name", "ARD app phone", "ARDCoin", "Pass", "Email", "Swapped at", "Status"];
+  const body = rows.map((r) => [r.id, r.fullName, r.ardPhone, r.coins, r.pass, r.email, new Date(r.at).toISOString(), r.status].map(cell).join(","));
   return "﻿" + [head.map(cell).join(","), ...body].join("\r\n");
 }
 
@@ -79,7 +79,7 @@ function ArdcoinSwaps() {
   const needle = q.trim().toLowerCase();
   const shown = data.swaps.filter((s) =>
     (show === "all" || s.status === show) &&
-    (!needle || [s.fullName, s.ardPhone, s.acoAddress, s.pass, s.email, s.id].some((v) => v.toLowerCase().includes(needle))));
+    (!needle || [s.fullName, s.ardPhone, s.pass, s.email, s.id].some((v) => (v ?? "").toLowerCase().includes(needle))));
 
   return (
     <>
@@ -94,7 +94,7 @@ function ArdcoinSwaps() {
       </button>
 
       <div className="mx-tools">
-        <label className="cw-search"><Search size={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, phone, address, pass" aria-label="Find" />{q && <button className="icon-btn" aria-label="Clear" onClick={() => setQ("")}><X size={15} /></button>}</label>
+        <label className="cw-search"><Search size={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, phone, pass" aria-label="Find" />{q && <button className="icon-btn" aria-label="Clear" onClick={() => setQ("")}><X size={15} /></button>}</label>
         <div className="mx-chips">
           <button className={`chip-btn ${show === "pending" ? "is-on" : ""}`} onClick={() => setShow("pending")}>Waiting {pending.length}</button>
           <button className={`chip-btn ${show === "sent" ? "is-on" : ""}`} onClick={() => setShow("sent")}>Sent {live.length - pending.length}</button>
@@ -107,8 +107,8 @@ function ArdcoinSwaps() {
           <article className={`aco-row is-${s.status}`} key={s.id}>
             <div className="aco-row-main">
               <b>{s.fullName}</b>
-              <small>{s.ardPhone} · {s.pass} · {when(s.at)}</small>
-              <code>{s.acoAddress}</code>
+              <code>{s.ardPhone}</code>
+              <small>{s.pass} · {when(s.at)}</small>
             </div>
             {s.status === "pending" ? (
               <div className="aco-row-act">

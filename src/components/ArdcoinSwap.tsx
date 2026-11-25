@@ -1,7 +1,7 @@
 "use client";
 
 // ARDCoin swap (owner, 25 Nov 2026; supabase/migrations/0074_ardcoin_swap.sql): 1,000★ → 1,000 ARDCoin, once per
-// person, first 200. Attendees fill in their name, ARD app phone number and ACO address; ARD send the coins 7 days
+// person, first 200. Attendees fill in their name and the phone number registered in the ARD app (no ACO address since 0083); ARD send the coins 7 days
 // after the swap. Separate from the one merch swap.
 import { useEffect, useRef, useState } from "react";
 import { Check, CircleCheck, Star } from "lucide-react";
@@ -11,7 +11,7 @@ import { haptic } from "@/lib/haptics";
 import { useRemembered } from "@/lib/useRemembered";
 import { Skel } from "@/components/Skeleton";
 
-type Swap = { id: string; fullName: string; ardPhone: string; acoAddress: string; stars: number; coins: number; status: "pending" | "sent" | "cancelled"; at: number };
+type Swap = { id: string; fullName: string; ardPhone: string; acoAddress: string | null; stars: number; coins: number; status: "pending" | "sent" | "cancelled"; at: number };
 type State = { cost: number; coins: number; stock: number; left: number; mine: Swap | null };
 
 const n = (x: number) => x.toLocaleString("en-US");
@@ -22,7 +22,6 @@ export function ArdcoinSwap({ me }: { me: Me }) {
   const [form, setForm] = useState(false);
   const [name, setName] = useState(me.user.name ?? "");
   const [phone, setPhone] = useState("");
-  const [addr, setAddr] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const box = useRef<HTMLElement>(null);
@@ -45,14 +44,14 @@ export function ArdcoinSwap({ me }: { me: Me }) {
   const toGo = s.cost - me.balance;
   // the same rules the database checks (app_ardcoin_swap): Swap stays off until all three are filled in properly
   const tel = phone.replace(/[^\d+]/g, ""); // a country code is fine: 99112233 or +976 99112233
-  const filled = name.trim().length >= 3 && /^\+?\d{8,15}$/.test(tel) && /^[A-Za-z0-9]{6,64}$/.test(addr.replace(/\s/g, "")); // ARD's address format isn't fixed
+  const filled = name.trim().length >= 3 && /^\+?\d{8,15}$/.test(tel);
 
   async function swap(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const res = await api<Me & { ardcoin: State }>("/api/rpc/app_ardcoin_swap", { full_name: name, ard_phone: phone, aco_address: addr });
+      const res = await api<Me & { ardcoin: State }>("/api/rpc/app_ardcoin_swap", { full_name: name, ard_phone: phone });
       setMe(res);
       if (res.ardcoin) setS(res.ardcoin);
       else load(); // never let the card vanish: read the swap back if the reply didn't carry it
@@ -95,11 +94,7 @@ export function ArdcoinSwap({ me }: { me: Me }) {
             <label htmlFor="aco-phone">Phone number in the ARD app</label>
             <input id="aco-phone" value={phone} onChange={(e) => setPhone(e.target.value)} required inputMode="tel" placeholder="e.g. 99112233 or +976 99112233" maxLength={20} autoComplete="tel" />
           </div>
-          <div className="field">
-            <label htmlFor="aco-addr">ACO address from the ARD app</label>
-            <input id="aco-addr" value={addr} onChange={(e) => setAddr(e.target.value)} required placeholder="e.g. 140027097258" maxLength={80} spellCheck={false} autoCapitalize="off" autoCorrect="off" />
-          </div>
-          <p className="aco-note">{filled ? "" : "Fill in all three to swap. "}{n(s.cost)}★ leave your balance now. We send these details to ARD, and they transfer the ARDCoin 7 days later.</p>
+          <p className="aco-note">{filled ? "" : "Fill in both to swap. "}{n(s.cost)}★ leave your balance now. We send these details to ARD, and they transfer the ARDCoin 7 days later.</p>
           {error && <p className="form-error" role="alert">{error}</p>}
           <div className="aco-actions">
             <button type="button" className="aco-btn is-ghost" onClick={() => { setForm(false); setError(""); }} disabled={busy}>Cancel</button>
