@@ -253,6 +253,15 @@ export function PartnerWheel() {
     el.addEventListener("focusout", fdefer);
 
     measure(); paint();
+    // Reveal once (owner, 25 Nov: partners "load weird" on refresh): before this runs the cards sit in one pile, so the
+    // ring stays invisible (its space is already reserved) until it's placed and its logos are in, then fades in once.
+    // Never waits more than 800 ms for slow logos.
+    let shown = false;
+    const show = () => { if (shown) return; shown = true; measure(); paint(); el.classList.add("is-ready"); };
+    const pending = Array.from(el.querySelectorAll("img")).filter((im) => !im.complete)
+      .map((im) => new Promise<void>((ok) => { im.addEventListener("load", () => ok(), { once: true }); im.addEventListener("error", () => ok(), { once: true }); }));
+    Promise.all(pending).then(show);
+    const revealCap = setTimeout(show, 800);
     const ro = new ResizeObserver(() => { measure(); paint(); });
     ro.observe(el);
     el.addEventListener("pointerdown", down);
@@ -262,7 +271,7 @@ export function PartnerWheel() {
     el.addEventListener("wheel", wheel, { passive: false });
     el.addEventListener("keydown", key);
     return () => {
-      cancelAnimationFrame(raf); clearTimeout(wheelEnd); ro.disconnect();
+      cancelAnimationFrame(raf); clearTimeout(wheelEnd); clearTimeout(revealCap); ro.disconnect();
       clearInterval(auto); io.disconnect();
       el.removeEventListener("pointerenter", enter);
       el.removeEventListener("pointerleave", leave);

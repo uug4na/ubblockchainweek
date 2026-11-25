@@ -146,7 +146,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <>
               <TopStars n={me.balance} href={open.stars ? "/app/stars" : "/app/games"} />
             </>
-          ) : (
+          ) : status === "loading" ? null : (
             <Link href="/" className="back">Website</Link>
           )}
         </div>
@@ -155,8 +155,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="app-main">
         <div className="app-inner">
           <OfflineBar>Offline — showing your saved Passport. Check-ins and swaps need signal.</OfflineBar>
-          {/* keyed by route (and by the first sign-in check) so each screen fades in once it has something to show */}
-          <div key={status === "loading" ? `${screenKey(path)}:wait` : screenKey(path)} className="page-in">{children}</div>
+          {/* keyed by route only: a screen fades in once per navigation. While the Passport loads it shows a
+              skeleton (components/Skeleton), and the real content replaces it in place without a second fade. */}
+          <div key={screenKey(path)} className="page-in">{children}</div>
         </div>
       </main>
 

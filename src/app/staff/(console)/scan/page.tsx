@@ -2,24 +2,23 @@
 
 import { MerchArt } from "@/components/MerchArt";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BadgeCheck, CircleAlert, Gift, MapPin, Sparkles, Star, CircleCheck, PackageCheck, Ticket, ChevronDown, Check } from "lucide-react";
+import { CircleAlert, Gift, Sparkles, Star, CircleCheck, PackageCheck, Ticket, ChevronDown, Check } from "lucide-react";
 import { QrScanner } from "@/components/QrScanner";
 import { useStaff } from "@/components/StaffShell";
 import { api } from "@/lib/me";
 import { usePersisted } from "@/lib/store";
 import { can } from "@/lib/roles";
 import { site } from "@/data/site";
-import { merchById, seatById, DESK_STARS } from "@/data/rewards";
+import { merchById, seatById } from "@/data/rewards";
 import type { Attendee } from "@/lib/types";
 import { page } from "@/lib/base";
 import { haptic } from "@/lib/haptics";
 import { useMerchCatalog } from "@/lib/merchCatalog";
 
-// Check-in is self-service (attendees scan the entrance and session posters), so crew stations are:
-// Desk — backup check-in for anyone without a phone · Seats — event door · Merch — handover · Reward — give a reward by scanning a pass.
-type Station = "desk" | "seats" | "merch" | "reward";
-const stations: { id: Station; label: string; icon: typeof MapPin }[] = [
-  { id: "desk", label: "Desk", icon: MapPin },
+// There's no entrance check-in any more (owner, 25 Nov: signing up is the check-in), so crew stations are:
+// Seats · Merch — handover · Reward — give a reward by scanning a pass.
+type Station = "seats" | "merch" | "reward";
+const stations: { id: Station; label: string; icon: typeof Gift }[] = [
   { id: "seats", label: "Seats", icon: Ticket },
   { id: "merch", label: "Merch", icon: Gift },
   { id: "reward", label: "Reward", icon: Sparkles },
@@ -125,8 +124,8 @@ function MerchCard({ a, claim, scanned, busy, onCollect, onCancel, canCancel }: 
 export default function StaffScan() {
   useMerchCatalog();
   const me = useStaff();
-  const [saved, setStation] = usePersisted<string>("ubbw.staff.station", "desk");
-  const station: Station = stations.some((x) => x.id === saved) ? (saved as Station) : "desk";
+  const [saved, setStation] = usePersisted<string>("ubbw.staff.station", "merch");
+  const station: Station = stations.some((x) => x.id === saved) ? (saved as Station) : "merch";
   const [rewardId, setRewardId] = usePersisted<string>("ubbw.staff.reward", "");
   const [rewards, setRewards] = useState<Reward[] | null>(null);
   const [a, setA] = useState<Attendee | null>(null);
@@ -254,7 +253,6 @@ export default function StaffScan() {
               <div className="scan-hint">
                 <b>{stations.find((x) => x.id === station)?.label}</b>
                 <span>
-                  {station === "desk" && "For people without a phone."}
                   {station === "seats" && "Scan their Passport at the event door."}
                   {station === "merch" && "Scan their Passport (or an old claim QR)."}
                   {station === "reward" &&
@@ -275,10 +273,6 @@ export default function StaffScan() {
                 </div>
                 <span className="star-chip"><Star size={14} fill="currentColor" /> {a.balance}</span>
               </div>
-              <div className={`verify-note ${a.user.verifiedAt ? "is-ok" : ""}`}>
-                {a.user.verifiedAt ? <BadgeCheck size={18} /> : <CircleAlert size={18} />}
-                {a.user.verifiedAt ? `Checked in ${time(a.user.verifiedAt)} by ${a.user.verifiedBy}` : "Not checked in at the desk yet"}
-              </div>
 
               {showMerch ? (
                 live.length === 0 ? (
@@ -297,23 +291,12 @@ export default function StaffScan() {
                     />
                   ))
                 )
-              ) : station === "desk" ? (
-                a.user.verifiedAt ? (
-                  <p className="muted">Already checked in.</p>
-                ) : (
-                  <button className="btn btn-clay btn-lg wide" disabled={busy} onClick={() => act({ action: "verify" }, `${a.user.name} is checked in (+${DESK_STARS} stars).`)}>
-                    <BadgeCheck size={20} /> Check in &amp; welcome (+{DESK_STARS})
-                  </button>
-                )
               ) : (
-                reward &&
-                (!a.user.verifiedAt ? (
-                  <p className="form-error">They need to scan the entrance QR first (or check them in at Desk).</p>
-                ) : (
+                reward && (
                   <button className="btn btn-clay btn-lg wide" disabled={busy} onClick={give}>
                     <Sparkles size={20} /> Give “{reward.title}” (+{reward.stars})
                   </button>
-                ))
+                )
               )}
 
               {can(me, "lead") && (

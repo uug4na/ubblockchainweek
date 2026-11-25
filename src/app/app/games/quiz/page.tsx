@@ -9,6 +9,7 @@ import { api, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { clock, isPlayer, joinQuiz, secs, serverNow, startQuiz, useQuiz, type QuizMe, type QuizNow, type QuizRound } from "@/lib/quiz";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 const ENTRY_FALLBACK = 100;
 
@@ -114,7 +115,7 @@ export default function QuizPage() {
     if (status === "in") loadBoard();
   }, [status, loadBoard, solved, open, q?.me.points]);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Quiz Rush" lead="Sign in to play." />;
 
   const round = q?.round;

@@ -15,6 +15,7 @@ import { haptic } from "@/lib/haptics";
 import { useMerchCatalog } from "@/lib/merchCatalog";
 import { useNow } from "@/lib/time";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type Stock = Record<string, number>;
 
@@ -225,7 +226,7 @@ export default function MerchPage() {
   const [slide, setSlide] = useState(0);
   const rowRef = useRef<HTMLDivElement>(null);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Spend your stars" lead="Sign in to get merch." />;
 
   const list = merch.filter((m) => filter === "all" || (filter === "ours" ? m.by === OWN : m.by !== OWN));
@@ -331,7 +332,7 @@ export default function MerchPage() {
             <button className="icon-btn sheet-x" onClick={() => setPassOpen(false)} aria-label="Close"><X size={18} /></button>
             <div className="pass-sheet-qr"><QrCode value={cardQr(me.user.id)} size={220} label={`Pass code ${me.user.id}`} /></div>
             <b>{me.user.id}</b>
-            <p>Crew scan this at the event door and the merch desk.</p>
+            <p>Crew scan this at the merch desk.</p>
           </div>
         </div>,
         document.body,

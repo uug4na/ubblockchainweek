@@ -14,6 +14,7 @@ import { haptic } from "@/lib/haptics";
 import { uploadShot } from "@/lib/shots";
 import { useOpen } from "@/lib/open";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 const when = (ms: number) =>
   new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
@@ -168,6 +169,7 @@ function Invite({ me }: { me: Me }) {
 
 export default function StarsPage() {
   const open = useOpen();
+  if (open.loading && !open.stars) return <PageSkeleton />;
   return open.stars ? <StarsLive /> : <StarsSoon />;
 }
 
@@ -188,7 +190,7 @@ function StarsSoon() {
 function StarsLive() {
   const { status, me } = useMe();
   const watchTasks = useWatchTasks();
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Start earning stars" lead={`Sign up for your Passport and get ${DESK_STARS}★ straight away. Every session and social task adds up.`} />;
 
   const verified = !!me.user.verifiedAt;

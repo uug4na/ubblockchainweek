@@ -10,6 +10,7 @@ import { burstFrom } from "@/lib/burst";
 import type { Market } from "@/lib/types";
 import { site } from "@/data/site";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type Res = { min: number; max: number; markets: Market[] };
 
@@ -113,7 +114,7 @@ export default function PredictPage() {
     return () => clearInterval(t);
   }, [status, load]);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Predictions" lead="Get your Passport to stake stars on what happens during the week." />;
 
   const open = data?.markets.filter((m) => m.status === "open" || m.status === "closed") ?? [];

@@ -8,10 +8,10 @@ import { useMe, type Me } from "@/lib/me";
 import { merch, DESK_STARS, starsFor } from "@/data/rewards";
 import { StarChip } from "@/components/AppShell";
 import { InstallPrompt } from "@/components/Pwa";
-import { InPass } from "@/components/InPass";
+import { HomeSkeleton } from "@/components/Skeleton";
 import { HACK_DETAILS_PUBLIC, HACK_SECTION_OPEN } from "@/data/hackathon";
 import { useMerchCatalog } from "@/lib/merchCatalog";
-import { openFor, useOpen } from "@/lib/open";
+import { useOpen } from "@/lib/open";
 import { useNow } from "@/lib/time";
 import { useSaved } from "@/lib/saved";
 import { useEventPlaces } from "@/lib/eventPlaces";
@@ -52,19 +52,8 @@ function PassStatus({ me }: { me: Me }) {
         <Link href="/app/merch" className="btn btn-ghost">{mine.status === "reserved" ? "Show QR" : "Merch"}</Link>
       </section>
     );
-  // Merch is closed for now: no strip at all (owner, 18 Nov: "Your stars are saved" was unnecessary).
-  if (!openFor(me.user.email).merch) return null;
-  const next = merch.filter((m) => m.cost > me.balance).sort((a, b) => a.cost - b.cost)[0];
-  return (
-    <section className="pass-strip">
-      <StarChip n={me.balance} />
-      <div>
-        <b>{next ? `${next.cost - me.balance} more for the ${next.name.toLowerCase()}` : "You can afford anything on the shelf"}</b>
-        <span>{me.attended.length} session{me.attended.length === 1 ? "" : "s"}</span>
-      </div>
-      <Link href="/app/merch" className="btn btn-ghost">Merch</Link>
-    </section>
-  );
+  // No stars/merch strip on Home (owner, 18 Nov and again 25 Nov: "you can afford anything on the shelf" isn't wanted).
+  return null;
 }
 
 // Before the clock is read (first paint) the boxes are already there, so the card never jumps.
@@ -101,10 +90,15 @@ export default function AppHome() {
     .filter((s) => saved.ids.includes(s.id) && (now == null || sessionTime(s).end > now))
     .sort((a, b) => sessionTime(a).start - sessionTime(b).start);
 
+  // Owner, 25 Nov (screen recording): on refresh Home first drew the signed-out page (no name, "— days", "Soon"),
+  // then everything jumped. Wait for the Passport and the clock, in a skeleton of the same shape.
+  if (status === "loading" || now == null) return <HomeSkeleton />;
+
   return (
     <>
       <h1 className="app-h1 home-h1">Welcome to UB Blockchain Week{firstName ? `, ${firstName}` : ""}.</h1>
-      <InstallPrompt app="attendee" />
+      {/* floats above the tab bar: the browser only offers install a moment after load, so inline it pushed the page down */}
+      <div className="install-float"><InstallPrompt app="attendee" /></div>
 
       <section className="countdown">
         <IsoArt mini={stopwatchArt} width={150} className="countdown-art" />
@@ -136,7 +130,6 @@ export default function AppHome() {
       <div className="desk is-home">
       <div className="desk-main">
 
-      {me?.inToday && <div style={{ marginTop: 16 }}><InPass name={me.user.name} pass={me.user.id} since={me.inToday} /></div>}
       {me ? (
         <PassStatus me={me} />
       ) : status === "out" ? (
@@ -144,7 +137,7 @@ export default function AppHome() {
           <Star size={26} />
           <div>
             <b>Get your UB Blockchain Passport</b>
-            <span>Your door QR and stars</span>
+            <span>Your QR and stars</span>
           </div>
           <Link href="/app/profile" className="btn btn-clay">Get Passport</Link>
         </section>

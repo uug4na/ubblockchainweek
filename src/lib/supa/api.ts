@@ -80,8 +80,7 @@ export async function callApi(input: string, init: RequestInit = {}): Promise<Re
     if (s.kind === "user") return err("That's someone's personal pass — scan a session poster to check in.");
     if (s.kind === "claim") return err("That's a merch claim. Show it at the merch desk.");
     if (s.kind === "reward") return rpc("app_claim_reward", { reward_id: s.id, sig: s.sig });
-    if (s.kind === "entry") return rpc("app_enter", { day: s.day, sig: s.sig });
-    if (s.kind === "door") return rpc("app_enter_live", { w: s.w, sig: s.sig });
+    if (s.kind === "entry" || s.kind === "door") return err("There's no entrance check-in any more. Scan a session poster.");
     if (s.kind === "meet") return err("That's a live connect code — open it from Scan to connect.");
     // posters are locked to the event's place: the scan page sends where the phone is
     const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);

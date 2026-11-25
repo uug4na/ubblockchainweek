@@ -16,6 +16,7 @@ import { fireBurst } from "@/lib/burst";
 import type { Connection, MeetRules, Person } from "@/lib/types";
 import { site } from "@/data/site";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type Code = { code: string; refreshAt: number };
 type Conns = { shareEmail: boolean; connections: Connection[]; pendingOut: number; earned: number; rules: MeetRules };
@@ -219,7 +220,7 @@ export default function MeetPage() {
     return () => clearInterval(t);
   }, [status, load]);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Proof of Meet" lead="Get your Passport to start connecting with people at the week." />;
 
   const ready = !!me.user.verifiedAt;
@@ -235,7 +236,6 @@ export default function MeetPage() {
       <h1 className="app-h1">Proof of Meet</h1>
       <p className="app-sub">{list.length} met · {conns?.earned ?? 0}★ earned</p>
 
-      {!ready && <div className="notice-card"><p>Scan the entrance QR at the event first. Connections only count in person.</p></div>}
       {ready && me.user.interests.length === 0 && (
         <div className="notice-card"><Sparkles size={18} /><p>Pick what you&apos;re <Link href="/app/profile">here for</Link> to unlock the ×2 different-worlds bonus.</p></div>
       )}

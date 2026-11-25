@@ -10,6 +10,7 @@ import { haptic } from "@/lib/haptics";
 import { burstFrom } from "@/lib/burst";
 import { BONES, COMBOS, combo, type ShagaiRoll } from "@/data/shagai";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type State = { min: number; max: number; dailyLimit: number; usedToday: number; recent: ShagaiRoll[] };
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -70,7 +71,7 @@ export default function ShagaiPage() {
     }
   }
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Shagai" lead="Sign in to play." />;
 
   const min = data?.min ?? 10, max = data?.max ?? 100;

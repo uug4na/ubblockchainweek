@@ -23,7 +23,7 @@ export function fingerprint(str: string) {
 
 export const isOwner = (email?: string | null) => !!email && OWNERS.has(fingerprint(email.trim().toLowerCase()));
 
-export type Open = { stars: boolean; games: boolean; merch: boolean };
+export type Open = { stars: boolean; games: boolean; merch: boolean; loading?: boolean };
 
 export function openFor(email?: string | null): Open {
   const owner = isOwner(email);
@@ -31,7 +31,9 @@ export function openFor(email?: string | null): Open {
 }
 
 // What's open for whoever is signed in.
+// While the Passport is still loading we don't know yet, so `loading` lets a gate show a skeleton
+// instead of flashing "Coming soon" at the owner.
 export function useOpen(): Open {
-  const { me } = useMe();
-  return openFor(me?.user.email);
+  const { status, me } = useMe();
+  return { ...openFor(me?.user.email), loading: status === "loading" };
 }

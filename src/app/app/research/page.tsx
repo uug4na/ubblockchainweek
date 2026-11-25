@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supa/client";
 import { rcFinal, rcThemes } from "@/data/researchCall";
 import { Call, Final, Guidelines, ResearchTabs, type ResearchTab } from "./ResearchInfo";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 // Attendee app › Research: The Future of Money research conference (Эрдэм шинжилгээний хурал).
 // Team mode (owner, 24 Nov; 0069), like UB Hack: no team → Create a research team (name + topics) | Join with a code.
@@ -375,7 +376,7 @@ export default function ResearchPage() {
   // Call, Guidelines and Final need no sign-in (same as the Hackathon tabs)
   const info = tab === "call" ? <Call /> : tab === "guide" ? <Guidelines /> : tab === "final" ? <Final /> : null;
   if (info) return (<>{head}{info}</>);
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out") return (<>{head}<p className="app-sub">Sign in to create or join a research team.</p><AuthPanel /></>);
   if (!data) return (<>{head}{error ? <p className="form-error" role="alert">{error}</p> : <div className="panel" aria-busy="true" style={{ minHeight: 160 }} />}</>);
 

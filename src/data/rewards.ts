@@ -3,7 +3,7 @@
 
 import type { Session } from "./schedule";
 
-export const DESK_STARS = 100; // Register: the first entrance check-in, once
+export const DESK_STARS = 100; // Register: paid once at sign-up (0073); there's no entrance check-in
 export const REFERRAL_STARS = 0; // inviting a friend pays no stars; it earns the Ambassador achievement
 
 const byKind: Record<Session["kind"], number> = {

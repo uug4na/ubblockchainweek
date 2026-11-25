@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useStaff, staffNav, tabsFor, canOpen } from "@/components/StaffShell";
 
 const blurbs: Record<string, string> = {
-  "/staff/door": "Live entrance QR",
   "/staff/reviews": "Check and pay stars",
   "/staff/merch": "Stock and handovers",
+  "/staff/ardcoin": "Swap forms for ARD",
   "/staff/rewards": "Booth QRs for stars",
   "/staff/games": "Predictions and stats",
   "/staff/posters": "Print check-in QRs",
@@ -19,9 +19,9 @@ const blurbs: Record<string, string> = {
 };
 // One solid tile colour per destination, Settings-style.
 const tint: Record<string, string> = {
-  "/staff/door": "t-green",
   "/staff/reviews": "t-blue",
   "/staff/merch": "t-green",
+  "/staff/ardcoin": "t-lime",
   "/staff/rewards": "t-lime",
   "/staff/games": "t-magenta",
   "/staff/posters": "t-violet",

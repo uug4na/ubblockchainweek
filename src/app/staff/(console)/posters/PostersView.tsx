@@ -162,19 +162,6 @@ export function PostersView() {
       {error && <p className="form-error">{error}</p>}
       {todo > 0 && <p className="ev-todo no-print"><MapPinOff size={16} /> {todo} {todo === 1 ? "event has" : "events have"} no place pinned yet</p>}
       <div className="posters">
-        {origin && data?.entrance && (
-          <article className="poster is-entrance" key="entrance">
-            <IsoArt mini={printerArt} width={140} className="poster-art" />
-            <div className="poster-top"><span>{site.short}</span><span>Entrance</span></div>
-            <h2>Scan to come in</h2>
-            <p className="poster-when">{(() => { const d = days.find((x) => x.date === data.day); return d ? `${d.weekday} ${d.short} ${d.month} · ${d.label}` : data.day; })()} — today only</p>
-            <div className="poster-qr">
-              <QrCode value={`${window.location.origin}${page("/app/scan")}?c=${encodeURIComponent(data.entrance)}`} size={300} label="Entrance check-in QR" />
-            </div>
-            <p className="poster-cta"><Star size={18} fill="currentColor" /> Open the UBBW app → Scan, or use your phone camera</p>
-            <code className="poster-code">Show the green &ldquo;You&apos;re in&rdquo; screen at the door</code>
-          </article>
-        )}
         {origin &&
           data?.posters.map((p) => {
             const s = sessionById[p.sessionId];

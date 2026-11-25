@@ -9,6 +9,7 @@ import { api, setMe, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import type { Ticket } from "@/lib/types";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type State = { cost: number; dailyLimit: number; usedToday: number; unrevealed: Ticket[]; recent: Ticket[]; prizes: { label: string; kind: string }[] };
 
@@ -74,7 +75,7 @@ export default function ScratchPage() {
     }
   }
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Scratch card" lead="Sign in to play." />;
 
   const cost = data?.cost ?? 50;

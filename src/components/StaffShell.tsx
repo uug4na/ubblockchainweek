@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, ScanLine, Inbox, Gift, Printer, ChartColumn, Users, ShieldCheck, UserRound, Menu, Sparkles, Dices, DoorOpen, GraduationCap, Trophy, Medal, Megaphone } from "lucide-react";
+import { Home, ScanLine, Inbox, Gift, Printer, ChartColumn, Users, ShieldCheck, UserRound, Menu, Sparkles, Dices, Coins, GraduationCap, Trophy, Medal, Megaphone } from "lucide-react";
 import { Logo } from "./Toono";
 import { OfflineBar } from "./Pwa";
 import { api } from "@/lib/me";
@@ -20,11 +20,11 @@ export const canOpen = (who: { role: Role }, n: Item) => can(who, n.min, n.also)
 export const staffNav: Item[] = [
   { href: "/staff", label: "Home", icon: Home, min: "volunteer" },
   { href: "/staff/scan", label: "Scan", icon: ScanLine, min: "volunteer" },
-  { href: "/staff/door", label: "Door", icon: DoorOpen, min: "volunteer" },
   { href: "/staff/insights", label: "Insights", icon: ChartColumn, min: "admin" },
   { href: "/staff/attendees", label: "Attendees", icon: Users, min: "admin" },
   { href: "/staff/reviews", label: "Star tasks", icon: Inbox, min: "lead" },
   { href: "/staff/merch", label: "Merch", icon: Gift, min: "lead" },
+  { href: "/staff/ardcoin", label: "ARDCoin", icon: Coins, min: "lead" },
   { href: "/staff/rewards", label: "Rewards", icon: Sparkles, min: "lead" },
   { href: "/staff/games", label: "Games", icon: Dices, min: "lead" },
   { href: "/staff/leaderboard", label: "Leaderboard", icon: Medal, min: "lead" },
@@ -39,7 +39,7 @@ export const staffNav: Item[] = [
 // The phone tab bar: four or five thumbs-reach destinations per role, scan in the middle.
 export const tabsFor: Record<Role, string[]> = {
   reviewer: ["/staff/research", "/staff/account"],
-  volunteer: ["/staff", "/staff/door", "/staff/scan", "/staff/account"],
+  volunteer: ["/staff", "/staff/scan", "/staff/account"],
   lead: ["/staff", "/staff/reviews", "/staff/scan", "/staff/merch", "/staff/more"],
   admin: ["/staff", "/staff/insights", "/staff/scan", "/staff/attendees", "/staff/more"],
 };
