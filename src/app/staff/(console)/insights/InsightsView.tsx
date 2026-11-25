@@ -22,7 +22,6 @@ type Insights = {
   log: { id: string; staff: string; action: string; detail: string; at: number }[];
   generatedAt: number;
 };
-type Door = { door: { inToday: number; recent: { name: string; at: number; first: boolean }[] } };
 
 const tz = { timeZone: site.tz };
 const clock = (ms: number) => new Date(ms).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit", ...tz });
@@ -88,40 +87,16 @@ function More({ n, open, onToggle }: { n: number; open: boolean; onToggle: () =>
   return <button className="ins-more" onClick={onToggle}>{open ? "Show less" : `Show all (${n} more)`}</button>;
 }
 
-function DoorPanel() {
-  const { data } = usePolling<Door>("/api/staff", 10_000);
-  const recent = data?.door.recent.slice(0, 5) ?? [];
-  return (
-    <section className="panel door-panel">
-      <div className="panel-head"><h2>At the door</h2><span className="pill">live</span></div>
-      <p className="door-line"><span className="door-count">{data ? num(data.door.inToday) : "–"}</span> <span className="muted">in today</span></p>
-      {recent.length > 0 && (
-        <div className="ins-list">
-          {recent.map((r, i) => (
-            <div className="ins-row" key={i}>
-              <time>{time(r.at)}</time>
-              <span className="ins-main"><b>{r.name}</b></span>
-              <span className={`ins-tag ${r.first ? "is-new" : ""}`}>{r.first ? "first time" : "back"}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
 function Overview({ d }: { d: Insights }) {
   const t = d.totals;
   return (
     <>
-      <div className="kpis kpis-4 ins-kpis">
+      <div className="kpis kpis-3 ins-kpis">
         <div><Num n={t.accounts} /><span>registered</span></div>
-        <div><Num n={t.verified} /><span>checked in · {pct(t.verified, t.accounts)}%</span></div>
-        <div><Num n={t.activeToday} /><span>active today</span></div>
+                <div><Num n={t.activeToday} /><span>active today</span></div>
         <div><Num n={t.checkins} /><span>session check-ins</span></div>
       </div>
       <div className="staff-grid">
-        <DoorPanel />
         <section className="panel">
           <div className="panel-head"><h2>Stars</h2></div>
           <div className="shift ins-trio">

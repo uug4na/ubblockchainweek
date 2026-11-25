@@ -1,6 +1,6 @@
 "use client";
 
-// Crew → Merch → ARDCoin: everyone who swapped 1,000★ for ARDCoin (0074). Leads export the list for ARD, then mark
+// Crew → ARDCoin (/staff/ardcoin): everyone who swapped 1,000★ for ARDCoin (0074). Leads export the list for ARD, then mark
 // each one sent once ARD have transferred. Cancelling refunds the stars.
 import { useEffect, useState } from "react";
 import { Check, Download, Search, X } from "lucide-react";
@@ -25,7 +25,18 @@ function csv(rows: Swap[]) {
   return "﻿" + [head.map(cell).join(","), ...body].join("\r\n");
 }
 
-export function ArdcoinSwaps() {
+// The page: title + the list (leads and admins; the database refuses anyone else).
+export function ArdcoinView() {
+  return (
+    <>
+      <h1 className="app-h1">ARDCoin</h1>
+      <p className="app-sub">Swap form submissions. Export for ARD, then mark each one sent.</p>
+      <ArdcoinSwaps />
+    </>
+  );
+}
+
+function ArdcoinSwaps() {
   const [data, setData] = useState<Data | null>(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState("");

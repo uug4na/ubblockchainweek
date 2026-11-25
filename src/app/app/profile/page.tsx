@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, BadgeCheck, CalendarDays, Check, ChevronLeft, ChevronRight, Compass, LogOut, Mail, MessageCircle, QrCode as QrCodeIcon, ScanLine, SunMoon, UserRound, Wallet as WalletIcon } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
-import { InPass } from "@/components/InPass";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { cardQr } from "@/lib/codes";
@@ -25,6 +24,7 @@ import type { Chats } from "@/lib/types";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import { replayTour } from "@/components/AppTour";
 import { interestOptions } from "@/data/interests";
+import { PageSkeleton } from "@/components/Skeleton";
 
 
 function ProfileForm({ me, onSaved }: { me: Me; onSaved: () => void }) {
@@ -145,7 +145,7 @@ export default function ProfilePage() {
     const t = setTimeout(() => setNotice(""), 3000);
     return () => clearTimeout(t);
   }, [notice]);
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel />;
 
   const u = me.user;
@@ -197,7 +197,6 @@ export default function ProfilePage() {
   return (
     <>
       {notice && <p className="float-note" role="status"><Check size={16} /> {notice}</p>}
-      {me.inToday && <InPass name={u.name} pass={u.id} since={me.inToday} />}
 
       <div className="desk is-profile">
       <div className="desk-main">

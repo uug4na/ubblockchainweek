@@ -11,6 +11,7 @@ import { useMe } from "@/lib/me";
 import { withBase } from "@/lib/base";
 import { clock, isPlayer, serverNow, startQuiz, useQuiz } from "@/lib/quiz";
 import { gameOpen, SoonSheet } from "./soon";
+import { PageSkeleton } from "@/components/Skeleton";
 
 // A shagai (ankle bone) seen from its side: pinched in the middle, rounded knuckles at the ends,
 // the hollow on its face. Drawn on lucide's 24px grid so it sits with the other icons.
@@ -73,7 +74,7 @@ function LiveQuizCard() {
 export default function GamesPage() {
   const { status, me } = useMe();
   const [soon, setSoon] = useState<{ title: string; tone: string } | null>(null);
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Games for stars" lead="Sign in to play." />;
   const close = () => setSoon(null);
   return (

@@ -23,9 +23,9 @@ const steps: Step[] = [
   { icon: Sparkles, title: "Welcome to UBBW 2026", body: "A quick look at the attendee app. Five places, about 20 seconds." },
   { target: "home", icon: Home, title: "Home", body: "Your day at a glance: what's on now and what's next on the agenda." },
   { target: "agenda", icon: CalendarDays, title: "Agenda", body: "The whole week, day by day: time, title and place for every session." },
-  { target: "scan", icon: ScanLine, title: "Scan", body: "Point it at the entrance, session posters, reward stands and other attendees' Passports to check in, connect and earn stars." },
+  { target: "scan", icon: ScanLine, title: "Scan", body: "Point it at session posters, reward stands and other attendees' Passports to check in, connect and earn stars." },
   { target: "stars", icon: Star, title: "Stars", body: "Earn stars, play games and swap them for merch. Opening closer to the week." },
-  { target: "profile", icon: QrCode, title: "Your UB Blockchain Passport", body: "It lives here. Open Profile and show the QR at the door and the merch desk. Your messages and this guide are here too." },
+  { target: "profile", icon: QrCode, title: "Your UB Blockchain Passport", body: "It lives here. Open Profile and show the QR at the merch desk. Your messages and this guide are here too." },
 ];
 
 const seen = (id: string) => { try { return localStorage.getItem(SEEN(id)) === "1"; } catch { return false; } };

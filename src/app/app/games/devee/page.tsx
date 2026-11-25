@@ -9,6 +9,7 @@ import { AuthPanel } from "@/components/AuthPanel";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { withBase } from "@/lib/base";
 import type { FlappyStats } from "@/games/flappy/types";
+import { PageSkeleton } from "@/components/Skeleton";
 
 // Devee: Ardcoin's flappy-bird game (github.com/batotgon602/FlappyBird), played full screen. Phaser needs the
 // browser, so the game loads only on the phone.
@@ -62,7 +63,7 @@ export default function DeveePage() {
 
   const exit = useCallback(() => setPlaying(false), []);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Devee" lead="Sign in to play." />;
 
   if (playing)

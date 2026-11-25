@@ -224,7 +224,7 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     id: "invite", label: "Ambassador", icon: UserPlus, ...inv, at: at.invited,
     note: inv.done ? `${b.invited} friend${b.invited === 1 ? "" : "s"} came` : "Bring a friend",
     about: inv.done ? `${b.invited} ${b.invited === 1 ? "person" : "people"} you invited came to UB Blockchain Week.` : "Bring your friends to UB Blockchain Week.",
-    how: "Share your invite link. It counts when a friend who signed up with it checks in at the entrance.",
+    how: "Share your invite link. It counts when a friend signs up with it.",
     link: !inv.done && open.stars ? { href: "/app/stars", label: "Get your invite link" } : undefined,
   });
   return list;

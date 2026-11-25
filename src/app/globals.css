@@ -3834,6 +3834,11 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .pwheel-stage { position: relative; height: calc(var(--pw-card) + 20px); perspective: 900px; perspective-origin: 50% 50%; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; outline: none; }
 .pwheel-stage.is-dragging { cursor: grabbing; }
 .pwheel-ring { position: absolute; inset: 0; transform-style: preserve-3d; transform: translateZ(calc(var(--pw-r, 300px) * -1)); }
+/* hidden until the wheel has placed the cards and the logos are in (PartnerWheel `is-ready`), then one fade; space stays reserved.
+   The fade is on the stage, not the ring: opacity below 1 on the preserve-3d ring flattens it, so it drew small, then popped. */
+.pwheel-stage { opacity: 0; transition: opacity .35s var(--ease-out, ease-out); }
+.pwheel-stage.is-ready { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .pwheel-stage { transition: none; } }
 .pwheel-card { --w: var(--pw-card); position: absolute; left: 50%; top: 10px; width: var(--w); height: var(--pw-card); margin-left: calc(var(--w) / -2);
   display: flex; flex-direction: column; justify-content: space-between; padding: 12px; border-radius: var(--r); background: var(--cell); color: var(--label);
   backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform, filter, opacity; -webkit-tap-highlight-color: transparent; }
@@ -4118,21 +4123,35 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .ach-bonus-stars { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: var(--label); }
 .ach-bonus.is-done .ach-bonus-stars { color: var(--label-2); }
 
-/* ARDCoin swap on Spend (0074): one quiet card, the coin mark is the only colour */
-.aco { margin: 16px 0 20px; padding: 16px; border-radius: var(--r, 14px); background: var(--fill); display: grid; gap: 14px; }
-.aco-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
-.aco-mark { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: #000; color: #a4e77f; }
-.aco-head b { display: block; font-size: 17px; color: var(--label); }
-.aco-head small, .aco-done small { display: block; font-size: 13px; color: var(--label-2); overflow-wrap: anywhere; }
-.aco-left { font-size: 13px; font-weight: 600; color: var(--label-2); white-space: nowrap; }
-.aco-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.aco-togo { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; color: var(--label-2); }
-.aco-togo.is-ready { color: var(--label); font-weight: 600; }
+/* ARDCoin airdrop card on Spend (0074): Ardcoin's own look — black, the mark large and faint behind, brand lime #a4e77f.
+   No gradients or glows; the brand mark is the only decoration. Same in light and dark themes. */
+.aco { --lime: #a4e77f; position: relative; overflow: hidden; isolation: isolate; margin: 16px 0 20px; padding: 18px 18px 16px; border-radius: 18px; background: #050505; color: #fff; display: grid; gap: 4px; }
+.aco-bg { position: absolute; z-index: -1; right: -70px; bottom: -86px; width: 280px; height: 272px; color: var(--lime); opacity: .09; transform: rotate(-12deg); pointer-events: none; }
+.aco-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.aco-mark { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: var(--lime); color: #050505; }
+.aco-tag { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--lime); }
+.aco-left { margin-left: auto; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, .08); font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .8); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.aco-amount { display: flex; align-items: baseline; gap: 8px; line-height: 1; }
+.aco-amount b { font-size: 44px; font-weight: 800; letter-spacing: -.02em; color: var(--lime); font-variant-numeric: tabular-nums; }
+.aco-amount span { font-size: 18px; font-weight: 700; color: #fff; }
+.aco-sub { margin: 6px 0 12px; font-size: 13px; color: rgba(255, 255, 255, .6); }
+.aco-foot { display: grid; gap: 8px; }
+.aco-meter { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.aco-meter span { display: block; height: 100%; width: calc(var(--p) * 100%); border-radius: inherit; background: var(--lime); }
+.aco-togo { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: rgba(255, 255, 255, .7); font-variant-numeric: tabular-nums; }
+.aco-btn { width: 100%; min-height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: var(--lime); color: #050505; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .12s ease, opacity .15s ease; }
+.aco-btn:active:not(:disabled) { transform: scale(.98); }
+.aco-btn:disabled { opacity: .35; cursor: default; }
+.aco-btn.is-ghost { background: rgba(255, 255, 255, .08); color: #fff; }
 .aco-form { display: grid; gap: 12px; }
-.aco-note { margin: 0; font-size: 13px; color: var(--label-2); }
-.aco-actions { display: flex; justify-content: flex-end; gap: 8px; }
-.aco-done { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; color: var(--label); }
-.aco-done b { display: block; font-size: 15px; }
+.aco .field label { color: rgba(255, 255, 255, .8); }
+.aco .field input { background: rgba(255, 255, 255, .08); color: #fff; }
+.aco .field input::placeholder { color: rgba(255, 255, 255, .35); }
+.aco .field input:focus { box-shadow: 0 0 0 2px var(--lime); }
+.aco-note { margin: 0; font-size: 13px; color: rgba(255, 255, 255, .6); }
+.aco-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+.aco-success { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: rgba(164, 231, 127, .12); color: var(--lime); }
+.aco-success b { display: block; font-size: 15px; color: #fff; }
 .aco-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
 .aco-sum span { padding: 12px; border-radius: var(--r, 14px); background: var(--fill); }
 .aco-sum b { display: block; font-size: 22px; color: var(--label); font-variant-numeric: tabular-nums; }
@@ -4146,3 +4165,23 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .aco-row-act { display: grid; gap: 6px; }
 .aco-row-state { font-style: normal; font-size: 13px; color: var(--label-2); white-space: nowrap; }
 @media (max-width: 560px) { .aco-row { grid-template-columns: 1fr; } .aco-row-act { grid-template-columns: 1fr 1fr; } }
+
+/* Loading skeletons (components/Skeleton.tsx): blocks in the shape of the content, a slow subtle sweep, no layout jump */
+.skel { display: block; background: var(--fill-2, rgba(120, 120, 128, .14)); background-image: linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .06) 50%, transparent 100%); background-size: 200% 100%; background-repeat: no-repeat; animation: skel-sweep 1.4s ease-in-out infinite; border-radius: 6px; }
+@keyframes skel-sweep { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+.skel-page { padding-top: 4px; }
+.skel-rows { display: grid; gap: 10px; margin-top: 14px; }
+.aco.is-loading { min-height: 200px; gap: 10px; }
+.aco.is-loading .skel { background-color: rgba(255, 255, 255, .07); }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; background-image: none; } }
+
+.skel-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+/* Install bar on Home floats above the tab bar (no layout shift when the browser offers install late) */
+.install-float:empty { display: none; }
+.install-float { position: fixed; z-index: 29; left: 12px; right: 12px; bottom: calc(96px + env(safe-area-inset-bottom)); animation: install-up .3s var(--ease-out, ease-out) backwards; }
+.install-float .install { margin: 0; }
+@keyframes install-up { from { opacity: 0; transform: translateY(12px); } }
+@media (min-width: 861px) { .install-float { left: auto; right: 24px; bottom: 24px; width: 380px; } }
+@media (prefers-reduced-motion: reduce) { .install-float { animation: none; } }
+/* room under the page while the floating install bar shows, so nothing stays hidden behind it */
+.app-inner:has(.install-float .install) { padding-bottom: 92px; }

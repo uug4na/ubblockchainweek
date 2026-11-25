@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CircleCheck, CircleAlert, UserPlus, Star, Handshake } from "lucide-react";
 import { getSpot } from "@/lib/geo";
 import { QrScanner } from "@/components/QrScanner";
-import { InPass } from "@/components/InPass";
 import { AuthPanel } from "@/components/AuthPanel";
 import { api, setMe, useMe, type Me } from "@/lib/me";
 import { useContacts } from "@/lib/store";
@@ -14,6 +13,7 @@ import { sessionById } from "@/data/schedule";
 import { page } from "@/lib/base";
 import { haptic } from "@/lib/haptics";
 import { fireBurst } from "@/lib/burst";
+import { PageSkeleton } from "@/components/Skeleton";
 
 const PENDING = "ubbw.pendingScan";
 
@@ -21,7 +21,6 @@ type Person = { id: string; name: string; handle: string; about: string; interes
 type Result =
   | { kind: "checkin"; title: string; room: string; stars: number; already: boolean }
   | { kind: "person"; person: Person }
-  | { kind: "entry"; at: number; stars: number }
   | { kind: "meet"; person: Person; code: { id: string; w: number; sig: string }; connected: boolean }
   | { kind: "met"; person: Person; status: "requested" | "connected"; stars?: number; bonus?: boolean }
   | { kind: "error"; message: string };
@@ -42,6 +41,8 @@ export default function ScanPage() {
       try {
         if (!scanned) throw new Error("That isn't a UBBW code. Look for the toono posters at each room's door.");
         if (scanned.kind === "claim") throw new Error("That's a merch claim — show it at the merch desk.");
+        // owner, 25 Nov: there's no entrance check-in any more (signing up is the check-in)
+        if (scanned.kind === "entry" || scanned.kind === "door") throw new Error("There's no entrance check-in any more. Scan a session poster.");
         if (scanned.kind === "meet") {
           const r = await api<{ person: Person; connected: boolean }>("/api/rpc/app_meet_peek", { pass_code: scanned.id, w: scanned.w, sig: scanned.sig });
           setResult({ kind: "meet", person: r.person, code: { id: scanned.id, w: scanned.w, sig: scanned.sig }, connected: r.connected });
@@ -59,12 +60,7 @@ export default function ScanPage() {
         const spot = scanned.kind === "event" ? await getSpot() : null;
         const res = await api<Me & { result: { session?: string; reward?: string; entry?: boolean; title?: string; stars: number; already: boolean; at?: number } }>("/api/me/checkin", { code: text, ...spot });
         setMe(res);
-        if (res.result.entry) {
-          setResult({ kind: "entry", at: res.result.at ?? Date.now(), stars: res.result.stars });
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          if (res.result.stars > 0) haptic.reward();
-          else haptic.success();
-        } else if (res.result.reward) {
+        if (res.result.reward) {
           setResult({ kind: "checkin", title: res.result.title ?? "Reward", room: "Reward", stars: res.result.stars, already: res.result.already });
           if (res.result.stars > 0) haptic.reward();
           else haptic.success();
@@ -128,7 +124,7 @@ export default function ScanPage() {
     }
   }
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out")
     return (
       <AuthPanel
@@ -143,17 +139,10 @@ export default function ScanPage() {
     <>
       <span className="eyebrow">Scan</span>
       <h1 className="app-h1">Point it at a poster.</h1>
-      <p className="app-sub">Entrance, session posters, rewards, friends.</p>
+      <p className="app-sub">Session posters, rewards, friends.</p>
 
-      {/* At the door the green screen is the whole point — show it first, camera tucked away. */}
-      {result?.kind === "entry" && me && (
-        <div className="entry-view">
-          <InPass name={me.user.name} pass={me.user.id} since={result.at} welcomeStars={result.stars} />
-          <button className="btn btn-ghost wide" onClick={() => setResult(null)}>Done — scan something else</button>
-        </div>
-      )}
-      <div className="scan-layout" style={result?.kind === "entry" ? { display: "none" } : undefined}>
-        <QrScanner onResult={handle} busy={busy} manualLabel="Or type the code" manualPlaceholder="UBBW:E:…" />
+      <div className="scan-layout">
+        <QrScanner onResult={handle} busy={busy} manualLabel="Or type the code" manualPlaceholder="UBBW:…" />
 
         <div aria-live="polite">
           {result?.kind === "meet" && (

@@ -208,9 +208,8 @@ export default function StaffHome() {
       {lead && <LiveRewards />}
 
       {data?.admin && (
-        <Link href="/staff/insights" className="kpis kpis-4 kpis-link">
-          <div><b>{data.door?.inToday ?? "–"}</b><span>in today</span></div>
-          <div><b>{data.admin.verified}</b><span>checked in</span></div>
+        <Link href="/staff/insights" className="kpis kpis-3 kpis-link">
+          <div><b>{data.admin.verified}</b><span>registered</span></div>
           <div><b>{data.admin.checkinsToday}</b><span>session check-ins today</span></div>
           <div><b>{data.admin.crewOnline}</b><span>crew online</span></div>
         </Link>

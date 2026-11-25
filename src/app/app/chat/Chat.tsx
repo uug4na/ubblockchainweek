@@ -21,6 +21,7 @@ import { site } from "@/data/site";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
 import type { ChatMsg, Chats, HackThread, Person, TeamInboxRow, TeamMsg, TeamThread } from "@/lib/types";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 const time = (ms: number) => {
   const d = new Date(ms);
@@ -752,7 +753,7 @@ export function Chat() {
   const { status, me } = useMe();
   const q = useSearchParams();
   const pass = q.get("p");
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Messages" lead="Get your Passport to chat with the people you meet." />;
   if (q.get("g") === "hack" && HACK_SECTION_OPEN) return <HackGroup />;
   if (q.get("g") === "research") return <HackGroup key="research" room="research" />;

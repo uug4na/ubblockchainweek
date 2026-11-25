@@ -11,6 +11,7 @@ import { InfoTabs, Learn, Prizes, Timeline, type InfoTab } from "./HackInfo";
 import { HACK_DETAILS_PUBLIC } from "@/data/hackathon";
 import { HACK_BUCKET, stepOf, steps, tracks, trackNames, type Hack, type Team, type Track } from "@/lib/hack";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 // Attendee app › Hackathon (UB Hack). One overview screen; each part opens on its own screen, like Profile:
 //   no team → Create a team | Join with a code
@@ -366,7 +367,7 @@ export default function HackPage() {
   const info = tab === "timeline" ? <Timeline /> : !HACK_DETAILS_PUBLIC ? null : tab === "prizes" ? <Prizes /> : tab === "learn" ? <Learn /> : null;
   if (view === "home" && info) return (<><h1 className="app-h1">Hackathon.</h1>{tabs}{info}</>);
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out") return (<><h1 className="app-h1">Hackathon.</h1>{tabs}<p className="app-sub">Sign in to create or join a team.</p><AuthPanel /></>);
   if (!data) return (<><h1 className="app-h1">Hackathon.</h1>{error ? <p className="form-error" role="alert">{error}</p> : <div className="panel" aria-busy="true" style={{ minHeight: 160 }} />}</>);
 

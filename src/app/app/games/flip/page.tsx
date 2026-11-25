@@ -9,6 +9,7 @@ import { api, setMe, useMe, type Me } from "@/lib/me";
 import { haptic } from "@/lib/haptics";
 import { burstFrom } from "@/lib/burst";
 import { useRemembered } from "@/lib/useRemembered";
+import { PageSkeleton } from "@/components/Skeleton";
 
 type Side = "heads" | "tails";
 type Flip = { id: string; pick: Side; result: Side; stake: number; won: boolean; at: number };
@@ -67,7 +68,7 @@ export default function CoinFlipPage() {
     }
   }
 
-  if (status === "loading") return null;
+  if (status === "loading") return <PageSkeleton />;
   if (status === "out" || !me) return <AuthPanel title="Coin flip" lead="Sign in to play." />;
 
   const min = data?.min ?? 10, max = data?.max ?? 100;
