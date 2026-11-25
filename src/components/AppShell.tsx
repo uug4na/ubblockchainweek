@@ -17,10 +17,10 @@ import { PassportSetup } from "./PassportSetup";
 
 // what the first-run guide (AppTour) points at
 const tourKey: Record<string, string> = { "/app": "home", "/app/agenda": "agenda", "/app/scan": "scan", "/app/stars": "stars", "/app/games": "stars", "/app/profile": "profile" };
-import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
+import { useOpen, type Open } from "@/lib/open";
 
 // PC sidebar, grouped by what people come to do (hackathon and research participants work on laptops)
-const side = [
+const sideFor = (open: Open) => [
   { group: "The week", items: [
     { href: "/app", label: "Home", icon: Home },
     { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
@@ -31,9 +31,9 @@ const side = [
     { href: "/app/research", label: "Research", icon: GraduationCap },
   ] },
   { group: "Stars", items: [
-    ...(STARS_OPEN ? [{ href: "/app/stars", label: "Earn stars", icon: Star }] : []),
+    ...(open.stars ? [{ href: "/app/stars", label: "Earn stars", icon: Star }] : []),
     { href: "/app/games", label: "Games", icon: Dices },
-    ...(MERCH_OPEN ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
+    ...(open.merch ? [{ href: "/app/merch", label: "Spend stars", icon: Gift }] : []),
   ] },
   { group: "You", items: [
     { href: "/app/chat", label: "Messages", icon: MessageCircle },
@@ -41,11 +41,11 @@ const side = [
   ] },
 ];
 
-const tabs = [
+const tabsFor = (open: Open) => [
   { href: "/app", label: "Home", icon: Home, also: ["/app/hack", "/app/research"] },
   { href: "/app/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/app/scan", label: "Scan", icon: ScanLine },
-  { href: STARS_OPEN ? "/app/stars" : "/app/games", label: "Stars", icon: Star, also: ["/app/stars", "/app/merch", "/app/games"] },
+  { href: open.stars ? "/app/stars" : "/app/games", label: "Stars", icon: Star, also: ["/app/stars", "/app/merch", "/app/games"] },
   { href: "/app/profile", label: "Profile", icon: UserRound, also: ["/app/chat"] },
 ];
 
@@ -101,6 +101,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // trailingSlash export: "/app/" and "/app" are the same page
   const path = usePathname().replace(/(.)\/$/, "$1");
   const { status, me } = useMe();
+  const open = useOpen();
+  const side = sideFor(open);
+  const tabs = tabsFor(open);
   const scrolled = useScrolled();
   const game = path.startsWith("/app/games"); // the games switch the whole app into game mode
   const isActive = (href: string, also?: string[]) =>
@@ -141,7 +144,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="app-top-end">
           {me ? (
             <>
-              <TopStars n={me.balance} href={STARS_OPEN ? "/app/stars" : "/app/games"} />
+              <TopStars n={me.balance} href={open.stars ? "/app/stars" : "/app/games"} />
             </>
           ) : (
             <Link href="/" className="back">Website</Link>

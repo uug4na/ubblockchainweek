@@ -1,29 +1,32 @@
 // Stars: how attendees earn them and what they can swap them for.
-// TODO: confirm amounts, merch, partners and stock before launch.
+// Amounts from the owner's sheet "UBBW 2026 · Stars" (24 Nov 2026). Keep in step with supabase/migrations/0072_stars_reset.sql.
 
-import { sessions, sessionTime, type Session } from "./schedule";
-import { days, site } from "./site";
+import type { Session } from "./schedule";
 
-export const DESK_STARS = 50; // first entrance check-in
-export const REFERRAL_STARS = 50; // when a friend you invited checks in at the entrance
+export const DESK_STARS = 100; // Register: the first entrance check-in, once
+export const REFERRAL_STARS = 0; // inviting a friend pays no stars; it earns the Ambassador achievement
 
 const byKind: Record<Session["kind"], number> = {
   Keynote: 20,
   Talk: 20,
   Panel: 20,
   Fireside: 20,
-  Workshop: 30,
-  Social: 15,
+  Workshop: 100,
+  Social: 20,
   Hack: 40,
 };
-export const starsFor = (s: Pick<Session, "kind">) => byKind[s.kind];
+const isAma = (s: Pick<Session, "title">) => s.title.startsWith("AMA ");
+export const starsFor = (s: Pick<Session, "kind" | "title">) => (isAma(s) ? 40 : byKind[s.kind]);
+// Seats aren't sold any more (owner, 24 Nov): the first 30 to check in at each AMA and Workshop earn its stars.
+export const FIRST_N = 30;
+export const firstNFor = (s: Pick<Session, "kind" | "title">) => (isAma(s) || s.kind === "Workshop" ? FIRST_N : null);
 
 export type SocialTask = {
   id: string;
   title: string;
   body: string;
   stars: number;
-  platform: "Instagram" | "Facebook" | "X" | "Telegram" | "Live";
+  platform: "Instagram" | "Facebook" | "Threads" | "X" | "Telegram" | "Live";
   href: string;
   cta: string;
   // Every task is proved with a screenshot and paid when a lead approves it ("auto" is no longer used).
@@ -32,8 +35,21 @@ export type SocialTask = {
   proofPlaceholder: string;
 };
 
-// Placeholder social tasks were removed 2026-11-17; crew add real ones in the staff app. Backup: .data/backup-2026-11-17-merch-and-social-tasks.json
-export const socialTasks: SocialTask[] = [];
+// Social tasks, 100 stars each, once (owner's sheet, 24 Nov). The same ids are rows in ubbw.tasks (0072), which is
+// what pays them when the crew approve the screenshot. Follow tasks = the "Follower" achievement (all four),
+// like-comment = "Like & comment".
+const IG = "https://www.instagram.com/ubblockchainweek";
+const task = (id: string, platform: SocialTask["platform"], title: string, body: string, href: string, cta: string): SocialTask =>
+  ({ id, platform, title, body, href, cta, stars: 100, verify: "review", proofLabel: "Your username", proofPlaceholder: "@username" });
+export const socialTasks: SocialTask[] = [
+  task("follow-instagram", "Instagram", "Follow UBBW on Instagram", "Follow @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
+  task("follow-facebook", "Facebook", "Follow UBBW on Facebook", "Follow the UB Blockchain Week page, then send a screenshot.", "https://www.facebook.com/ubblockchainweek/", "Open Facebook"),
+  task("follow-threads", "Threads", "Follow UBBW on Threads", "Follow @ubblockchainweek, then send a screenshot.", "https://www.threads.com/@ubblockchainweek", "Open Threads"),
+  task("follow-x", "X", "Follow UBBW on X", "Follow @UBBlockchainWk, then send a screenshot.", "https://x.com/UBBlockchainWk", "Open X"),
+  task("like-comment", "Instagram", "Like and comment", "Like a UBBW post and leave a comment, then send a screenshot.", IG, "Open Instagram"),
+  task("post-ubbw", "Instagram", "Post about UBBW", "Post about UB Blockchain Week and tag @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
+  task("story-ubbw", "Instagram", "Share a story", "Share UBBW in your story and tag @ubblockchainweek, then send a screenshot.", IG, "Open Instagram"),
+];
 
 export const taskById = Object.fromEntries(socialTasks.map((t) => [t.id, t]));
 
@@ -60,8 +76,8 @@ export const merch: MerchItem[] = [];
 export const merchById = Object.fromEntries(merch.map((m) => [m.id, m]));
 // One merch swap per person, in total — limited stock reaches more people.
 
-// Event seats bought with stars. One per person per event, as many events as they can afford.
-// Mirrors supabase/migrations/0022_star_seats.sql, which is what actually charges and closes them.
+// Event seats used to be bought with stars (0022). Owner, 24 Nov: no more seats; the first 30 to check in at each
+// AMA and Workshop earn its stars instead (FIRST_N above). The types stay for the crew's old seat screens.
 export type Seat = {
   id: string;
   name: string;
@@ -76,26 +92,8 @@ export type Seat = {
 };
 export type SeatGroup = { id: "ama" | "workshop" | "investor"; title: string; seats: Seat[] };
 
-export const AMA_COST = 1000;
-export const WORKSHOP_COST = 1500;
-export const INVESTOR_COST = 2000;
-
-const INVESTOR_DATE = "2026-12-05";
-const seat = (id: string, name: string, day: string, start: string, time: string, cost: number, stock: number, closesAt: number): Seat => {
-  const d = days.find((x) => x.date === day);
-  return { id, name, cost, stock, weekday: d?.weekday ?? "", date: d?.short ?? day, month: d?.month ?? "", time, when: `${d?.weekday} ${d?.short} ${d?.month} · ${start}`, closesAt };
-};
-const sessionSeats = (match: (s: Session) => boolean, cost: number, stock: number): Seat[] =>
-  sessions.filter(match).map((s) => seat(`seat-${s.id}`, s.title, s.day, s.start, `${s.start}–${s.end}`, cost, stock, sessionTime(s).start));
-
-const investorName = days.find((d) => d.date === INVESTOR_DATE)?.label ?? "Investor Nation";
-
-export const seatGroups: SeatGroup[] = [
-  { id: "ama", title: "AMA", seats: sessionSeats((s) => s.title.startsWith("AMA "), AMA_COST, 100) },
-  { id: "workshop", title: "Workshop", seats: sessionSeats((s) => s.kind === "Workshop", WORKSHOP_COST, 40) },
-  { id: "investor", title: investorName, seats: [seat("seat-investor", investorName, INVESTOR_DATE, "All day", "All day", INVESTOR_COST, 100, new Date("2026-12-06T00:00:00+08:00").getTime())] },
-];
+export const seatGroups: SeatGroup[] = [];
 
 export const seats: Seat[] = seatGroups.flatMap((g) => g.seats);
 
-export const seatById = Object.fromEntries(seats.map((s) => [s.id, s]));
+export const seatById: Record<string, Seat> = Object.fromEntries(seats.map((s) => [s.id, s]));

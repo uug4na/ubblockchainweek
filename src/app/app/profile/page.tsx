@@ -207,7 +207,7 @@ export default function ProfilePage() {
         <h1>{u.name}</h1>
         {u.about && <p>{u.about}</p>}
         <span className={`profile-badge ${u.verifiedAt ? "is-ok" : ""}`}>
-          {u.verifiedAt ? <><BadgeCheck size={14} /> Checked in</> : <><ScanLine size={14} /> Not checked in</>}
+          {u.verifiedAt ? <><BadgeCheck size={14} /> Registered</> : <><ScanLine size={14} /> Not registered</>}
         </span>
       </header>
 

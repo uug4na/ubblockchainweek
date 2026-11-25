@@ -11,7 +11,7 @@ import { InstallPrompt } from "@/components/Pwa";
 import { InPass } from "@/components/InPass";
 import { HACK_DETAILS_PUBLIC, HACK_SECTION_OPEN } from "@/data/hackathon";
 import { useMerchCatalog } from "@/lib/merchCatalog";
-import { MERCH_OPEN, STARS_OPEN } from "@/data/open";
+import { openFor, useOpen } from "@/lib/open";
 import { useNow } from "@/lib/time";
 import { useSaved } from "@/lib/saved";
 import { useEventPlaces } from "@/lib/eventPlaces";
@@ -33,10 +33,10 @@ function PassStatus({ me }: { me: Me }) {
       <section className="pass-strip is-todo">
         <ScanLine size={26} />
         <div>
-          <b>Check in at the door</b>
-          <span>Scan the entrance QR · +{DESK_STARS}★</span>
+          <b>Finish signing up</b>
+          <span>Get your Passport · +{DESK_STARS}★</span>
         </div>
-        <Link href="/app/scan" className="btn btn-primary">Scan</Link>
+        <Link href="/app/profile" className="btn btn-primary">Open</Link>
       </section>
     );
   const mine = me.claims.find((c) => c.status !== "cancelled" && c.source === "swap");
@@ -53,7 +53,7 @@ function PassStatus({ me }: { me: Me }) {
       </section>
     );
   // Merch is closed for now: no strip at all (owner, 18 Nov: "Your stars are saved" was unnecessary).
-  if (!MERCH_OPEN) return null;
+  if (!openFor(me.user.email).merch) return null;
   const next = merch.filter((m) => m.cost > me.balance).sort((a, b) => a.cost - b.cost)[0];
   return (
     <section className="pass-strip">
@@ -86,6 +86,7 @@ function Countdown({ now }: { now: number | null }) {
 export default function AppHome() {
   const now = useNow();
   const { status, me } = useMe();
+  const open = useOpen();
 
   const phase = now == null ? "loading" : now < start ? "before" : now > end ? "after" : "during";
   const live = now == null ? [] : sessions.filter((s) => { const t = sessionTime(s); return t.start <= now && now < t.end; });
@@ -153,8 +154,8 @@ export default function AppHome() {
       <div className="desk-rail">
       <div className="quick">
         <Link href="/app/scan"><ScanLine size={22} /><span>Scan<small>Posters</small></span></Link>
-        <Link href="/app/stars"><Star size={22} /><span>Earn stars<small>{STARS_OPEN ? "Tasks" : "Soon"}</small></span></Link>
-        <Link href="/app/merch"><Gift size={22} /><span>Merch<small>{MERCH_OPEN ? "Limited" : "Soon"}</small></span></Link>
+        <Link href="/app/stars"><Star size={22} /><span>Earn stars<small>{open.stars ? "Tasks" : "Soon"}</small></span></Link>
+        <Link href="/app/merch"><Gift size={22} /><span>Merch<small>{open.merch ? "Limited" : "Soon"}</small></span></Link>
       </div>
 
       {/* The two competitions, each its own section */}

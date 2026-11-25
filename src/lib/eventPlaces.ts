@@ -5,7 +5,7 @@ import { api } from "@/lib/me";
 import { lastSeen, remember } from "@/lib/lastSeen";
 
 // Where each event happens (set by crew in staff Posters). Loaded once per page visit and shared.
-export type EventPlace = { mode: "in_person" | "online" | "both"; name: string | null; lat: number | null; lng: number | null; stars?: number };  // stars: 0071
+export type EventPlace = { mode: "in_person" | "online" | "both"; name: string | null; lat: number | null; lng: number | null; stars?: number; firstN?: number | null };  // stars: 0071, firstN: 0072
 export type EventPlaces = Record<string, EventPlace>;
 
 let cache: Promise<EventPlaces> | null = null;

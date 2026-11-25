@@ -7,17 +7,21 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { BadgeCheck, ChevronRight, Lock, X } from "lucide-react";
-import { achievements, type Achievement, type Badges } from "@/data/badges";
+import { BadgeCheck, ChevronRight, Lock, Star, X } from "lucide-react";
+import { achievements, BONUS_NEEDS, BONUS_STARS, type Achievement, type Badges } from "@/data/badges";
+import { api, setMe, type Me } from "@/lib/me";
 import { HACK_SECTION_OPEN } from "@/data/hackathon";
-import { GAMES_PLAYABLE, STARS_OPEN } from "@/data/open";
+import { useOpen } from "@/lib/open";
 import { Medal3D } from "@/components/Medal3D";
 import { clipPath, lookFor } from "@/lib/medalShapes";
 
 // these also show as badges on the Passport (src/data/badges.ts → earned)
 const ON_PASSPORT = new Set(["speaker", "crew", "hack", "research", "events"]);
 const earnedOn = (ms?: number) => (ms ? new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Ulaanbaatar" }) : "");
-export const useAchievements = (b: Badges) => achievements(b, { hack: HACK_SECTION_OPEN, stars: STARS_OPEN, games: GAMES_PLAYABLE });
+export const useAchievements = (b: Badges) => {
+  const open = useOpen();
+  return achievements(b, { hack: HACK_SECTION_OPEN, stars: open.stars, games: open.games });
+};
 
 // the medal in its own shape and enamel (src/lib/medalShapes.ts), with a progress ring when it's earned by number.
 // Locked medals keep their shape in grey, so each one is recognisable before it's earned.
@@ -91,6 +95,7 @@ export function AchievementsSection({ b, holder }: { b: Badges; holder: string }
         <div className="ach-meter" aria-hidden="true"><span style={{ ["--p" as string]: got.length / list.length }} /></div>
         <small>Every medal you earn is yours to keep, on your Passport and profile.</small>
       </div>
+      <BonusCard list={list} taken={!!b.bonus} />
       {got.length > 0 && (
         <section className="ach" aria-label="Earned">
           <h2>Earned</h2>
@@ -105,6 +110,39 @@ export function AchievementsSection({ b, holder }: { b: Badges; holder: string }
       )}
       {open && createPortal(<AchievementSheet a={open} holder={holder} onClose={() => setOpen(null)} />, document.body)}
     </>
+  );
+}
+
+// Owner's sheet (24 Nov): earn the 11 in BONUS_NEEDS (not Crew, Early bird, Hackathon, Research, Speaker) and collect 1,000 stars, once
+function BonusCard({ list, taken }: { list: Achievement[]; taken: boolean }) {
+  const [got, setGot] = useState(taken);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const need = list.filter((a) => BONUS_NEEDS.includes(a.id));
+  const have = need.filter((a) => a.done).length;
+  const ready = have === need.length && need.length > 0;
+  async function collect() {
+    setBusy(true);
+    setError("");
+    try {
+      setMe(await api<Me>("/api/rpc/app_achievement_bonus", {}));
+      setGot(true);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className={`ach-bonus ${got || taken ? "is-done" : ""}`}>
+      <span className="ach-bonus-stars"><Star size={16} fill="currentColor" /> {BONUS_STARS.toLocaleString("en-US")}</span>
+      <div>
+        <b>{got || taken ? "Collected" : ready ? "Every achievement earned" : "Earn them all"}</b>
+        <small>{got || taken ? `${BONUS_STARS.toLocaleString("en-US")} stars for earning every achievement.` : `${have} of ${need.length} done. Crew, Early bird, Hackathon and Research don't count.`}</small>
+        {error && <small className="form-error" role="alert">{error}</small>}
+      </div>
+      {ready && !got && !taken && <button type="button" className="btn btn-primary" onClick={collect} disabled={busy}>{busy ? "…" : "Collect"}</button>}
+    </div>
   );
 }
 

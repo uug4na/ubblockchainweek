@@ -81,7 +81,7 @@ function SetupForm({ me }: { me: Me }) {
 }
 
 const uses = [
-  { icon: ScanLine, text: "Check in at the door" },
+  { icon: ScanLine, text: "Check in at sessions" },
   { icon: Gift, text: "Collect rewards at the merch desk" },
   { icon: UsersRound, text: "Swap contacts with people you meet" },
 ];
