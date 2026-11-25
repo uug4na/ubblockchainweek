@@ -35,7 +35,7 @@ export type Badges = {
   // the sheet's achievements (0072)
   workshops?: number; // workshops attended
   amas?: number; // AMAs attended
-  follows?: number; // follow tasks approved (of 4)
+  follows?: number; // the Instagram follow step approved (0080)
   engaged?: number; // like & comment task approved
   bonus?: boolean; // took the 1,000 stars for earning them all
   at?: Partial<Record<"speaker" | "crew" | "hack" | "research" | "events" | "checkedIn" | "online" | "connections" | "invited"
@@ -208,7 +208,7 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     id: "engaged", label: "Like & comment", icon: Heart, done: en, at: at.engaged,
     note: en ? "Liked and commented" : "Like and comment on a post",
     about: en ? "You liked and commented on a UBBW post." : "Show some love to a UBBW post.",
-    how: "Do the Like and Comment steps of the social tasks in Stars, with a screenshot each. It counts once the crew approve both.",
+    how: "Do the Like & comment step of the social tasks in Stars and send a screenshot. It counts once the crew approve it.",
     link: en ? undefined : toStars("Open Stars"),
   });
   const fo = counted(b.follows ?? 0, FOLLOW_TASKS);
