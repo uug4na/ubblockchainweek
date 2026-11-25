@@ -36,7 +36,7 @@ export type SocialTask = {
 };
 
 // Social tasks as one group (owner, 25 Nov 2026; supabase/migrations/0080_social_group.sql): no stars for a single
-// interaction. Four Instagram steps, each proved with its own screenshot and approved by the crew; when the last one is
+// interaction. Three Instagram steps (0084: follow · like & comment · story), each proved with its own screenshot and approved by the crew; when the last one is
 // approved the person gets SOCIAL_GROUP_STARS once. Step ids = rows in ubbw.tasks (stars 0) = ubbw.social_group().
 export const SOCIAL_GROUP_STARS = 100;
 const IG = "https://www.instagram.com/ubblockchainweek";
@@ -46,8 +46,7 @@ const step = (id: string, title: string, body: string, cta: string, href = SOCIA
   ({ id, platform: "Instagram", title, body, href, cta, stars: 0, verify: "review", proofLabel: "Your username", proofPlaceholder: "@username" });
 export const socialTasks: SocialTask[] = [
   step("follow-instagram", "Follow", "Follow @ubblockchainweek.", "Open Instagram", IG),
-  step("like-post", "Like the reel", "Like our UBBW reel.", "Open the reel"),
-  step("comment-post", "Comment", "Comment on our UBBW reel.", "Open the reel"),
+  step("like-comment", "Like & comment", "Like our UBBW reel and leave a comment.", "Open the reel"),
   step("story-ubbw", "Share in your story", "Share our UBBW reel in your story.", "Open the reel"),
 ];
 
