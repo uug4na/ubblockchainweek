@@ -80,6 +80,7 @@ export const LOOKS: Record<string, Look> = {
   workshops: { shape: "hexagon", ...C.magenta },
   amas: { shape: "octagon", ...C.green },
   engaged: { shape: "scallop", ...C.lime },
+  social: { shape: "scallop", ...C.lime }, // 0085: the one social achievement
   follows: { shape: "squircle", ...C.klein },
 };
 export const lookFor = (id: string): Look => LOOKS[id] ?? { shape: "circle", ...C.green };

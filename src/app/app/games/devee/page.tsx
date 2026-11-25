@@ -18,7 +18,7 @@ import { PageSkeleton } from "@/components/Skeleton";
 const PhaserGame = dynamic(() => import("@/games/flappy/scenes/PhaserGame").then((m) => m.PhaserGame), { ssr: false });
 
 type Run = { id: string; at: number; score: number | null; entry: number; payout: number; flagged: boolean; done: boolean };
-type State = { entry: number; perPipe: number; maxPay: number; dailyLimit: number; usedToday: number; best: number; recent?: Run[] };
+type State = { entry: number; perPipe: number; pipesPerStar?: number; maxPay: number; dailyLimit: number; usedToday: number; best: number; recent?: Run[] };
 type Result = { score: number; payout: number | null; flagged?: boolean };
 
 export default function DeveePage() {
@@ -99,12 +99,12 @@ export default function DeveePage() {
           <ol className="devee-steps">
             <li><b>Tap Play.</b> A run costs {data.entry}★. The bird takes off after a 3-second count.</li>
             <li><b>Tap anywhere to flap.</b> Stop tapping and the bird drops.</li>
-            <li><b>Fly through the gaps.</b> Each pipe you pass is +{data.perPipe}★.</li>
+            <li><b>Fly through the gaps.</b> Every {data.pipesPerStar ?? 10} pipes you pass is +1★.</li>
             <li><b>You have three hearts.</b> Hitting a pipe costs one; falling ends the run. Grab hearts and stars on the way.</li>
           </ol>
           <dl>
             <div><dt>A run</dt><dd>{data.entry}★</dd></div>
-            <div><dt>Every pipe you pass</dt><dd>+{data.perPipe}★</dd></div>
+            <div><dt>Every {data.pipesPerStar ?? 10} pipes</dt><dd>+1★</dd></div>
             <div><dt>Most back from one run</dt><dd>{data.maxPay}★</dd></div>
             <div><dt>Your best run</dt><dd>{data.best} pipes</dd></div>
           </dl>
