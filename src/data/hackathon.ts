@@ -10,148 +10,135 @@ export const HACK_DETAILS_PUBLIC = true;
 // Owner, 18 Nov 2026: open again for Real World Mining (teams register and submit in the app).
 export const HACK_SECTION_OPEN = true;
 
-// UB Hackathon 2026: Real World Mining, powered by Global MPC. Owner, 18 Nov 2026: the participant brief
-// ("Participant brief and judging guide", proposed rules) for the challenge, workflows, technology, schedule
-// and scorecard. Owner, 27 Nov 2026: two prizes only (₮3M / ₮2M, ₮5M in total); registration until 30 Nov,
-// shortlist 1 Dec, Demo Day 3 Dec, Pitch Day 4 Dec.
-// Before that: the owner's brief "UB Hackathon 2026.pdf", pages 1–6 (12 Nov 2026); hackTracks and
-// hackAwards below are from that brief and no longer shown on /hackathon.
+// UB Hackathon 2026: Real World Mining. Owner, 27 Nov 2026: the participant brief "Real-World-Mining-2026.pdf"
+// (Оролцогчдын удирдамж, Mongolian) replaces the 18 Nov brief (assay workflows, 100-point scorecard, Mining 101).
+// Text below is the PDF's own wording. Schedule: registration until 30 Nov 23:59 (owner; the PDF says 1 Dec),
+// finalists 1 Dec (owner), one final presentation 3 Dec (PDF). Prizes ₮3M / ₮2M.
 
-export const hackIdea = { title: "Real World Mining", by: "Global MPC" };
+export const hackIdea = { title: "Real World Mining", by: "Global MPC", host: "TenGer TV" };
 
 export const hackFacts = [
-  { label: "Dates", value: "1 – 4 Dec 2026" },
-  { label: "Prize pool", value: "₮5M" },
+  { label: "Хугацаа", value: "12/01 – 12/03" },
+  { label: "Шагналын сан", value: "₮5M" },
+  { label: "Зохион байгуулагч", value: "TenGer TV" },
   { label: "Powered by", value: "Global MPC" },
-  { label: "Teams", value: "Solo or any size" },
-  { label: "Location", value: "Ulaanbaatar, Mongolia" },
+  { label: "Байршил", value: "Улаанбаатар" },
 ];
 
 export const hackStats = [
-  { value: "₮5M", label: "prize pool" },
-  { value: "8", label: "shortlisted teams" },
-  { value: "4", label: "workflows" },
-  { value: "100", label: "point scorecard" },
+  { value: "₮5M", label: "шагналын сан" },
+  { value: "8", label: "финалын баг" },
+  { value: "4", label: "жишээ чиглэл" },
+  { value: "10", label: "минутын танилцуулга" },
 ];
 
 // The registration block at the end of /hackathon.
 export const hackKeyDates = [
-  { label: "Registration", when: "Open now" },
-  { label: "Shortlist", when: "1 Dec" },
-  { label: "Demo Day", when: "3 Dec" },
-  { label: "Final Pitch Day", when: "4 Dec" },
+  { label: "Бүртгэл", when: "11/30 23:59 хүртэл" },
+  { label: "Финалын багууд", when: "12/01" },
+  { label: "Финалын танилцуулга", when: "12/03" },
 ];
 
-export const hackChallenge =
-  "A laboratory issues a corrected assay report after the first version has reached a project reviewer. How does the reviewer know which result to use, who approved the correction and which sample it belongs to? Build a prototype that answers a question like this for someone working with Mongolian mining data.";
+// 1. Зорилго ба даалгавар
+export const hackGoal = {
+  question: "Монголын уул уурхайн салбарт бодит хөрөнгө (Real-World Assets, RWA) болон түүнтэй холбоотой лиценз, бичиг баримт, бүртгэлийн мэдээллийг блокчэйнээр холбосноор хэний, ямар асуудлыг шийдэж болох вэ?",
+  task: "Танай баг нэг хэрэглэгчийг сонгож, түүний ашигладаг хөрөнгө, лиценз, бичиг баримт эсвэл бүртгэлийн жишээн дээр, тухайн хэрэглэгчийн ажлыг хэрхэн сайжруулах санаа дэвшүүлнэ. Бүртгэлийн шатанд санаагаа бичгээр танилцуулна. Финалд шалгарсан найман баг хэрэглэгчийн хийх нэг гол үйлдлийг туршилтын загвар дээр ажиллуулж үзүүлнэ.",
+};
 
-export const hackWhy = [
-  "A sample passes through several hands before its result informs a project decision. Each handover creates a question about identity, custody or authority. A digital record becomes useful when the next person can trace a claim back to its source and see what has changed.",
-  "Global MPC describes its approach to mining real-world assets (RWAs) as connecting field evidence, professional verification, digital registries and applications. Its first reference case, Tsagaan Tolgoi in Mongolia, includes exploration and laboratory records. Global MPC states that it has published no mineral resource or reserve estimate for this case. Teams using the case should preserve that distinction in their interfaces.",
+// 2. Санаагаа хэрхэн сонгох вэ?
+export const hackExample = [
+  "Уурхайгаас гарсан нэг ачилт баяжмалыг төсөөлье. Тээвэрлэгч ачааг хүлээн авна. Лаборатори тухайн ачилтаас авсан дээжийг шинжилнэ. Худалдан авагч ачааг хүлээн авахдаа шинжилгээний тайлан аль ачилтад хамаарахыг шалгана. Хэрэв лаборатори тайлангаа зассан бол худалдан авагч аль хувилбарт үндэслэн шийдвэр гаргах вэ?",
+  "Энэ тохиолдолд баг ачилт, дээж, тайлан гурвыг дугаараар нь холбож болно. Лаборатори зассан тайлангаа баталгаажуулж, худалдан авагч ачилтын дугаараар хүчинтэй хувилбарыг олдог үйлдлийг загвар дээр үзүүлнэ. Дээжийг тухайн ачилтаас авсныг хэн бүртгэсэн, тайланг хэн баталсан, блокчэйний бүртгэлээс худалдан авагч яг юуг шалгаж болохыг тайлбарлаарай. Үр дүнг зөв тайлангаа олоход зарцуулсан хугацаагаар хэмжиж болно.",
+];
+export const hackDirectionsNote = "Дараах жишээнээс сонгох эсвэл өөрсдийн олж харсан асуудал, боломжид тулгуурлан сэдвээ дэвшүүлж болно.";
+// The ids are also the team's picks in the app (src/lib/hack.ts tracks, 0097).
+export const hackDirections = [
+  { id: "finance", title: "Төслийн санхүүжилт", q: "Санхүүжилтийн дараагийн хэсгийг олгохын өмнө хөрөнгө оруулагч гэрээнд заасан ажлыг хэн хүлээн авсныг хэрхэн шалгах вэ?" },
+  { id: "trade", title: "Түүхий эдийн худалдаа", q: "Худалдан авагч нэг ачилтын жин, чанар, хүлээлцсэн баримтыг хэрхэн тулгах вэ?" },
+  { id: "equipment", title: "Тоног төхөөрөмжийн ашиглалт", q: "Өрмийн машины түрээсийн бүртгэлээр захиалсан хугацааг шалгаж, давхар захиалгаас хэрхэн сэргийлэх вэ?" },
+  { id: "community", title: "Орон нутгийн оролцоо", q: "Орон нутгийн төлөөлөл гэрээгээр тохирсон хөрөнгө, тоног төхөөрөмжийг хүлээлгэн өгсөн эсэхийг ямар баримтаар шалгах вэ?" },
 ];
 
-// Choose a workflow or combine them (24 Nov). `build` = what to help the user do, `demo` = what to show.
-export const hackWorkflows = [
-  { no: "01", title: "Exploration and assays", user: "Geologist",
-    build: "Follow one sample from collection to laboratory receipt and assay.",
-    demo: "A mismatched identifier or a corrected result, and how the geologist resolves it." },
-  { no: "02", title: "Project review", user: "Reviewer",
-    build: "Assemble a dated evidence pack. Link each claim to a document, issuer and review status.",
-    demo: "What happens when a document expires or a reviewer withdraws approval." },
-  { no: "03", title: "Mineral shipments", user: "Buyer",
-    build: "Trace a batch through dispatch and receipt. The UN Transparency Protocol’s Digital Product Passport is a reference for batch identifiers and origin data.",
-    demo: "How a split shipment keeps its link to the original lot." },
-  { no: "04", title: "Environmental reporting", user: "Mine operator or community reviewer",
-    build: "Trace a water measurement to a place, date, method and responsible party.",
-    demo: "How a correction reaches someone who saw the earlier reading." },
+// 4. Эхний шатанд юу илгээх вэ?
+export const hackSubmitIntro = "Багийн нэр, холбоо барих гишүүний нэр, холбоо барих мэдээллээ бичнэ. Финалын найман багийг бичгэн танилцуулгад үндэслэн сонгох тул дараах дөрвөн асуултад тодорхой хариулаарай.";
+export const hackSubmitQuestions = [
+  { q: "Хэнд ямар асуудал тулгардаг вэ?", a: "Хэрэглэгчээ нэрлэж, ажлын аль шатанд саатал, зөрүү, нэмэлт зардал гардаг эсвэл ямар боломж ашиглагдахгүй байгааг нэг жишээгээр тайлбарлана." },
+  { q: "Ямар хөрөнгө, мэдээлэлтэй ажиллах вэ?", a: "Сонгосон хөрөнгөө нэрлэж, түүнтэй холбоотой ямар лиценз, бичиг баримт эсвэл бүртгэл ашиглахаа тодорхойлно. Хэрэглэгч танай шийдлээр юу хийхийг бичнэ." },
+  { q: "Блокчэйн ямар үүрэгтэй вэ?", a: "Ямар тал мэдээлэл оруулах, хэн баталгаажуулах, өөр аль тал уг бүртгэлийг ямар шийдвэрт ашиглахыг тайлбарлана. Хамтын бүртгэл яагаад хэрэгтэйг үндэслэнэ." },
+  { q: "Финалд юу үзүүлэх вэ?", a: "Хэрэглэгчийн хийх нэг үйлдэл, түүнд шаардагдах өгөгдөл, дэлгэц дээр харагдах үр дүнг тодорхойлно. Санаа үр өгөөжтэй эсэхийг юугаар хэмжихээ бичнэ." },
 ];
 
-export const hackTech = [
-  { title: "Keep it simple", text: "Choose the simplest architecture that lets the intended user check the claim. A signed record can identify the issuer. A hash can show whether a file matches an earlier version. A registry can link revisions, while an API or oracle can deliver a dated result to another application." },
-  { title: "Own the source", text: "Explain who takes responsibility for the original measurement and how a reviewer can challenge it. Teams proposing a digital token should specify the record it references, the issuer and what a holder can verify." },
-  { title: "For example", text: "Keep a sample report off-chain, record its identifier and hash, and let a reviewer check an uploaded copy. Then change one value and repeat the check. If verification fails, the screen should tell the reviewer what to do next." },
-  { title: "Data", text: "Public records, permissioned data or clearly labelled synthetic fixtures are acceptable. Identify simulated integrations. Global MPC’s Registry dApp is under development and its token is pre-issuance, so designs may use a local registry or test network. Access to a sponsor API, a particular chain or a token earns no points by itself." },
+// 5. Финалын танилцуулга
+export const hackFinal = {
+  lead: "Финалд шалгарсан баг бүр 6–8 слайдтай PowerPoint (PPT) танилцуулга бэлтгэж, илтгэлээ 10 минутад багтаан танилцуулна.",
+  body: [
+    "Хэрэглэгч өнөөдөр тухайн ажлыг хэрхэн хийдгийг товч тайлбарлаад загвараа ажиллуулна. Хэрэглэгч ямар мэдээлэл оруулах, түүнийг хэн баталгаажуулах, дараагийн оролцогч юу хараад ямар шийдвэр гаргахыг нэг жишээн дээр эхнээс нь дуустал үзүүлээрэй.",
+    "Танилцуулгын төгсгөлд загварын аль хэсэг ажиллаж байгаа, ямар өгөгдөл эсвэл үйлдлийг жишээгээр төлөөлүүлсэн, уурхай эсвэл түнш байгууллагатай туршихад юу хэрэгтэйг тайлбарлана. Үр дүнг хэмжихдээ баримт тулгах хугацаа, давхардсан захиалгын тоо, зөрүүтэй бүртгэлийг илрүүлэхэд зарцуулсан хугацаа зэрэг асуудалдаа тохирох үзүүлэлт сонгоорой.",
+  ],
+};
+
+// 6. Финалын үнэлгээ
+export const hackCriteria = [
+  { title: "Асуудал ба хэрэглэгч", text: "Тодорхой хэрэглэгчийн ажлыг бодитой тайлбарласан эсэх. Санал болгосон үйлдэл тухайн хэрэгцээг хэрхэн хангаж байгаа нь үзүүлэнгээс харагдаж байгаа эсэх." },
+  { title: "RWA ба блокчэйний хэрэглээ", text: "Ямар хөрөнгийг бүртгэж, түүнтэй холбоотой ямар мэдээлэл ашигласнаа тайлбарласан эсэх. Бодит хөрөнгийг бүртгэлтэй нь хэрхэн холбодог, мэдээллийг хэн баталгаажуулдаг, талууд яагаад уг бүртгэлийг хамт ашиглах хэрэгтэй нь тодорхой эсэх." },
+  { title: "Техникийн гүйцэтгэл", text: "Баг гол үйлдлээ загвар дээр ажиллуулж, үр дүнг үзүүлсэн эсэх. Бодит орчинд туршихад шаардагдах өгөгдөл, холболт эсвэл түншийг тодорхойлсон эсэх." },
+  { title: "Үр нөлөө", text: "Шийдэл хэрэгжвэл хэний ажилд ямар өөрчлөлт гарах, түүнийг өнөөгийн нөхцөлтэй хэрхэн харьцуулж хэмжихээ тайлбарласан эсэх." },
 ];
 
-// Final scorecard, 100 points (proposed in the brief).
-export const hackScore = [
-  { pts: 20, title: "Problem and user evidence", q: "Who makes the decision today?", full: "A specific workflow and evidence of friction, such as a user interview, a sample form or a documented handover." },
-  { pts: 25, title: "Impact in Mongolia", q: "Who would use this locally and what would improve?", full: "A plausible local user, a baseline or a plan to measure it, and a measurable outcome such as time to identify the current report." },
-  { pts: 25, title: "Technical design", q: "Can another person trace the claim to its source?", full: "Clear identifiers, issuer authority, access rules and correction handling, with a reason for each technology choice." },
-  { pts: 20, title: "Working prototype", q: "Can a judge repeat the core check?", full: "A working end-to-end demonstration with inspectable inputs, an expected result and a handled exception." },
-  { pts: 10, title: "Pilot feasibility", q: "What would it take to run a first trial?", full: "A pilot owner or prospective user, data dependencies and a test with a clear success condition." },
+// Сэдвээ судлахад ашиглах материал (the PDF's links)
+export const hackReading = [
+  { text: "Ачилт, хөрөнгийн хөдөлгөөнийг үйл явдал бүрээр бүртгэх арга.", label: "GS1 — EPCIS", href: "https://www.gs1.org/standards/epcis" },
+  { text: "Ашигт малтмалын нийлүүлэлтийн сүлжээнд гарал үүсэл, хүлээлцсэн баримтыг хэрхэн ашигладаг тухай.", label: "OECD — уурхайн олборлолт, нийлүүлэлтийн эхний шатанд оролцогчдод зориулсан танилцуулга", href: "https://mneguidelines.oecd.org/An-introduction-to-the-OECD-Due-Diligence-Guidance-for-upstream-actors.pdf" },
+  { text: "Прототип танилцуулах хэлбэр, техникийн гүйцэтгэл, ашиглахад хялбар байдлыг үнэлэх жишээ.", label: "ETHGlobal Singapore — төслийн танилцуулга ба үнэлгээ", href: "https://ethglobal.com/events/singapore2024/info/details" },
 ];
 
-export const hackJudging = "Each judge scores independently: zero for missing evidence, roughly half for a partially supported claim, full marks when the stated evidence is demonstrated. A judge with a direct interest in a team recuses themselves from scoring that team. Teams are ranked by their mean total; ties go to the prototype score, then local impact, then a recorded panel decision.";
-
-export const hackTracks = [
-  {
-    no: "01",
-    title: "The Stablecoin Economy",
-    sub: "Payments & Real-World Commerce",
-    focus: "Everyday utility, local merchant adoption, MNT/USD stablecoin on/off-ramps, POS integrations, micro-transactions and cross-border B2B settlements.",
-    deliverable: "Consumer apps, Telegram mini-apps or payment gateways that make stablecoins invisible and frictionless.",
-  },
-  {
-    no: "02",
-    title: "DeFi & Programmable Liquidity",
-    sub: "Yield, Lending & Markets",
-    focus: "Lending and borrowing, stablecoin liquidity pools, AMMs, delta-neutral yield strategies and RWA collateralization.",
-    deliverable: "Smart contract protocols, yield vaults or on-chain treasury tools with sound cryptoeconomic logic.",
-  },
-  {
-    no: "03",
-    title: "Consumer Web3, Gaming & Account Abstraction",
-    focus: "Stablecoin-powered in-game economies, automated rewards, gasless transactions (ERC-4337 / smart accounts) and SocialFi.",
-    deliverable: "Apps or games where stablecoins settle underneath, without complex wallet management.",
-  },
-];
-
-// Owner, 27 Nov 2026: ₮5M in two prizes (3 + 2), no other awards. `share` = the prize's part of the pool.
+// 7. Шагналын сан. `share` = the prize's part of the pool.
 export const hackPool = "₮5,000,000";
 export const hackPrizes = [
 // `amount` is per team, without the ₮ (the page sets the sign apart: the brand fonts don't draw it well).
-  { tier: "#1", place: "1st Place", amount: "3M", share: 60, teams: "1 team" },
-  { tier: "#2", place: "2nd Place", amount: "2M", share: 40, teams: "1 team" },
+  { tier: "#1", place: "I байр", amount: "3M", full: "3,000,000 ₮", share: 60, teams: "1 баг" },
+  { tier: "#2", place: "II байр", amount: "2M", full: "2,000,000 ₮", share: 40, teams: "1 баг" },
 ];
 
-export const hackAwards = [
-  { no: "01", title: "Best Local Impact", sub: "Ulaanbaatar Utility Award", text: "Best solution tailored to Mongolian merchants, local fintech integration or cross-border trade." },
-  { no: "02", title: "Best UX", sub: "“Invisible Crypto” Award", text: "Most seamless onboarding: a non-crypto user can transact in under 30 seconds." },
-  { no: "03", title: "Technical Excellence", sub: "Best Smart Contract Architecture", text: "Cleanest, most gas-efficient and secure on-chain implementation." },
-  { no: "04", title: "Best Rookie Team", sub: "Students & first-time builders", text: "The highest-scoring team of students or first-time hackathon builders." },
-];
-
-// Schedule (owner, 27 Nov): one-page proposals → 8 shortlisted 1 Dec → Demo Day 3 Dec
-// (all 8 continue) → Final Pitch Day 4 Dec. Tabs on phones (HackDays.tsx).
-// Each step: a short headline (`what`), its parts (`items`), score weights (`scores`) and an outcome (`note`).
+// 3. Бүртгэл ба шалгаруулалтын хуваарь (Улаанбаатарын цагаар). Tabs on phones (HackDays.tsx).
+// Each step: a short headline (`what`), its parts (`items`), an outcome (`note`) and a link.
 export type HackSlot = { time: string; what: string; items?: string[]; scores?: { label: string; pts: number }[]; note?: string; link?: { href: string; label: string } };
 export const hackDays: { date: string; day: string; title: string; slots: HackSlot[] }[] = [
   {
-    date: "1 Dec", day: "Stage 1", title: "Proposal and shortlist",
+    date: "11/30", day: "1-р шат", title: "Бүртгэл",
     slots: [
-      // Owner, 18 Nov: teams submit through the attendee app (/app/hack)
-      { time: "Until Nov 30", what: "Submit a one-page proposal in the attendee app",
-        items: ["The user and the decision they make", "The evidence they need", "The technology you propose", "One workflow you can demo by 3 December"],
-        link: { href: "/app/hack", label: "Submit in the attendee app" } },
-      { time: "Tue, Dec 1", what: "Eight teams shortlisted",
-        scores: [{ label: "Problem and user evidence", pts: 40 }, { label: "Relevance and feasibility in Mongolia", pts: 35 }, { label: "Demo plan", pts: 25 }] },
+      { time: "11 дүгээр сарын 30-ны 23:59 хүртэл", what: "Багийн мэдээлэл, төслийн санаагаа бичгээр илгээнэ.",
+        link: { href: "/app/hack", label: "Attendee app-д бүртгүүлэх" } },
     ],
   },
   {
-    date: "3 Dec", day: "Stage 2", title: "Demo Day",
+    date: "12/01", day: "2-р шат", title: "Финалын багуудыг сонгох",
     slots: [
-      { time: "Thu, Dec 3", what: "Run one workflow, live",
-        items: ["5 minutes: the normal case and one exception", "3 minutes: technical questions"],
-        note: "All eight teams advance to Pitch Day." },
+      { time: "12 дугаар сарын 1", what: "Ирүүлсэн санаануудаас найман баг шалгарна. Шалгарсан багууд финалын үзүүлэнгээ бэлтгэнэ." },
     ],
   },
   {
-    date: "4 Dec", day: "Stage 3", title: "Final Pitch Day",
+    date: "12/03", day: "3-р шат", title: "Финалын танилцуулга",
     slots: [
-      { time: "Fri, Dec 4", what: "Pitch to the judges",
-        items: ["5 minutes: the first pilot user, the data needed and one measurable outcome", "5 minutes: questions"],
-        note: "One final scorecard from both days, then the awards." },
+      { time: "12 дугаар сарын 3", what: "Найман баг шийдлээ танилцуулж, туршилтын загвараа ажиллуулан шүүгчдийн асуултад хариулна." },
     ],
   },
 ];
+
+// /hackathon "Зорилго ба даалгавар", shortened (owner, 27 Nov: too much text; same layout as before).
+// The full PDF wording above stays in the app's Удирдамж tab.
+export const hackGoalShort = {
+  question: "Уул уурхайн бодит хөрөнгө, лиценз, бичиг баримт, бүртгэлийг блокчэйнээр холбосноор хэний, ямар асуудлыг шийдэж болох вэ?",
+  task: "Нэг хэрэглэгч сонгож, түүний ажлыг сайжруулах санаагаа бичгээр илгээнэ. Финалд шалгарсан найман баг гол үйлдлээ туршилтын загвар дээр үзүүлнэ.",
+};
+export const hackExampleShort = [
+  "Лаборатори шинжилгээний тайлангаа зассан бол худалдан авагч аль хувилбарт үндэслэн шийдвэр гаргах вэ?",
+  "Ачилт, дээж, тайланг дугаараар нь холбож, худалдан авагч хүчинтэй хувилбарыг ачилтын дугаараар олдог үйлдлийг загвар дээр үзүүлж болно. Үр дүнг зөв тайлангаа олох хугацаагаар хэмжинэ.",
+];
+export const hackDirectionsNoteShort = "Жишээнээс сонгох эсвэл өөрийн сэдвээ дэвшүүлж болно.";
+export const hackDirectionsShort: Record<string, string> = {
+  finance: "Дараагийн санхүүжилтээс өмнө гэрээнд заасан ажлыг хүлээн авсныг хэрхэн шалгах вэ?",
+  trade: "Нэг ачилтын жин, чанар, хүлээлцсэн баримтыг хэрхэн тулгах вэ?",
+  equipment: "Өрмийн машины түрээсийн хугацааг шалгаж, давхар захиалгаас хэрхэн сэргийлэх вэ?",
+  community: "Гэрээгээр тохирсон хөрөнгийг орон нутагт хүлээлгэн өгснийг юугаар шалгах вэ?",
+};

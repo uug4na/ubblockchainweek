@@ -33,13 +33,13 @@ async function openFile(path: string) {
 
 // What the team should do now, in one sentence.
 function nextStep(t: Team) {
-  if (t.stage === "out") return "Thanks for taking part. Your team space is now read-only.";
-  if (t.stage === "final") return "Pitch Day is 4 Dec: 5 minutes to present, 5 for questions. Name your first pilot user, the data you need and one measurable outcome.";
-  if (t.stage === "top20") return "You're shortlisted. Demo Day is 3 Dec: run one workflow, the normal case and one exception, in 5 minutes.";
+  if (t.stage === "out") return "Оролцсонд баярлалаа. Багийн хуудас одоо зөвхөн уншигдана.";
+  if (t.stage === "final") return "Финалын танилцуулга 12/03-нд. 6–8 слайдтай PowerPoint (PPT) танилцуулгаа 10 минутад багтаан танилцуулна.";
+  if (t.stage === "top20") return "Танай баг финалд шалгарлаа. 12/03-нд шийдлээ танилцуулж, туршилтын загвараа ажиллуулан шүүгчдийн асуултад хариулна.";
   // Stage 1 is the proposal: project name, a short summary and the one-page proposal. Links come later.
-  const missing = [!t.title && "project name", !t.summary && "proposal summary", !t.files.length && "one-page proposal"].filter(Boolean) as string[];
-  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} by 30 Nov.`;
-  return "All set. Eight teams are shortlisted on 1 Dec.";
+  const missing = [!t.title && "төслийн нэр", !t.summary && "товч тайлбар", !t.files.length && "бичгэн танилцуулга"].filter(Boolean) as string[];
+  if (missing.length) return `Дутуу: ${missing.join(", ")}. 11/30 23:59 хүртэл оруулна уу.`;
+  return "Бүгд бэлэн. Финалын найман баг 12/01-нд шалгарна.";
 }
 
 function Steps({ stage }: { stage: Team["stage"] }) {
@@ -61,13 +61,13 @@ function Back({ to, label, go }: { to: View; label: string; go: (v: View) => voi
   return <button type="button" className="back-link game-back hk-back" onClick={() => go(to)}><ChevronLeft size={18} /> {label}</button>;
 }
 
-// Real World Mining: each team picks one or more of the four workflows and can combine any of them
-// (owner, 24 Nov; stored in `tracks`, 0068 allows 1–4).
+// Real World Mining: each team picks one or more directions from the brief, or its own topic
+// (owner, 27 Nov; stored in `tracks`, 0097 allows 1–5).
 function TrackPicker({ value, onChange, disabled }: { value: Track[]; onChange: (v: Track[]) => void; disabled?: boolean }) {
   return (
     <fieldset className="field">
-      <legend>Workflows <small>pick one or combine</small></legend>
-      <div className="hk-track-cards" role="group" aria-label="Workflows">
+      <legend>Чиглэл <small>нэг эсвэл хэд хэдийг сонгоно</small></legend>
+      <div className="hk-track-cards" role="group" aria-label="Чиглэл">
         {tracks.map((t) => (
           <button type="button" key={t.id} role="checkbox" aria-checked={value.includes(t.id)} className={value.includes(t.id) ? "is-on" : undefined} onClick={() => onChange(value.includes(t.id) ? value.filter((x) => x !== t.id) : tracks.map((x) => x.id).filter((id) => id === t.id || value.includes(id)))} disabled={disabled}>
             <b>{t.label}</b><small>{t.text}</small>
@@ -231,7 +231,8 @@ function TeamView({ team, open, onChange, go }: { team: Team; open: boolean; onC
 function ProjectForm({ team, onSaved }: { team: Team; onSaved: (h: Hack) => void }) {
   const live = team.stage !== "out";
   const can = live && team.leader; // only the leader edits team info (0042_hack_leader_edits.sql)
-  const [d, setD] = useState({ name: team.name, title: team.title, summary: team.summary, tracks: team.tracks, sourceUrl: team.sourceUrl, demoUrl: team.demoUrl, siteUrl: team.siteUrl });
+  const [d, setD] = useState({ name: team.name, title: team.title, summary: team.summary, tracks: team.tracks.filter((x) => tracks.some((t) => t.id === x)), // older workflow picks must be re-chosen (0097)
+    sourceUrl: team.sourceUrl, demoUrl: team.demoUrl, siteUrl: team.siteUrl });
   const [state, setState] = useState<"idle" | "saving" | "saved" | string>("idle");
   const edit = (p: Partial<typeof d>) => { setD((x) => ({ ...x, ...p })); setState("idle"); };
   return (
@@ -316,7 +317,7 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
       </div>
       <div className="desk-rail is-sticky">
       <h2 className="hk-sec">{stage1 ? "One-page proposal" : "Files"}</h2>
-      <p className="hk-sec-sub">{stage1 ? `PDF, up to ${MAX_MB} MB: the user, the decision, the evidence, the technology and one workflow you can demo by 3 December.` : `Proposal, demo inputs and instructions, diagrams. Up to ${MAX_MB} MB each.`}</p>
+      <p className="hk-sec-sub">{stage1 ? `PDF, ${MAX_MB} MB хүртэл. Дөрвөн асуултад хариулна: хэнд ямар асуудал тулгардаг, ямар хөрөнгө, мэдээлэлтэй ажиллах, блокчэйн ямар үүрэгтэй, финалд юу үзүүлэх.` : `Финалын PPT танилцуулга (6–8 слайд), загварын тайлбар, диаграм. Тус бүр ${MAX_MB} MB хүртэл.`}</p>
       {team.files.length > 0 && (
         <div className="settings-group">
           {team.files.map((f) => (
@@ -384,7 +385,7 @@ export default function HackPage() {
     return (
       <>
         <h1 className="app-h1">Hackathon.</h1>
-        <p className="app-sub hk-lead">{HACK_DETAILS_PUBLIC ? <>Real World Mining · powered by Global MPC · ₮5M prize pool</> : "UB Hack"}</p>
+        <p className="app-sub hk-lead">{HACK_DETAILS_PUBLIC ? <>Real World Mining · Powered by Global MPC · ₮5M шагналын сан</> : "UB Hack"}</p>
         {tabs}
         <div className="desk">
         <div className="desk-main">
@@ -398,7 +399,7 @@ export default function HackPage() {
             <button className="btn btn-ghost wide" onClick={() => go("join")}>Join with a code</button>
           </div>
         ) : (
-          <div className="panel empty"><p>Registration closed on 30 November.</p></div>
+          <div className="panel empty"><p>Бүртгэл 11/30-ны 23:59-д хаагдсан.</p></div>
         )}
         </div>
         {projectsRow && <div className="desk-rail"><nav className="settings-group">{projectsRow}</nav></div>}
