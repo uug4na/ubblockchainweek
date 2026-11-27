@@ -3281,7 +3281,8 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .hk-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .hk-steps li { display: grid; justify-items: start; gap: 3px; padding: 10px 12px; border-radius: var(--r); background: var(--cell-2, rgba(255,255,255,.05)); color: var(--label-2); }
 .hk-steps i { margin-bottom: 4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--cell-3, rgba(255,255,255,.12)); font: 700 12px/1 var(--font-body); font-style: normal; }
-.hk-steps b { font-size: 13px; line-height: 1.2; color: var(--label); white-space: nowrap; }
+.hk-steps li { min-width: 0; }
+.hk-steps b { font-size: 13px; line-height: 1.2; color: var(--label); overflow-wrap: anywhere; }  /* wraps: "Финалын багууд" overflowed a third of a phone (27 Nov) */
 .hk-steps small { font-size: 11.5px; white-space: nowrap; }
 .hk-steps li.is-now { background: var(--klein); color: rgba(255,255,255,.8); }
 .hk-steps li.is-now b { color: #fff; }
