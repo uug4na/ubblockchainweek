@@ -12,7 +12,7 @@ import { isOwner } from "@/lib/open";
 // Flip GAMES_PLAYABLE in src/data/open.ts to bring them back.
 // Owner, 23 Nov: the owner's account can play every game (Devee too), while they all say "Coming soon" for everyone else.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const gameOpen = (_href: string, email?: string | null) => GAMES_PLAYABLE || isOwner(email);
+export const gameOpen = (_href: string, email?: string | null, crew = false) => GAMES_PLAYABLE || isOwner(email) || crew; // crew test too (0094)
 
 const LINE = "Games open closer to the week.";
 
