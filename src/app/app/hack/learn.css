@@ -314,7 +314,8 @@
 .hk-page .hk-steps { gap: 8px; }
 .hk-page .hk-steps li { gap: 4px; padding: 14px; color: var(--hk-2); }
 .hk-page .hk-steps i { width: 24px; height: 24px; margin-bottom: 6px; font-size: 12.5px; }
-.hk-page .hk-steps b { font-size: 15px; }
+.hk-page .hk-steps b { font-size: 15px; line-height: 1.2; }
+@media (max-width: 420px) { .hk-page .hk-steps li { padding: 12px 10px; } .hk-page .hk-steps b { font-size: 14px; } .hk-page .hk-steps small { font-size: 12px; } }
 .hk-page .hk-steps small { font-size: 13px; }
 .hk-page .hk-steps li.is-now { color: rgba(255, 255, 255, .86); }
 .hk-page .hk-start { gap: 16px; padding: 20px; }
