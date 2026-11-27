@@ -1973,3 +1973,28 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .lp-cases.is-mining .lp-case-steps p { font-size: 15.5px; margin-top: 4px; }
   .lp-cases.is-mining .lp-lesson { font-size: 17.5px; padding: 20px; }
 }
+
+/* UB Hack brief (owner, 27 Nov): the Mongolian participant brief on /hackathon */
+.hk-dir-note { margin: 0 0 16px; max-width: 760px; font-size: 16px; line-height: 1.6; color: var(--t-muted); }
+.hk-asks { counter-reset: none; }
+.hk-asks .hk-no { color: var(--t-accent-dark); font-size: 13px; }
+.hk-final { margin-top: clamp(40px, 5vw, 64px); }
+.hk-final-lead { margin: 20px 0 0; max-width: 900px; font-size: clamp(17px, 1.5vw, 20px); font-weight: 600; line-height: 1.5; color: #fff; }
+.hk-final .hk-score-note { margin-top: 14px; padding-top: 0; border-top: 0; }
+.hk-criteria { margin-top: 0; }
+.hk-criteria ol { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hk-reading .hk-tech { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 20px; }
+.hk-reading .hk-tech a { display: inline; font-size: 14.5px; font-weight: 600; line-height: 1.4; color: var(--t-accent-dark); text-decoration: none; }
+.hk-reading .hk-tech a:hover { text-decoration: underline; }
+@media (max-width: 1000px) {
+  .hk-criteria ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hk-reading .hk-tech { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .hk-reading .hk-tech { display: grid; margin: 16px 0 0; padding: 0; overflow: visible; }
+  .hk-dir-note { font-size: 15px; }
+}
+.hk-reading .hk-tech a svg { display: inline; vertical-align: -2px; margin-left: 4px; }
+@media (max-width: 640px) { #submit.hk-learn .hk-head > p { display: block; } } /* the brief's intro (4 questions) stays on phones */
+.hk-awards.hk-reading .hk-tech li { padding: clamp(20px, 2.2vw, 26px); border: 0; }
+
