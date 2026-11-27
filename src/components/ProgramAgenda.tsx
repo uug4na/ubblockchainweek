@@ -8,7 +8,8 @@ import { ubDate } from "@/lib/time";
 // The public agenda. Desktop lists every day; phones get a sticky day picker and one day at a time (CSS decides).
 const isDay = (date: string) => days.some((d) => d.date === date);
 
-export function ProgramAgenda() {
+// tabbed: one day at a time on desktop too (the landing page); /program lists every day on desktop.
+export function ProgramAgenda({ id, eyebrow, title, tabbed = false }: { id?: string; eyebrow?: string; title?: string; tabbed?: boolean } = {}) {
   const [active, setActive] = useState(days[0].date);
   const tabs = useRef<HTMLDivElement>(null);
 
@@ -40,8 +41,14 @@ export function ProgramAgenda() {
   }
 
   return (
-    <section className="t-band band-light t-agenda" aria-label="Agenda">
+    <section className={`t-band band-light t-agenda${tabbed ? " is-tabbed" : ""}`} id={id} aria-label="Agenda">
       <div className="t-wrap">
+        {title && (
+          <div className="t-partners-head" data-reveal>
+            {eyebrow && <p className="t-eyebrow">{eyebrow}</p>}
+            <h2 className="t-title t-title-sm">{title}</h2>
+          </div>
+        )}
         <div className="t-agenda-tabs" role="tablist" aria-label="Choose a day" ref={tabs}>
           {days.map((d) => (
             <button

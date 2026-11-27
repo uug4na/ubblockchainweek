@@ -243,6 +243,19 @@
 .t-agenda-about { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--t-muted); max-width: 64ch; }
 .t-agenda-day li > div b { font-size: clamp(16px, 1.5vw, 19px); font-weight: 600; line-height: 1.3; letter-spacing: .02em; color: var(--t-ink); }
 .t-agenda-tabs { display: none; }
+/* landing (ProgramAgenda tabbed): desktop gets a day picker and one day at a time, so the section stays short */
+@media (min-width: 721px) {
+  .t-agenda.is-tabbed .t-agenda-tabs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 0 0 8px; }
+  .t-agenda.is-tabbed .t-agenda-tabs button { display: grid; justify-items: center; gap: 4px; padding: 14px 0; border: 1px solid var(--t-line); border-radius: 12px; background: transparent; color: var(--t-ink); font: inherit; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
+  .t-agenda.is-tabbed .t-agenda-tabs button:hover { border-color: var(--t-navy); }
+  .t-agenda.is-tabbed .t-agenda-tabs small { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--t-muted); }
+  .t-agenda.is-tabbed .t-agenda-tabs b { font-size: 24px; font-weight: 700; line-height: 1; }
+  .t-agenda.is-tabbed .t-agenda-tabs .is-on { border-color: var(--t-navy); background: var(--t-navy); color: #fff; }
+  .t-agenda.is-tabbed .t-agenda-tabs .is-on small { color: rgba(255, 255, 255, .75); }
+  .t-agenda.is-tabbed .t-agenda-tabs button:focus-visible { outline: 2px solid var(--t-accent-light); outline-offset: 2px; }
+  .t-agenda.is-tabbed .t-agenda-day { display: none; }
+  .t-agenda.is-tabbed .t-agenda-day.is-on { display: grid; border-bottom: 1px solid var(--t-line); }
+}
 .prog-head { display: none; }
 
 /* phones: a soft light page under the dark hero, a sticky day picker, one day as a white grouped list */
