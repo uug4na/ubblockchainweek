@@ -410,3 +410,6 @@
 @media (max-width: 420px) {
   .app-learn .hb-dirs { grid-template-columns: 1fr; }
 }
+
+/* what the hackathon is about, above the question (owner, 27 Nov) */
+.hk-brief .hb-intro { margin: 0 0 12px; font-size: 15px; line-height: 1.55; color: var(--label-2); text-wrap: pretty; }

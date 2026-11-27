@@ -125,6 +125,13 @@ export const hackDays: { date: string; day: string; title: string; slots: HackSl
   },
 ];
 
+// What the hackathon is about, in the owner's words (27 Nov 2026: "otherwise people get it wrong"). Shown in the
+// /hackathon hero and challenge section and at the top of the app's brief tab.
+export const hackIntro = [
+  "Real World Asset буюу бодит хөрөнгийг дижитал хэлбэрт хөрвүүлэх шийдэл блокчэйны шинэ чиг хандлага болжээ.",
+  "Хакатонд оролцох багууд уг шийдлийг уул уурхайн салбарт хэрхэн ашиглаж болохыг судалж санаа, шийдэл, бүтээгдэхүүнээрээ өрсөлдөх юм.",
+];
+
 // /hackathon "Зорилго ба даалгавар", shortened (owner, 27 Nov: too much text; same layout as before).
 // The full PDF wording above stays in the app's Удирдамж tab.
 export const hackGoalShort = {

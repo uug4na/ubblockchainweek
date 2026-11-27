@@ -1,110 +1,81 @@
+// Partners 2026 as one block mosaic, after the UBBW block-graph "B" (owner, 27 Nov 2026: "more creative").
+// 27 Nov (owner): dark panel in the UBW 2025 kit (Desktop/UBW): the BG songolt background behind glass blocks,
+// a neon tetromino from the kit on each tier block, the kit's line grid in the corner of the big blocks, and the
+// white logos from the vault ("Assets/Partner logos 2026", p.dark).
+// Desktop: an 8-column grid of square cells. Tier blocks down the left (Powered by and Partners 2x2, Supporters
+// 2x1); Powered by and Partners are 2x2 blocks, supporters 1x1, so the tiers fill the grid with no gaps
+// (2+6 / 2+6 / 2+6 / 8 columns). Every block in a tier is the same: logo in the middle at the same visual area
+// (--ar, see fitArea), name below (small blocks: name on hover). Hover tints the glass with the partner's colour.
+// Tablets: 21 columns (big blocks 3 a row, supporters 7 a row); phones: 3 across, and a kit block closes the
+// last supporter row. The tier comes from src/data/partners.ts: tag "Powered by" -> Powered by,
+// supporter / media / sponsor -> Supporters, everyone else -> Partners.
 "use client";
 
-// Partners 2026 as a spotlight (owner, 23 Nov: tag pills, grouped cards, a credits block and tiered tiles were
-// all rejected: "more stylish yet interactive"). Left: an index of every partner, grouped by tier
-// (Hosted by, Powered by, Partners, Media supporters). Right: the chosen partner large on a white panel,
-// with its role, one line and a link. People pick a partner by clicking (or arrow keys); nothing
-// rotates on its own. Phones: a compact panel on top and every partner's mark in one row under it.
-// New partners land in their tier from src/data/partners.ts: host → Hosted by, tag "Powered by" → Powered by,
-// media / sponsor / supporter (or app label "Media partner") → Media supporters, everyone else → Partners.
-
-import { useState } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Partner, PartnerType } from "@/data/partners";
 import { withBase } from "@/lib/base";
 
 const src = (f: string) => withBase(`/brand/${f}`);
 
+// each tier's block from the kit (Desktop/UBW/Blocks)
 const TIERS = [
-  { id: "host", label: "Hosted by" },
-  { id: "powered", label: "Powered by" },
-  { id: "partner", label: "Partners" },
-  { id: "media", label: "Media supporters", one: "Media supporter" },
+  { id: "powered", label: "Powered by", block: "lime" },
+  { id: "partner", label: "Partners", block: "cyan" },
+  { id: "supporter", label: "Supporters", block: "magenta" },
 ] as const;
 type TierId = (typeof TIERS)[number]["id"];
 
 const tierOf = (p: Partner): TierId =>
-  p.type === "host" ? "host"
-  : p.tag === "Powered by" ? "powered"
-  : p.type === "media" || p.type === "supporter" || p.type === "sponsor" || p.appTag === "Media partner" ? "media"
+  p.tag === "Powered by" ? "powered"
+  : p.type === "supporter" || p.type === "media" || p.type === "sponsor" ? "supporter"
   : "partner";
 
-const isWord = (p: Partner) => !!p.word || !!p.wide || p.type === "host";
 const domain = (href: string) => href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
 
-// big: the full wordmark when there is one, else the mark in its own colours. mini (index): the square icon;
-// a wordmark-only partner (TenGer, AI Group) shows its wordmark small.
-// Every logo gets the same visual area whatever its shape (owner, 23 Nov: "each logo has a different size"):
-// the image's width/height ratio goes to --ar and the CSS sizes it as --s·√ar wide by --s/√ar tall.
 function fitArea(img: HTMLImageElement | null) {
   if (!img) return;
   const set = () => img.naturalWidth && img.naturalHeight && img.style.setProperty("--ar", String(img.naturalWidth / img.naturalHeight));
   if (img.complete) set(); else img.addEventListener("load", set, { once: true });
 }
 
-function Mark({ p, big, on }: { p: Partner; big?: boolean; on?: boolean }) {
-  const word = isWord(p);
-  const f = big ? p.word ?? p.svg ?? p.icon ?? p.logo : word ? p.svg ?? p.logo ?? p.icon : p.icon ?? p.svg ?? p.logo;
-  const cls = `${big ? "t-spot-big" : "t-spot-mini"}${word ? " is-word" : ""}${p.onDark ? " is-ink" : ""}${on ? " is-cur" : ""}`;
-  return f ? <img ref={fitArea} className={cls} src={src(f)} alt="" decoding="async" aria-hidden={big && !on ? true : undefined} /> : <i className={`${cls} is-letter`}>{p.name[0]}</i>;
+function Block({ p, tier }: { p: Partner; tier: TierId }) {
+  const big = tier !== "supporter";
+  const f = p.dark ?? p.icon ?? p.svg ?? p.logo;
+  const body = (
+    <>
+      <span className="t-pm-logo">
+        {f ? <img ref={fitArea} src={src(f)} alt="" loading="lazy" decoding="async" /> : <i>{p.name[0]}</i>}
+      </span>
+      <span className="t-pm-name">
+        <b>{p.name}</b>
+        {big && p.href && <small>{domain(p.href)} <ArrowUpRight size={13} /></small>}
+      </span>
+    </>
+  );
+  const cls = `t-pm-cell is-${tier}${big ? " is-big" : ""}`;
+  const style = { ["--tint" as string]: p.tint ?? "#2945d5" };
+  return p.href
+    ? <a className={cls} style={style} href={p.href} target="_blank" rel="noopener noreferrer" aria-label={p.name}>{body}</a>
+    : <div className={cls} style={style}>{body}</div>;
 }
 
 export function PartnerCards({ types, partners }: { types: { id: PartnerType; label: string }[]; partners: Partner[] }) {
   const shown = partners.filter((p) => types.some((t) => t.id === p.type));
   const tiers = TIERS.map((t) => ({ ...t, list: shown.filter((p) => tierOf(p) === t.id) })).filter((t) => t.list.length);
-  // the panel names one partner, so it uses the singular where there is one (owner, 23 Nov: "Media supporter")
-  const flat = tiers.flatMap((t) => t.list.map((p) => ({ p, tier: "one" in t ? t.one : t.label })));
-  // open on the first "Powered by" partner, else the first one
-  const [at, setAt] = useState(() => Math.max(0, flat.findIndex((x) => tierOf(x.p) === "powered")));
-  if (!flat.length) return null;
-  const cur = flat[at] ?? flat[0];
-  const go = (d: number) => setAt((at + d + flat.length) % flat.length);
-
   return (
-    <div className="t-spot" onKeyDown={(e) => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); go(1); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); go(-1); } }}>
-      <nav className="t-spot-index" aria-label="Partners">
-        {tiers.map((t) => (
-          <div className="t-spot-tier" key={t.id}>
-            <h3>{t.label}</h3>
-            <ul>
-              {t.list.map((p) => {
-                const i = flat.findIndex((x) => x.p === p);
-                return (
-                  <li key={p.name}>
-                    <button type="button" className={i === at ? "is-on" : undefined} aria-pressed={i === at} aria-label={p.name} onClick={() => setAt(i)}>
-                      <Mark p={p} />
-                      <span>{p.name}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </nav>
-
-      <article className="t-spot-stage" style={{ ["--tint" as string]: cur.p.tint ?? "#1f2a6b" }} aria-live="polite">
-        <div className="t-spot-head">
-          <span>{cur.tier}</span>
-          <span className="t-spot-count">{String(at + 1).padStart(2, "0")} / {String(flat.length).padStart(2, "0")}</span>
-        </div>
-        {/* every big logo is in the page from the start, stacked; picking one only cross-fades (owner, 23 Nov:
-            "laggy" when each logo was fetched on tap) */}
-        <div className="t-spot-mark">
-          {flat.map((x) => <Mark key={x.p.name} p={x.p} big on={x.p === cur.p} />)}
-        </div>
-        <div className="t-spot-foot">
-          <div className="t-spot-copy" key={cur.p.name}>
-            <h4>{cur.p.name}</h4>
-            {cur.p.about && <p>{cur.p.about}</p>}
-          </div>
-          <div className="t-spot-ctl">
-            {cur.p.href && <a className="t-spot-visit" href={cur.p.href} target="_blank" rel="noopener noreferrer">{domain(cur.p.href)} <ArrowUpRight size={16} /></a>}
-            <button type="button" aria-label="Previous partner" onClick={() => go(-1)}><ChevronLeft size={18} /></button>
-            <button type="button" aria-label="Next partner" onClick={() => go(1)}><ChevronRight size={18} /></button>
-          </div>
-        </div>
-      </article>
+    <div className="t-pm" style={{ ["--pm-bg" as string]: `url(${src("2026/kit/bg-songolt2.webp")})`, ["--pm-grid" as string]: `url(${src("2026/kit/grid-6.png")})` }}>
+      <div className="t-pm-grid">
+        {tiers.map((t) => [
+          <h3 key={t.id} className={`t-pm-label is-${t.id}`}>
+            <span>{t.label}</span>
+            <em>{String(t.list.length).padStart(2, "0")}</em>
+            <img className="t-pm-block" src={src(`2026/kit/block-${t.block}.png`)} alt="" aria-hidden="true" />
+          </h3>,
+          ...t.list.map((p) => <Block key={p.name} p={p} tier={t.id} />),
+        ])}
+        {/* phones only: closes the last row of three with a kit block */}
+        <span className="t-pm-cell is-deco" aria-hidden="true"><img src={src("2026/kit/block-purple.png")} alt="" /></span>
+      </div>
     </div>
   );
 }

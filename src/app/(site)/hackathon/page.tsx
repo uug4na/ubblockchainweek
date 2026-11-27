@@ -9,7 +9,7 @@ import { TetherRain } from "@/components/TetherRain";
 import { AsciiMpc } from "@/components/AsciiMpc";
 import { MatrixReveal } from "@/components/MatrixReveal";
 import { HackDays } from "@/components/HackDays";
-import { hackCriteria, hackDirections, hackDirectionsNoteShort, hackDirectionsShort, hackExampleShort, hackFacts, hackFinal, hackGoalShort, hackIdea, hackKeyDates, hackPool, hackPrizes, hackReading, hackStats, hackSubmitIntro, hackSubmitQuestions } from "@/data/hackathon";
+import { hackCriteria, hackDirections, hackDirectionsNoteShort, hackDirectionsShort, hackExampleShort, hackFacts, hackFinal, hackGoalShort, hackIdea, hackIntro, hackKeyDates, hackPool, hackPrizes, hackReading, hackStats, hackSubmitIntro, hackSubmitQuestions } from "@/data/hackathon";
 
 export const metadata: Metadata = { title: "UB Hack" };
 
@@ -52,6 +52,7 @@ export default function HackathonPage() {
               <h2 className="t-title">Real World<span>Mining</span></h2>
             </div>
             <p className="hk-lede">
+              <span className="is-scene">{hackIntro.join(" ")}</span>{" "}
               <span className="is-q">{hackGoalShort.question}</span>
             </p>
           </header>
