@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { ArrowLeft, Mail, Sparkles, Star, X, Mic, BadgeCheck, MessageCircle, ChevronRight, ChevronDown } from "lucide-react";
+import { ArrowLeft, Mail, Star, X, Mic, BadgeCheck, MessageCircle, ChevronRight, ChevronDown } from "lucide-react";
 import { AuthPanel } from "@/components/AuthPanel";
 import { QrCode } from "@/components/QrCode";
 import { QrScanner } from "@/components/QrScanner";
@@ -112,7 +112,7 @@ function MeetScan({ onConnected }: { onConnected: () => void }) {
         <b>{done.res.status === "connected" ? `You met ${done.person.name}` : `Sent to ${done.person.name}`}</b>
         <span className="muted small">
           {done.res.status === "connected"
-            ? done.res.stars ? `+${done.res.stars}★${done.res.vip ? ` · ${done.res.vip} bonus` : done.res.bonus ? " · different worlds ×2" : ""}` : "Today's meet stars are used up"
+            ? done.res.stars ? `+${done.res.stars}★` : "Your first meets have already paid their stars"
             : "They accept it on their phone"}
         </span>
         {done.res.milestone && <span className="meet-milestone-hit"><Star size={14} fill="currentColor" /> {done.res.milestone.n} people met · +{done.res.milestone.stars}★</span>}
@@ -181,7 +181,7 @@ function PersonSheet({ c, ice, onClose, onAnswered }: { c: Connection; ice: numb
           <span className="muted small">{[c.handle, c.about].filter(Boolean).join(" · ") || "No bio yet"}</span>
           {c.interests.length > 0 && <span className="conn-tags">{c.interests.join(" · ")}</span>}
           {c.email && <a className="conn-mail" href={`mailto:${c.email}`}>{c.email}</a>}
-          <span className="conn-when">Met {when}{c.bonus ? " · different worlds" : ""}</span>
+          <span className="conn-when">Met {when}</span>
           <Link href={`/app/chat/?p=${encodeURIComponent(c.id)}`} className="btn btn-ghost"><MessageCircle size={16} /> Message</Link>
         </div>
         <div className="ice">
@@ -235,10 +235,6 @@ export default function MeetPage() {
       <Link href="/app/games" className="back-link game-back"><ArrowLeft size={16} /> Games</Link>
       <h1 className="app-h1">Proof of Meet</h1>
       <p className="app-sub">{list.length} met · {conns?.earned ?? 0}★ earned</p>
-
-      {ready && me.user.interests.length === 0 && (
-        <div className="notice-card"><Sparkles size={18} /><p>Pick what you&apos;re <Link href="/app/profile">here for</Link> to unlock the ×2 different-worlds bonus.</p></div>
-      )}
 
       <section className="meet-card">
         <div className="side-pick meet-switch" role="tablist" aria-label="Connect">
@@ -311,11 +307,8 @@ export default function MeetPage() {
           <div className="panel-head"><h2>Rules</h2></div>
           <div className="meet-rules">
             <div><span>Meet someone new</span><b>+{rules.base}★ each</b></div>
-            <div><span>Different interests</span><b>×2</b></div>
-            <div><span>A speaker or crew</span><b>×{rules.vip}</b></div>
-            <div><span>Answer the icebreaker (paid meets)</span><b>+{rules.ice}★</b></div>
-            <div><span>{rules.milestones.map((m) => m.n).join(" · ")} people met</span><b>{rules.milestones.map((m) => `+${m.stars}`).join(" · ")}★</b></div>
-            <div><span>Paid meets a day</span><b>{rules.cap}</b></div>
+            <div><span>Meets that pay stars</span><b>first {rules.cap}</b></div>
+            <div><span>People you can meet</span><b>no limit</b></div>
           </div>
           <p className="muted small" style={{ marginTop: 10 }}>Both of you must be checked in at the event. Each pair counts once.</p>
         </section>

@@ -82,7 +82,7 @@ export default function CoinFlipPage() {
     <>
       <Link href="/app/games" className="back-link game-back"><ArrowLeft size={16} /> Games</Link>
       <h1 className="app-h1">Coin flip</h1>
-      <p className="app-sub">Fair 50/50{data ? ` · ${Math.max(0, left)} of ${data.dailyLimit} left today` : ""}</p>
+      <p className="app-sub">40% chance to win{data ? ` · ${Math.max(0, left)} of ${data.dailyLimit} left today` : ""}</p>
 
       <div className={`toss-stage ${tossing ? "is-tossing" : ""}`} aria-hidden>
         <Coin3D ref={coin} />
