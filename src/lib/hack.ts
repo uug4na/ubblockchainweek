@@ -26,7 +26,7 @@ export const stageLabel: Record<Stage, string> = { registered: "Stage 1 · Propo
 
 // The three stages as the app shows them (step = 1-based index; "out" shows no step).
 export const steps = [
-  { label: "Proposal", when: "until 1 Dec" },
+  { label: "Proposal", when: "until 30 Nov" },
   { label: "Demo Day", when: "3 Dec" },
   { label: "Pitch Day", when: "4 Dec" },
 ];
