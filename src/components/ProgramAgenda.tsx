@@ -77,6 +77,7 @@ export function ProgramAgenda() {
                     </time>
                     <div>
                       <b>{s.title}</b>
+                      {s.about && <p className="t-agenda-about">{s.about}</p>}
                     </div>
                   </li>
                 ))}

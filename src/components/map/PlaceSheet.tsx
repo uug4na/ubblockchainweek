@@ -14,6 +14,7 @@ type Place = { lat: number; lng: number; name: string | null };
 // kind: e.g. "Panel · Ecosystem"; when: day and hours; where: the place's name (or "Online", "To be announced").
 export type EventInfo = {
   kind: string; when: string; live: boolean; lang: string; stars: number; firstN: number | null;
+  about?: string;                       // short description of the event (schedule.ts)
   topic: string; speakers: string[];   // the sheet's Сэдэв and Илтгэгч (schedule.ts), may be empty
   where: string; mode: "in_person" | "online" | "both" | null;
   saved: boolean; onSave: () => void;
@@ -102,6 +103,7 @@ export function PlaceSheet({ title, event, place, onClose, onSpot }: { title: st
         <div className="where-body">
           <small className="ev-kind">{event.kind}</small>
           <h2>{title}</h2>
+          {event.about && <p className="ev-about">{event.about}</p>}
           <ul className="ev-facts">
             {event.topic && event.topic !== title && !title.endsWith(event.topic) && <li><MessageSquareText size={16} aria-hidden /><span className="ev-topic">{event.topic}</span></li>}
             {event.speakers.length > 0 && <li><Mic size={16} aria-hidden /><span>{event.speakers.map((x) => <span key={x} className="ev-speaker">{x}</span>)}</span></li>}

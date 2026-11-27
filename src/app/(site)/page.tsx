@@ -168,7 +168,7 @@ export default function Home() {
             <dl className="t-net-stats">
               <div><dt>30 November – 5 December 2026</dt><dd>6 days</dd></div>
               <div><dt>Free with advance registration</dt><dd>Free entry</dd></div>
-              <div><dt>Venues and speakers to be announced</dt><dd>25 sessions</dd></div>
+              <div><dt>Venues and speakers to be announced</dt><dd>28 sessions</dd></div>
             </dl>
             <Link href="/app" className="t-btn t-btn-fill">Get your pass</Link>
           </div>
