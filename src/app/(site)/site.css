@@ -360,48 +360,83 @@
   .t-spot-tier button.is-on { opacity: 1; background: #fff; }
   .t-spot-mini, .t-spot-mini:not(.is-word), .t-spot-mini.is-word { width: calc(25px * sqrt(var(--ar, 1))); height: calc(25px / sqrt(var(--ar, 1))); max-width: 100%; margin: 0; }
 }
-.t-pgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-.t-pcard { aspect-ratio: 1 / 1; background: #fff; border: 1px solid var(--t-line); border-radius: var(--r); }
-.t-pcard > a, .t-pcard > div { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; height: 100%; padding: 24px; color: inherit; text-decoration: none; }
-.t-pcard > a:hover { border-color: var(--t-accent-light); }
-.t-pcard:has(> a:hover) { border-color: var(--t-accent-light); }
-.t-pcard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.t-pcard-icon { flex: none; width: 52px; height: 52px; display: grid; place-items: center; overflow: hidden; border-radius: var(--r); background: #fff; }
-.t-pcard-icon img { width: 100%; height: 100%; object-fit: contain; }
-.t-pcard-icon[style] img { width: 64%; height: 64%; }
-.t-pcard-icon.is-word { background: var(--t-navy); }
-.t-pcard-icon.is-word img { width: 78%; height: auto; filter: brightness(0) invert(1); }
-.t-pcard-icon.is-letter { background: var(--t-navy); color: #fff; font-size: 22px; font-weight: 700; }
-.t-pcard-icon.is-wide { width: auto; }  /* a full wordmark (AI Group) instead of a square mark */
-.t-pcard-icon.is-wide img { width: auto; height: 28px; }
-.t-pcard-more { display: inline-flex; align-items: center; gap: 8px; padding-top: 8px; font-size: 12px; font-weight: 500; color: var(--t-muted); white-space: nowrap; }
-.t-pcard-more i { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--t-line); border-radius: var(--r); color: var(--t-ink); font-style: normal; transition: background-color .2s, border-color .2s, color .2s; }
-.t-pcard > a:hover .t-pcard-more i { background: var(--t-navy); border-color: var(--t-navy); color: #fff; }
-.t-pcard-text { display: grid; gap: 8px; }
-.t-pcard-text b { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--t-ink); }
-.t-pcard-tag { padding: 3px 8px; border-radius: var(--r); background: var(--t-accent-dark); color: var(--t-navy); font-size: 11px; font-style: normal; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.t-pcard-text span { font-size: 14px; line-height: 1.5; color: var(--t-muted); }
-.t-pcard.is-open { display: grid; place-items: center; background: transparent; }
-.t-ptile-mark { display: grid; grid-template-columns: repeat(2, 12px); gap: 3px; }
-.t-ptile-mark i { width: 12px; height: 12px; border-radius: 2px; background: #e4e8f6; }
-.t-ptile-mark i:first-child { grid-column: 1 / -1; width: 27px; }
+/* Partners: block mosaic on a dark panel in the UBW 2025 kit (27 Nov 2026); layout notes in PartnerCards.tsx. */
+.t-pm { padding: 8px; border-radius: calc(var(--r) * 2); background: #07082a var(--pm-bg) center / cover no-repeat; }
+.t-pm-grid { --gap: 8px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: var(--gap); }
+/* glass: a light white veil, blurred backdrop and the kit's thin top-left edge light */
+.t-pm-label, .t-pm-cell { border-radius: var(--r); background: rgba(255, 255, 255, .05); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .14); }
+.t-pm-label { position: relative; overflow: hidden; grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; margin: 0; padding: 20px; color: #fff; }
+.t-pm-label.is-supporter { grid-row: span 1; }
+.t-pm-label span { position: relative; z-index: 1; font-size: clamp(18px, 1.9vw, 26px); font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; }
+.t-pm-label em { position: relative; z-index: 1; font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--t-accent-dark); }
+/* the tier's tetromino from the kit, bottom right */
+.t-pm-block { position: absolute; right: 6%; bottom: 6%; width: 52%; height: auto; pointer-events: none; }
+.t-pm-label.is-supporter .t-pm-block { width: 30%; right: 5%; bottom: 8%; }
+.t-pm-cell { position: relative; display: grid; place-items: center; aspect-ratio: 1; overflow: hidden; color: #fff; text-decoration: none; transition: background-color .25s ease; --s: 40px; }
+.t-pm-cell.is-big { grid-column: span 2; grid-row: span 2; --s: 84px; }
+/* the kit's 6x6 line grid fading out of the top-right corner of the big blocks */
+.t-pm-cell.is-powered::before { content: ""; position: absolute; top: 0; right: 0; width: 46%; aspect-ratio: 1; background: var(--pm-grid) top right / 100% no-repeat; opacity: .22; -webkit-mask-image: radial-gradient(circle at top right, #000 20%, transparent 72%); mask-image: radial-gradient(circle at top right, #000 20%, transparent 72%); pointer-events: none; }
+.t-pm-logo { display: grid; place-items: center; width: 100%; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.t-pm-cell.is-big:hover .t-pm-logo { transform: scale(1.05); }
+.t-pm-cell:not(.is-big):hover .t-pm-logo, .t-pm-cell:not(.is-big):focus-visible .t-pm-logo { transform: translateY(-9px); }
+.t-pm-logo img { display: block; width: calc(var(--s) * sqrt(var(--ar, 1))); height: calc(var(--s) / sqrt(var(--ar, 1))); max-width: 78%; object-fit: contain; }
+.t-pm-logo i { display: grid; place-items: center; width: var(--s); height: var(--s); border-radius: var(--r); background: rgba(255, 255, 255, .12); color: #fff; font-style: normal; font-weight: 700; }
+.t-pm-name { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding: 0 20px 18px; }
+.t-pm-name b { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; color: rgba(255, 255, 255, .9); }
+.t-pm-name small { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: rgba(255, 255, 255, .55); white-space: nowrap; }
+/* small blocks: the name slides in on hover */
+.t-pm-cell:not(.is-big) .t-pm-name { justify-content: center; padding: 0 8px 10px; opacity: 0; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease; }
+.t-pm-cell:not(.is-big) .t-pm-name b { overflow: hidden; white-space: normal; font-size: 11.5px; line-height: 1.25; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.t-pm-cell:not(.is-big):hover .t-pm-name, .t-pm-cell:not(.is-big):focus-visible .t-pm-name { opacity: 1; transform: none; }
+/* tier labels are not cards (owner, 27 Nov): text and the kit block straight on the panel */
+.t-pm-label { background: none; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; padding-left: 6px; }
+/* tiers told apart by brand-colour label blocks (owner, 27 Nov: the labels sat on the same background as everything
+   else; then "too bright"): soft tints of Powered by green, Partners cyan, Supporters violet (globals.css brand
+   colours), white text, the count and the kit tetromino in the tier colour. */
+.t-pm-label { padding: 20px; color: #fff; }
+.t-pm-label.is-powered { --tc: #01fe6d; }
+.t-pm-label.is-partner { --tc: #13effd; }
+.t-pm-label.is-supporter { --tc: #b57bff; }
+.t-pm-label.is-powered, .t-pm-label.is-partner, .t-pm-label.is-supporter { background: color-mix(in srgb, var(--tc) 16%, rgba(7, 8, 42, .55)); box-shadow: inset 1px 1px 0 color-mix(in srgb, var(--tc) 30%, transparent); }
+.t-pm-label em { color: var(--tc); }
+.t-pm-label .t-pm-block { opacity: .9; }
+/* Powered by only: a soft gradient from the brand green into the brand blue (owner, 27 Nov) */
+.t-pm-cell.is-powered { background: linear-gradient(150deg, rgba(1, 254, 109, .16), rgba(41, 69, 213, .28) 55%, rgba(255, 255, 255, .04)); box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .18); }
+.t-pm-cell.is-powered .t-pm-name small { color: #01fe6d; }
+.t-pm-cell.is-partner .t-pm-name small { color: #13effd; }
+.t-pm-cell.is-supporter:hover, .t-pm-cell.is-supporter:focus-visible { background-color: color-mix(in srgb, var(--tint) 18%, rgba(255, 255, 255, .06)); }
+.t-pm-cell.is-partner:hover, .t-pm-cell.is-partner:focus-visible { background-color: color-mix(in srgb, var(--tint) 18%, rgba(255, 255, 255, .06)); }
+.t-pm-cell.is-powered:hover, .t-pm-cell.is-powered:focus-visible { filter: brightness(1.15); }
+.t-pm-cell:hover .t-pm-logo img { opacity: 1; }
+.t-pm-cell.is-deco { display: none; }
+
+.t-pm-cell.is-deco { background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.t-pm-cell.is-deco img { width: 46%; height: auto; }
 .t-partners-cta { display: flex; justify-content: center; margin-top: clamp(32px, 4.4vw, 48px); }
 @media (max-width: 1100px) {
-  .t-pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .t-pcard.is-extra { display: none; }
-  .t-pcard { aspect-ratio: auto; min-height: 240px; }
+  /* 21 columns: big blocks span 7 (3 a row), supporters span 3 (7 a row, two full rows) */
+  .t-pm-grid { grid-template-columns: repeat(21, minmax(0, 1fr)); }
+  .t-pm-label, .t-pm-label.is-supporter { grid-column: 1 / -1; grid-row: auto; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; min-height: 52px; padding: 12px 16px; margin-top: 6px; }
+  .t-pm-label.is-powered { margin-top: 0; }
+  .t-pm-label span { font-size: 16px; }
+  .t-pm-block, .t-pm-label.is-supporter .t-pm-block { width: auto; height: 34px; right: 14px; bottom: 50%; transform: translateY(50%); }
+  .t-pm-cell { grid-column: span 3; }
+  .t-pm-cell.is-big { grid-column: span 7; grid-row: auto; --s: 64px; }
+  .t-pm-cell:not(.is-big) .t-pm-name { opacity: 1; transform: none; }
+  .t-pm-cell:not(.is-big) .t-pm-logo { transform: translateY(-9px); }
 }
-/* phones: the same cards, two across (empty cards still finish the last row); "Learn more" keeps only its arrow */
+/* phones: three across in every tier; a kit block closes the last supporter row (14 + 1 = five rows) */
 @media (max-width: 640px) {
-  .t-pgrid { gap: 10px; }
-  .t-pcard { min-height: 196px; }
-  .t-pcard > a, .t-pcard > div { padding: 14px; gap: 14px; }
-  .t-pcard-icon { width: 40px; height: 40px; }
-  .t-pcard-more { padding: 0; gap: 0; font-size: 0; }
-  .t-pcard-text { gap: 6px; }
-  .t-pcard-text b { gap: 6px; font-size: 16px; }
-  .t-pcard-text span { font-size: 12.5px; line-height: 1.45; }
-  .t-pcard-tag { padding: 2px 6px; font-size: 10px; }
+  .t-pm { padding: 6px; }
+  .t-pm-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); --gap: 6px; }
+  .t-pm-cell, .t-pm-cell.is-big { grid-column: span 1; --s: 34px; }
+  .t-pm-cell.is-big { --s: 40px; }
+  .t-pm-cell.is-powered::before { width: 60%; }
+  .t-pm-name { padding: 0 8px 9px; justify-content: center; }
+  .t-pm-name b { font-size: 11.5px; text-align: center; }
+  .t-pm-name small { display: none; }
+  .t-pm-cell.is-big .t-pm-logo { transform: translateY(-9px); }
+  .t-pm-cell.is-deco { display: grid; }
 }
 
 /* ── FAQ ── */
@@ -1808,9 +1843,9 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 /* ── UB Hack polish (owner, 18 Nov): challenge as a lede, sidenote text, aligned workflow cards, prize bento ── */
 /* the challenge: scenario muted, the question in ink, the ask on its own line */
 .hk-challenge .hk-head { align-items: end; }
-.hk-lede { margin: 0; max-width: 560px; font-size: clamp(18px, 1.55vw, 21px); line-height: 1.5; letter-spacing: -0.005em; text-wrap: pretty; }
+.hk-lede { margin: 0; max-width: 560px; font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; letter-spacing: -0.005em; text-wrap: pretty; }
 .hk-lede .is-scene { color: var(--t-muted); }
-.hk-lede .is-q { color: var(--t-ink); font-weight: 600; }
+.hk-lede .is-q { color: var(--t-ink); font-weight: 500; }
 .hk-lede .is-ask { display: block; margin-top: 14px; color: var(--t-accent-light); font-weight: 600; }
 
 /* "Why mining?": the reason as a statement under the label (left), Global MPC's context beside it (right) */
@@ -1891,7 +1926,7 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .hk-challenge .hk-why p, .hk-challenge .hk-why p + p { grid-column: 1; grid-row: auto; }
 }
 @media (max-width: 640px) {
-  .hk-lede { font-size: 17px; }
+  .hk-lede { font-size: 15px; }
   .hk-lede .is-ask { margin-top: 10px; }
   .hk-challenge .hk-why p { font-size: 18px; }
   .hk-challenge .hk-why p + p { font-size: 15px; }

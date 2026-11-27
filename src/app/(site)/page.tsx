@@ -197,7 +197,7 @@ export default function Home() {
             <h2 className="t-title t-title-sm">Our partners</h2>
             <p>The people making the week possible. Announced as they sign.</p>
           </div>
-          <div data-reveal><PartnerCards types={["host", "partner"].map((id) => partnerTypes.find((t) => t.id === id)!)} partners={partners2026} /></div>
+          <div data-reveal><PartnerCards types={["partner", "supporter"].map((id) => partnerTypes.find((t) => t.id === id)!)} partners={partners2026} /></div>
           <div className="t-partners-cta">
             <Link href="/get-involved#partner" className="t-btn t-btn-fill">Become a partner</Link>
           </div>

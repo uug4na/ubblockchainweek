@@ -1,6 +1,6 @@
 "use client";
 
-import { HACK_DETAILS_PUBLIC, hackCriteria, hackDays, hackDirections, hackDirectionsShort, hackExample, hackFinal, hackGoalShort, hackKeyDates, hackPool, hackPrizes, hackReading, hackSubmitQuestions } from "@/data/hackathon";
+import { HACK_DETAILS_PUBLIC, hackCriteria, hackDays, hackDirections, hackDirectionsShort, hackExample, hackFinal, hackGoalShort, hackIntro, hackKeyDates, hackPool, hackPrizes, hackReading, hackSubmitQuestions } from "@/data/hackathon";
 import "./learn.css";
 
 // App › Hackathon tabs next to the team space: Хуваарь, Шагнал, Удирдамж (the 27 Nov participant brief).
@@ -96,6 +96,7 @@ function Fold({ no, title, children }: { no?: string; title: string; children: R
 export function Learn() {
   return (
     <div className="app-learn hk-brief">
+      <p className="hb-intro">{hackIntro.join(" ")}</p>
       <p className="lp-lede">{hackGoalShort.question}</p>
 
       <ol className="hb-dates">

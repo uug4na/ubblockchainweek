@@ -22,7 +22,7 @@ const tagOf = (p: Partner) => p.appTag ?? p.tag ?? TYPE_TAG[p.type];
 const rank = (p: Partner) => (p.type === "host" ? 0 : p.tag === "Powered by" ? 1 : tagOf(p) === "Media partner" ? 2 : 3);
 const LEVEL = ["is-host", "is-powered", "is-media", "is-plain"] as const;
 const list = partners2026
-  .filter((p) => (p.type === "host" || p.type === "partner") && (p.icon || p.logo))
+  .filter((p) => (p.type === "host" || p.type === "partner" || p.type === "supporter") && (p.icon || p.logo))
   .map((p, i) => ({ p, i }))
   .sort((a, b) => rank(a.p) - rank(b.p) || a.i - b.i)
   .map(({ p }) => p);
