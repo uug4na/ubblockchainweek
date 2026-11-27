@@ -53,7 +53,7 @@ function RequestCard({ r, onDone }: { r: MeetRequest; onDone: (text: string) => 
             setBusy(true);
             try {
               const res = await answer(r, true);
-              onDone(`Connected with ${r.name}${res.stars ? ` · +${res.stars} stars${res.vip ? " (speaker/crew bonus)" : res.bonus ? " (×2)" : ""}` : ""}`);
+              onDone(`Connected with ${r.name}${res.stars ? ` · +${res.stars} stars` : ""}`);
             } catch (e) {
               onDone((e as Error).message);
             }

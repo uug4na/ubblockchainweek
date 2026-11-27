@@ -21,7 +21,7 @@ export type Badges = {
   // games
   berkh?: number; // Shagai rolls that came up Dorvon Berkh
   flipStreak?: number; // longest run of coin-flip wins
-  jackpot?: boolean; // scratched the 500-star jackpot
+  jackpot?: boolean; // scratched the scratch-card jackpot (50★ since 0099)
   oracle?: number; // predictions called right
   quizWins?: number; // Quiz Rush rounds won (first to answer)
   // more games (0066)
@@ -202,7 +202,7 @@ export function achievements(b: Badges, open: Open = {}): Achievement[] {
     id: "miner", label: "Hackathon", icon: GlobalMpcMark, partner: "Global MPC, powering the hackathon", done: !!b.hack, at: at.hack,
     note: b.hack ? "Building with Global MPC" : "Join the hackathon",
     about: b.hack ? "You're building for Real World Mining, the UBBW 2026 hackathon powered by Global MPC." : "This year's hackathon is Real World Mining, powered by Global MPC: apps for verifying and registering mined real-world assets.",
-    how: "Join a hackathon team. Every member earns it. It isn't needed for the 1,000-star reward.",
+    how: "Join a hackathon team. Every member earns it.",
     link: !b.hack && open.hack ? { href: "/app/hack", label: "Open the hackathon" } : undefined,
   });
 

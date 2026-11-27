@@ -30,7 +30,7 @@ function facesFor(t: Ticket, prizes: Prize[]): Face[] {
     return [f, f, f];
   }
   const pool = prizes.map(faceOf).filter((f, i, a) => a.findIndex((g) => g.key === f.key) === i);
-  if (pool.length < 3) return [{ key: "a", stars: 20 }, { key: "b", stars: 100 }, { key: "c", stars: 500 }];
+  if (pool.length < 3) return [{ key: "a", stars: 10 }, { key: "b", stars: 20 }, { key: "c", stars: 50 }];
   let h = 0;
   for (const ch of t.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   const out: Face[] = [];
@@ -183,7 +183,7 @@ export function ScratchCard({ ticket, prizes, revealAll, onReveal }: { ticket: T
     fired.current = true;
     onReveal(); // the server pays it in the background
     const won = ticket.kind !== "none";
-    const big = ticket.kind === "merch" || (ticket.stars ?? 0) >= 200;
+    const big = ticket.kind === "merch" || (ticket.stars ?? 0) >= 50;
     const t = setTimeout(() => {
       if (won) {
         haptic.reward();

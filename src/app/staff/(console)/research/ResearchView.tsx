@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileText, Search, X, GraduationCap } from "lucide-react";
+import { FileText, Search, X, GraduationCap, BadgeCheck } from "lucide-react";
 import { usePolling } from "@/lib/usePolling";
 import { HackChat } from "@/components/HackChat";
 import { supabase } from "@/lib/supa/client";
+import { api } from "@/lib/me";
 import { site } from "@/data/site";
 import { rcThemes } from "@/data/researchCall";
 
@@ -13,6 +14,7 @@ import { rcThemes } from "@/data/researchCall";
 type Item = {
   id: number; name: string; email: string; phone: string; school: string; degree: string;
   coauthors: string; title: string; abstract: string; file: string | null; at: number;
+  qualified: number | null;   // when crew marked it qualified (0099): the author and their team got the reward
   team: { name: string; code: string; themes: number[]; members: string[] | null } | null;   // research team (0069)
 };
 
@@ -21,7 +23,8 @@ const topic = (i: number) => (i === 6 ? "Related topic" : rcThemes[i - 1]?.title
 const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 
 export function ResearchView() {
-  const { data, error } = usePolling<{ items: Item[] }>("/api/rpc/staff_research", 60_000);
+  const { data, error, setData } = usePolling<{ items: Item[]; stars?: number }>("/api/rpc/staff_research", 60_000);
+  const [busy, setBusy] = useState<number | null>(null);
   const [tab, setTab] = useState<"list" | "chat">("list");
   const [q, setQ] = useState("");
   const [err, setErr] = useState("");
@@ -47,6 +50,20 @@ export function ResearchView() {
     else window.location.href = link.signedUrl;
   }
 
+  // 0099: qualifying pays the author and every member of their research team (once each)
+  async function qualify(r: Item) {
+    if (!window.confirm(`Mark "${r.title}" as qualified? The author and their team get ${data?.stars ?? 150}★ each. This can't be undone.`)) return;
+    setErr("");
+    setBusy(r.id);
+    try {
+      setData(await api<{ items: Item[]; stars?: number }>("/api/rpc/staff_research_qualify", { id: r.id }));
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <>
       <span className="eyebrow">The Future of Money</span>
@@ -64,6 +81,7 @@ export function ResearchView() {
       <div className="shift" style={{ marginBottom: 16 }}>
         <div><b>{data?.items.length ?? "–"}</b><span>registered</span></div>
         <div><b>{data ? pdfs : "–"}</b><span>with a PDF</span></div>
+        <div><b>{data ? data.items.filter((r) => r.qualified).length : "–"}</b><span>qualified</span></div>
       </div>
 
       <div className="search" style={{ marginBottom: 16 }}>
@@ -94,6 +112,9 @@ export function ResearchView() {
               {r.file && (
                 <button type="button" className="btn btn-ghost rs-pdf" onClick={() => openPdf(r.file!)}><FileText size={16} /> Open PDF</button>
               )}
+              {r.qualified
+                ? <p className="rs-meta"><BadgeCheck size={14} /> Qualified {when(r.qualified)} · reward paid</p>
+                : <button type="button" className="btn btn-primary rs-pdf" disabled={busy === r.id} onClick={() => qualify(r)}>{busy === r.id ? "…" : `Qualify · +${data?.stars ?? 150}★`}</button>}
             </article>
           ))}
         </div>
