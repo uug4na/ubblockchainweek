@@ -10,6 +10,7 @@ import { ValidatorRack } from "@/components/iso/ValidatorRack";
 import { recap, stats2025, reel2025, reel2025b } from "@/data/recap2025";
 import { Marquee } from "@/components/report/Marquee";
 import { PartnerCards } from "@/components/PartnerCards";
+import { ProgramAgenda } from "@/components/ProgramAgenda";
 import { ScrollFx } from "@/components/ScrollFx";
 import { Faq } from "@/components/Faq";
 import { PowerFx } from "@/components/PowerFx";
@@ -188,6 +189,9 @@ export default function Home() {
           </ol>
         </div>
       </section>
+
+      {/* ── The full agenda, every session with its description (same component and data as /program) ── */}
+      <ProgramAgenda id="agenda" eyebrow={site.dates} title="The program" tabbed />
 
       {/* ── Partners 2026: centred title + line, one grid of partner cards (host first, tagged), one button ── */}
       <section className="t-band t-partners" id="partners">
