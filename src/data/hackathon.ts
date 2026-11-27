@@ -12,22 +12,23 @@ export const HACK_SECTION_OPEN = true;
 
 // UB Hackathon 2026: Real World Mining, powered by Global MPC. Owner, 18 Nov 2026: the participant brief
 // ("Participant brief and judging guide", proposed rules) for the challenge, workflows, technology, schedule
-// and scorecard; prizes from the owner (₮5M / ₮3M / ₮1M / ₮1M), not the brief's 3M / 2M.
+// and scorecard. Owner, 27 Nov 2026: two prizes only (₮3M / ₮2M, ₮5M in total); registration until 1 Dec,
+// shortlist 2 Dec, Demo Day 3 Dec, Pitch Day 4 Dec.
 // Before that: the owner's brief "UB Hackathon 2026.pdf", pages 1–6 (12 Nov 2026); hackTracks and
 // hackAwards below are from that brief and no longer shown on /hackathon.
 
 export const hackIdea = { title: "Real World Mining", by: "Global MPC" };
 
 export const hackFacts = [
-  { label: "Dates", value: "29 Nov – 3 Dec 2026" },
-  { label: "Prize pool", value: "₮10M" },
+  { label: "Dates", value: "2 – 4 Dec 2026" },
+  { label: "Prize pool", value: "₮5M" },
   { label: "Powered by", value: "Global MPC" },
   { label: "Teams", value: "Solo or any size" },
   { label: "Location", value: "Ulaanbaatar, Mongolia" },
 ];
 
 export const hackStats = [
-  { value: "₮10M", label: "prize pool" },
+  { value: "₮5M", label: "prize pool" },
   { value: "8", label: "shortlisted teams" },
   { value: "4", label: "workflows" },
   { value: "100", label: "point scorecard" },
@@ -36,9 +37,9 @@ export const hackStats = [
 // The registration block at the end of /hackathon.
 export const hackKeyDates = [
   { label: "Registration", when: "Open now" },
-  { label: "Shortlist", when: "29 Nov" },
-  { label: "Demo Day", when: "2 Dec" },
-  { label: "Final Pitch Day", when: "3 Dec" },
+  { label: "Shortlist", when: "2 Dec" },
+  { label: "Demo Day", when: "3 Dec" },
+  { label: "Final Pitch Day", when: "4 Dec" },
 ];
 
 export const hackChallenge =
@@ -106,14 +107,12 @@ export const hackTracks = [
   },
 ];
 
-// Owner, 18 Nov 2026: ₮10M in four prizes (5 + 3 + 1 + 1). `share` = the prize's part of the pool.
-export const hackPool = "₮10,000,000";
+// Owner, 27 Nov 2026: ₮5M in two prizes (3 + 2), no other awards. `share` = the prize's part of the pool.
+export const hackPool = "₮5,000,000";
 export const hackPrizes = [
 // `amount` is per team, without the ₮ (the page sets the sign apart: the brand fonts don't draw it well).
-  { tier: "#1", place: "1st Place", amount: "5M", share: 50, teams: "1 team" },
-  { tier: "#2", place: "2nd Place", amount: "3M", share: 30, teams: "1 team" },
-  { tier: "Award", place: "Best Local Impact", amount: "1M", share: 10, teams: "1 team" },
-  { tier: "Award", place: "Best Technical Excellence", amount: "1M", share: 10, teams: "1 team" },
+  { tier: "#1", place: "1st Place", amount: "3M", share: 60, teams: "1 team" },
+  { tier: "#2", place: "2nd Place", amount: "2M", share: 40, teams: "1 team" },
 ];
 
 export const hackAwards = [
@@ -123,34 +122,34 @@ export const hackAwards = [
   { no: "04", title: "Best Rookie Team", sub: "Students & first-time builders", text: "The highest-scoring team of students or first-time hackathon builders." },
 ];
 
-// The brief's schedule (owner chose it, 18 Nov): one-page proposals → 8 shortlisted 29 Nov → Demo Day 2 Dec
-// (all 8 continue) → Final Pitch Day 3 Dec. Tabs on phones (HackDays.tsx).
+// Schedule (owner, 27 Nov): one-page proposals → 8 shortlisted 2 Dec → Demo Day 3 Dec
+// (all 8 continue) → Final Pitch Day 4 Dec. Tabs on phones (HackDays.tsx).
 // Each step: a short headline (`what`), its parts (`items`), score weights (`scores`) and an outcome (`note`).
 export type HackSlot = { time: string; what: string; items?: string[]; scores?: { label: string; pts: number }[]; note?: string; link?: { href: string; label: string } };
 export const hackDays: { date: string; day: string; title: string; slots: HackSlot[] }[] = [
   {
-    date: "29 Nov", day: "Stage 1", title: "Proposal and shortlist",
+    date: "2 Dec", day: "Stage 1", title: "Proposal and shortlist",
     slots: [
       // Owner, 18 Nov: teams submit through the attendee app (/app/hack)
-      { time: "Before Nov 29", what: "Submit a one-page proposal in the attendee app",
-        items: ["The user and the decision they make", "The evidence they need", "The technology you propose", "One workflow you can demo by 2 December"],
+      { time: "Until Dec 1", what: "Submit a one-page proposal in the attendee app",
+        items: ["The user and the decision they make", "The evidence they need", "The technology you propose", "One workflow you can demo by 3 December"],
         link: { href: "/app/hack", label: "Submit in the attendee app" } },
-      { time: "Sun, Nov 29", what: "Eight teams shortlisted",
+      { time: "Wed, Dec 2", what: "Eight teams shortlisted",
         scores: [{ label: "Problem and user evidence", pts: 40 }, { label: "Relevance and feasibility in Mongolia", pts: 35 }, { label: "Demo plan", pts: 25 }] },
     ],
   },
   {
-    date: "2 Dec", day: "Stage 2", title: "Demo Day",
+    date: "3 Dec", day: "Stage 2", title: "Demo Day",
     slots: [
-      { time: "Wed, Dec 2", what: "Run one workflow, live",
+      { time: "Thu, Dec 3", what: "Run one workflow, live",
         items: ["5 minutes: the normal case and one exception", "3 minutes: technical questions"],
         note: "All eight teams advance to Pitch Day." },
     ],
   },
   {
-    date: "3 Dec", day: "Stage 3", title: "Final Pitch Day",
+    date: "4 Dec", day: "Stage 3", title: "Final Pitch Day",
     slots: [
-      { time: "Thu, Dec 3", what: "Pitch to the judges",
+      { time: "Fri, Dec 4", what: "Pitch to the judges",
         items: ["5 minutes: the first pilot user, the data needed and one measurable outcome", "5 minutes: questions"],
         note: "One final scorecard from both days, then the awards." },
     ],

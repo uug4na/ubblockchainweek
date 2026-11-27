@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { withBase } from "@/lib/base";
 import { hackathonPublic } from "@/data/site";
 import { ArrowRight } from "lucide-react";
 import { HackField } from "@/components/HackField";
@@ -84,7 +85,7 @@ export default function HackathonPage() {
         </div>
       </section>
 
-      {/* prizes: ₮10M in four prizes */}
+      {/* prizes: ₮5M in two prizes */}
       <section className="t-band hk-prizes" id="prizes">
         <div className="t-wrap">
           <header className="hk-head">
@@ -92,9 +93,14 @@ export default function HackathonPage() {
               <p className="t-eyebrow">Prizes</p>
               <h2 className="t-title">Prize<span>Architecture</span></h2>
             </div>
-            <p className="hk-pool-line"><b>{hackPool}</b> in four prizes.</p>
+            <p className="hk-pool-line"><b>{hackPool}</b> in two prizes.</p>
           </header>
-          <ul className="hk-tiers is-bento">
+          {/* the official poster (27 Nov), as it is, beside the two prizes */}
+          <div className="hk-prize-row">
+          <figure className="hk-poster">
+            <img src={withBase("/brand/2026/hackathon-rwm-poster.webp")} alt="Real World Mining Hackathon poster: блокчэйнд суурилсан уул уурхайн шийдэл. Шагналын сан: I байр ₮3,000,000, II байр ₮2,000,000. Hosted by TenGer TV, powered by Global MPC." loading="lazy" />
+          </figure>
+          <ul className={`hk-tiers is-bento${hackPrizes.length === 2 ? " is-two" : ""}`}>
             {hackPrizes.map((p, i) => (
               <li key={p.place} className={`is-r${i + 1}${i === 0 ? " is-gold" : ""}`}>
                 <span className="hk-tier">{p.tier}</span>
@@ -107,6 +113,7 @@ export default function HackathonPage() {
               </li>
             ))}
           </ul>
+          </div>
 
         </div>
       </section>

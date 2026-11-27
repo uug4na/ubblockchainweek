@@ -34,12 +34,12 @@ async function openFile(path: string) {
 // What the team should do now, in one sentence.
 function nextStep(t: Team) {
   if (t.stage === "out") return "Thanks for taking part. Your team space is now read-only.";
-  if (t.stage === "final") return "Pitch Day is 3 Dec: 5 minutes to present, 5 for questions. Name your first pilot user, the data you need and one measurable outcome.";
-  if (t.stage === "top20") return "You're shortlisted. Demo Day is 2 Dec: run one workflow, the normal case and one exception, in 5 minutes.";
+  if (t.stage === "final") return "Pitch Day is 4 Dec: 5 minutes to present, 5 for questions. Name your first pilot user, the data you need and one measurable outcome.";
+  if (t.stage === "top20") return "You're shortlisted. Demo Day is 3 Dec: run one workflow, the normal case and one exception, in 5 minutes.";
   // Stage 1 is the proposal: project name, a short summary and the one-page proposal. Links come later.
   const missing = [!t.title && "project name", !t.summary && "proposal summary", !t.files.length && "one-page proposal"].filter(Boolean) as string[];
-  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} before 29 Nov.`;
-  return "All set. Eight teams are shortlisted on 29 Nov.";
+  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} by 1 Dec.`;
+  return "All set. Eight teams are shortlisted on 2 Dec.";
 }
 
 function Steps({ stage }: { stage: Team["stage"] }) {
@@ -316,7 +316,7 @@ function FilesView({ team, onChange, go }: { team: Team; onChange: (h: Hack) => 
       </div>
       <div className="desk-rail is-sticky">
       <h2 className="hk-sec">{stage1 ? "One-page proposal" : "Files"}</h2>
-      <p className="hk-sec-sub">{stage1 ? `PDF, up to ${MAX_MB} MB: the user, the decision, the evidence, the technology and one workflow you can demo by 2 December.` : `Proposal, demo inputs and instructions, diagrams. Up to ${MAX_MB} MB each.`}</p>
+      <p className="hk-sec-sub">{stage1 ? `PDF, up to ${MAX_MB} MB: the user, the decision, the evidence, the technology and one workflow you can demo by 3 December.` : `Proposal, demo inputs and instructions, diagrams. Up to ${MAX_MB} MB each.`}</p>
       {team.files.length > 0 && (
         <div className="settings-group">
           {team.files.map((f) => (
@@ -384,7 +384,7 @@ export default function HackPage() {
     return (
       <>
         <h1 className="app-h1">Hackathon.</h1>
-        <p className="app-sub hk-lead">{HACK_DETAILS_PUBLIC ? <>Real World Mining · powered by Global MPC · ₮10M prize pool</> : "UB Hack"}</p>
+        <p className="app-sub hk-lead">{HACK_DETAILS_PUBLIC ? <>Real World Mining · powered by Global MPC · ₮5M prize pool</> : "UB Hack"}</p>
         {tabs}
         <div className="desk">
         <div className="desk-main">
@@ -398,7 +398,7 @@ export default function HackPage() {
             <button className="btn btn-ghost wide" onClick={() => go("join")}>Join with a code</button>
           </div>
         ) : (
-          <div className="panel empty"><p>Registration closed on 28 November.</p></div>
+          <div className="panel empty"><p>Registration closed on 1 December.</p></div>
         )}
         </div>
         {projectsRow && <div className="desk-rail"><nav className="settings-group">{projectsRow}</nav></div>}

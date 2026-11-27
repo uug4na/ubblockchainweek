@@ -153,7 +153,7 @@ export default function AppHome() {
 
       {/* The two competitions, each its own section */}
       <nav className="settings-group home-compete" aria-label="Compete">
-        {HACK_SECTION_OPEN && <Link href="/app/hack" className="is-special" style={{ ["--tint" as string]: "#2945d5", ["--i" as string]: 0 }}><span className="pwheel-dots compete-dots" aria-hidden="true" /><i className="tile t-klein"><Trophy size={18} /></i><span>Hackathon<small>{HACK_DETAILS_PUBLIC ? "Real World Mining · ₮10M" : "UB Hack"}</small></span><ChevronRight size={18} /></Link>}
+        {HACK_SECTION_OPEN && <Link href="/app/hack" className="is-special" style={{ ["--tint" as string]: "#2945d5", ["--i" as string]: 0 }}><span className="pwheel-dots compete-dots" aria-hidden="true" /><i className="tile t-klein"><Trophy size={18} /></i><span>Hackathon<small>{HACK_DETAILS_PUBLIC ? "Real World Mining · ₮5M" : "UB Hack"}</small></span><ChevronRight size={18} /></Link>}
         <Link href="/app/research" className="is-special" style={{ ["--tint" as string]: "#d415ea", ["--i" as string]: 3 }}><span className="pwheel-dots compete-dots" aria-hidden="true" /><i className="tile t-fushia"><GraduationCap size={18} /></i><span>Research conference<small>The Future of Money · ₮3M</small></span><ChevronRight size={18} /></Link>
       </nav>
       </div>
