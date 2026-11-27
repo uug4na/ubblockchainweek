@@ -25,7 +25,7 @@ export function InfoTabs({ tab, onTab }: { tab: InfoTab; onTab: (t: InfoTab) => 
 }
 
 // Which stage is on today (Ulaanbaatar time), per the Real World Mining schedule (18 Nov):
-// 0 proposals (to 1 Dec) + shortlist (2 Dec), 1 Demo Day (3 Dec), 2 Final Pitch Day (4 Dec). Owner, 27 Nov.
+// 0 proposals (to 30 Nov) + shortlist (1 Dec), 1 Demo Day (3 Dec), 2 Final Pitch Day (4 Dec). Owner, 27 Nov.
 function stageNow() {
   const now = Date.now();
   if (now >= Date.parse("2026-12-04T00:00:00+08:00")) return 2;
