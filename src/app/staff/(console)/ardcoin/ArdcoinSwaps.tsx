@@ -9,7 +9,7 @@ import { site } from "@/data/site";
 
 type Swap = {
   id: string; fullName: string; ardPhone: string; acoAddress: string | null; stars: number; coins: number;
-  status: "pending" | "sent" | "cancelled"; at: number; doneAt: number | null; pass: string; email: string; name: string;
+  status: "pending" | "sent" | "cancelled"; at: number; doneAt: number | null; pass: string; email: string; name: string; crew?: boolean;
 };
 type Data = { stock: number; left: number; swaps: Swap[] };
 
@@ -74,7 +74,8 @@ function ArdcoinSwaps() {
   if (err && !data) return <p className="form-error" role="alert">{err}</p>;
   if (!data) return <p className="muted cw-none">Loading…</p>;
 
-  const live = data.swaps.filter((s) => s.status !== "cancelled");
+  // crew swaps are tests (0094): shown with a tag, left out of the counts and the export for ARD
+  const live = data.swaps.filter((s) => s.status !== "cancelled" && !s.crew);
   const pending = live.filter((s) => s.status === "pending");
   const needle = q.trim().toLowerCase();
   const shown = data.swaps.filter((s) =>
@@ -108,7 +109,7 @@ function ArdcoinSwaps() {
             <div className="aco-row-main">
               <b>{s.fullName}</b>
               <code>{s.ardPhone}</code>
-              <small>{s.pass} · {when(s.at)}</small>
+              <small>{s.pass} · {when(s.at)}{s.crew ? " · crew test (not sent to ARD)" : ""}</small>
             </div>
             {s.status === "pending" ? (
               <div className="aco-row-act">

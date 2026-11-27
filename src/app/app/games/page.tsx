@@ -82,7 +82,7 @@ export default function GamesPage() {
       <span className="eyebrow">Games</span>
       <h1 className="app-h1">Play for stars.</h1>
       <RewardsHead balance={me.balance} />
-      <QuizCard onSoon={gameOpen("/app/games/quiz", me.user.email) ? undefined : () => setSoon({ title: "Quiz Rush", tone: "var(--klein)" })} />
+      <QuizCard onSoon={gameOpen("/app/games/quiz", me.user.email, !!me.user.isCrew) ? undefined : () => setSoon({ title: "Quiz Rush", tone: "var(--klein)" })} />
       <div className="game-list game-list-art">
         {games.map((g) => (
           <Link
@@ -90,7 +90,7 @@ export default function GamesPage() {
             href={g.href}
             className={`game-card ${g.glass ? "is-glass" : ""}`}
             style={{ ["--tone" as string]: g.tone }}
-            onClick={gameOpen(g.href, me.user.email) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
+            onClick={gameOpen(g.href, me.user.email, !!me.user.isCrew) ? undefined : (e) => { e.preventDefault(); setSoon({ title: g.title, tone: g.tone }); }}
           >
             {/* Each game shows its card artwork on the right . */}
             {/* Glass cards: one continuous panorama fills the card; the text side is frosted with a progressive blur
@@ -99,7 +99,7 @@ export default function GamesPage() {
             {g.image ? <img className="game-photo" src={withBase(g.image)} alt="" aria-hidden /> : <g.icon className="game-art" aria-hidden strokeWidth={1.5} />}
             <span className="game-text">
               <span className="game-tag">{g.tag}</span>
-              <b>{g.title}{!gameOpen(g.href, me.user.email) && <span className="soon-tag">Coming soon</span>}</b>
+              <b>{g.title}{!gameOpen(g.href, me.user.email, !!me.user.isCrew) && <span className="soon-tag">Coming soon</span>}</b>
               <span>{g.body}</span>
             </span>
             <ChevronRight size={20} className="game-go" />

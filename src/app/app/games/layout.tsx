@@ -11,5 +11,5 @@ export default function GamesLayout({ children }: { children: React.ReactNode })
   const { status, me } = useMe();
   const isGame = path.startsWith("/app/games/");
   if (isGame && status === "loading") return <PageSkeleton />;
-  return isGame && !gameOpen(path, me?.user.email) ? <GamesSoonPage /> : <>{children}</>;
+  return isGame && !gameOpen(path, me?.user.email, !!me?.user.isCrew) ? <GamesSoonPage /> : <>{children}</>;
 }

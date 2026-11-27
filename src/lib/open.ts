@@ -25,8 +25,9 @@ export const isOwner = (email?: string | null) => !!email && OWNERS.has(fingerpr
 
 export type Open = { stars: boolean; games: boolean; merch: boolean; loading?: boolean };
 
-export function openFor(email?: string | null): Open {
-  const owner = isOwner(email);
+// crew (0094): they can use everything to check it; the database keeps them out of rankings, stats and real spots
+export function openFor(email?: string | null, crew = false): Open {
+  const owner = isOwner(email) || crew;
   return { stars: STARS_OPEN || owner, games: GAMES_PLAYABLE || owner, merch: MERCH_OPEN || owner };
 }
 
@@ -35,5 +36,5 @@ export function openFor(email?: string | null): Open {
 // instead of flashing "Coming soon" at the owner.
 export function useOpen(): Open {
   const { status, me } = useMe();
-  return { ...openFor(me?.user.email), loading: status === "loading" };
+  return { ...openFor(me?.user.email, !!me?.user.isCrew), loading: status === "loading" };
 }
