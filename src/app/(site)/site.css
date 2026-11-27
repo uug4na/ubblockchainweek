@@ -1836,10 +1836,35 @@ html:has(.t-site)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .hk-tiers.is-bento .is-r2 { grid-column: 3 / span 2; grid-row: 1; }
 .hk-tiers.is-bento .is-r3 { grid-column: 3; grid-row: 2; }
 .hk-tiers.is-bento .is-r4 { grid-column: 4; grid-row: 2; }
-/* two prizes (27 Nov): 2nd place fills the right half, its amount at the bottom like 1st */
-@media (min-width: 1001px) {
-  .hk-tiers.is-bento.is-two .is-r2 { grid-row: 1 / span 2; }
-  .hk-tiers.is-bento.is-two .is-r2 .hk-share { margin-top: auto; padding-top: 48px; }
+/* two prizes (27 Nov): the poster on the left, 1st and 2nd place stacked on the right, at every width.
+   The poster keeps its own shape (never cropped); the two cards share its height. */
+.hk-prize-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px; align-items: stretch; }
+.hk-poster { margin: 0; align-self: start; overflow: hidden; border-radius: var(--r); background: #0a1a7a; }
+.hk-poster img { display: block; width: 100%; height: auto; }
+.hk-tiers.is-bento.is-two { grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr 1fr; }
+.hk-tiers.is-bento.is-two .is-r1 { grid-column: 1; grid-row: 1; }
+.hk-tiers.is-bento.is-two .is-r2 { grid-column: 1; grid-row: 2; }
+.hk-tiers.is-bento.is-two .is-r1 .hk-share { padding-top: 16px; font-size: clamp(80px, 7.5vw, 120px); }
+.hk-tiers.is-bento.is-two .is-r2 .hk-share { margin-top: auto; padding-top: 16px; font-size: clamp(64px, 6vw, 96px); line-height: .85; }
+/* tablets: slightly wider poster and smaller amounts so the two cards fit the poster's height */
+@media (min-width: 641px) and (max-width: 1000px) {
+  .hk-prize-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .hk-tiers.is-bento.is-two .is-r1 .hk-share, .hk-tiers.is-bento.is-two .is-r2 .hk-share { margin-top: auto; padding-top: 8px; font-size: 64px; line-height: .85; }
+  .hk-tiers.is-bento.is-two .hk-bar { margin: 14px 0 0; }
+  .hk-tiers.is-bento.is-two .hk-win { margin-top: 12px; padding-top: 10px; }
+}
+/* phones: one compact block. Each cell = place + amount + share; the bar and team line drop out (the poster says it all) */
+@media (max-width: 640px) {
+  .hk-prize-row { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 8px; }
+  .hk-tiers.is-bento.is-two .hk-tier { display: none; }
+  .hk-tiers.is-bento.is-two { gap: 8px; }
+  .hk-tiers.is-bento.is-two li { padding: 12px 12px 10px; }
+  .hk-tiers.is-bento.is-two li .hk-place { margin-top: 0; font-size: 14px; min-height: 0; }
+  .hk-tiers.is-bento.is-two .is-r1 .hk-share, .hk-tiers.is-bento.is-two .is-r2 .hk-share { margin-top: auto; padding-top: 4px; font-size: 36px; line-height: .9; }
+  .hk-tiers.is-bento.is-two .hk-bar { display: none; }
+  .hk-tiers.is-bento.is-two .hk-win { margin-top: 6px; padding-top: 0; border-top: 0; }
+  .hk-tiers.is-bento.is-two .hk-win b { display: none; }
+  .hk-tiers.is-bento.is-two .hk-win span { font-size: 12px; }
 }
 .hk-tiers.is-bento .is-r1 .hk-place { font-size: clamp(22px, 2vw, 28px); }
 .hk-tiers.is-bento .is-r1 .hk-share { margin-top: auto; padding-top: 48px; font-size: clamp(96px, 11vw, 168px); line-height: .85; }

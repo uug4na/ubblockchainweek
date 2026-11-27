@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { withBase } from "@/lib/base";
 import { hackathonPublic } from "@/data/site";
 import { ArrowRight } from "lucide-react";
 import { HackField } from "@/components/HackField";
@@ -94,6 +95,11 @@ export default function HackathonPage() {
             </div>
             <p className="hk-pool-line"><b>{hackPool}</b> in two prizes.</p>
           </header>
+          {/* the official poster (27 Nov), as it is, beside the two prizes */}
+          <div className="hk-prize-row">
+          <figure className="hk-poster">
+            <img src={withBase("/brand/2026/hackathon-rwm-poster.webp")} alt="Real World Mining Hackathon poster: блокчэйнд суурилсан уул уурхайн шийдэл. Шагналын сан: I байр ₮3,000,000, II байр ₮2,000,000. Hosted by TenGer TV, powered by Global MPC." loading="lazy" />
+          </figure>
           <ul className={`hk-tiers is-bento${hackPrizes.length === 2 ? " is-two" : ""}`}>
             {hackPrizes.map((p, i) => (
               <li key={p.place} className={`is-r${i + 1}${i === 0 ? " is-gold" : ""}`}>
@@ -107,6 +113,7 @@ export default function HackathonPage() {
               </li>
             ))}
           </ul>
+          </div>
 
         </div>
       </section>

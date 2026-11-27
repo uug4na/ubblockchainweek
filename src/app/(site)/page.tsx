@@ -135,8 +135,8 @@ export default function Home() {
               </p>
             </div>
             <figure className="t-gal-portrait" data-reveal>
-              <img src={img("2025/recap/hack/p01.webp")} alt="Web3 Hackathon poster, UB Blockchain Week 2025" loading="lazy" />
-              <figcaption><small>2025</small><b>Web3 Hackathon</b><span>₮20,000,000 prize pool</span></figcaption>
+              <img src={img("2026/hackathon-rwm-poster.webp")} alt="Real World Mining Hackathon poster: блокчэйнд суурилсан уул уурхайн шийдэл. Шагналын сан: I байр ₮3,000,000, II байр ₮2,000,000. Hosted by TenGer TV, powered by Global MPC." loading="lazy" />
+              <figcaption><small>2026</small><b>Real World Mining Hackathon</b><span>₮5,000,000 prize pool</span></figcaption>
             </figure>
             <QuoteCard
               by="UB Blockchain Week 2026"

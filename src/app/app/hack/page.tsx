@@ -38,8 +38,8 @@ function nextStep(t: Team) {
   if (t.stage === "top20") return "You're shortlisted. Demo Day is 3 Dec: run one workflow, the normal case and one exception, in 5 minutes.";
   // Stage 1 is the proposal: project name, a short summary and the one-page proposal. Links come later.
   const missing = [!t.title && "project name", !t.summary && "proposal summary", !t.files.length && "one-page proposal"].filter(Boolean) as string[];
-  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} before 29 Nov.`;
-  return "All set. Eight teams are shortlisted on 30 Nov.";
+  if (missing.length) return `Add your ${missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing.at(-1) : missing[0]} by 1 Dec.`;
+  return "All set. Eight teams are shortlisted on 2 Dec.";
 }
 
 function Steps({ stage }: { stage: Team["stage"] }) {
@@ -398,7 +398,7 @@ export default function HackPage() {
             <button className="btn btn-ghost wide" onClick={() => go("join")}>Join with a code</button>
           </div>
         ) : (
-          <div className="panel empty"><p>Registration closed on 28 November.</p></div>
+          <div className="panel empty"><p>Registration closed on 1 December.</p></div>
         )}
         </div>
         {projectsRow && <div className="desk-rail"><nav className="settings-group">{projectsRow}</nav></div>}
