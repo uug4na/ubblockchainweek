@@ -42,12 +42,12 @@ export const applyForm = "https://docs.google.com/forms/d/e/1FAIpQLSeOBvLuWUCwRk
 export type Day = { date: string; short: string; month: string; weekday: string; label: string; blurb: string; allDay?: boolean };
 
 export const days: Day[] = [
-  { date: "2026-11-30", short: "30", month: "Nov", weekday: "Mon", label: "TenGer Panel 1", blurb: "The first TenGer panel, AMAs with Erchim Labs and Certify, UB Blockchain тойм EP1." },
-  { date: "2026-12-01", short: "1", month: "Dec", weekday: "Tue", label: "Roundtable", blurb: "A workshop at IT Park, the stablecoin roundtable at Монголбанк, AMAs with Nomad Dao and E-Geree, UB Blockchain тойм EP2." },
-  { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Demo Show", blurb: "TenGer Panel 2 on RWA, AMAs with X-Meta and Cryptoverse, University Tour at СЭЗИС (Binance), the Demo Show and UB Blockchain тойм EP3." },
-  { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Hackathon Dev Day", blurb: "Hackathon Dev Day at IT Park, the research conference final at СЭЗИС, University Tour at МУИС, AMAs with Khatun and Global MPC." },
-  { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "Hackathon final", blurb: "The last TenGer panel, the hackathon final, AMAs with idax and one more, and UB Blockchain тойм EP5." },
-  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Blue Sky Tower. 14:00 ЭШХ-ын шагнал, Хакатоны шагнал. 15:00 Launchpad Meetup Ulaanbaatar Volume 2.", allDay: true },
+  { date: "2026-11-30", short: "30", month: "Nov", weekday: "Mon", label: "TenGer Panel 1", blurb: "The first TenGer panel, AMAs with Erchim Labs and Certify, Inside UB Blockchain Week #1." },
+  { date: "2026-12-01", short: "1", month: "Dec", weekday: "Tue", label: "Roundtable", blurb: "Workshops #1 and #2 at IT Park, the stablecoin roundtable at Монголбанк, AMAs with Nomad Dao and E-Geree, Inside UB Blockchain Week #2." },
+  { date: "2026-12-02", short: "2", month: "Dec", weekday: "Wed", label: "Roundtable #2", blurb: "Roundtable #2 on the state of the crypto industry at СЗХ, TenGer Panel 2 on RWA, AMAs with Green Score and Cryptoverse, University Tour #1 at МУИС (Binance Academy), Inside UB Blockchain Week #3." },
+  { date: "2026-12-03", short: "3", month: "Dec", weekday: "Thu", label: "Hackathon Dev Day", blurb: "Hackathon Dev Day at IT Park, the research conference final and University Tour #2 at СЭЗИС, AMAs with Khatun and Global MPC, the Stipendium Hungaricum alumni networking, Inside UB Blockchain Week #4." },
+  { date: "2026-12-04", short: "4", month: "Dec", weekday: "Fri", label: "Hackathon final", blurb: "TenGer Panel 3 on tokenization, Workshop #2 at IT Park, the hackathon final, AMAs with Ard and idax at Kryptos, Inside UB Blockchain Week #5." },
+  { date: "2026-12-05", short: "5", month: "Dec", weekday: "Sat", label: "ХӨРӨНГӨ ОРУУЛАГЧ ҮНДЭСТЭН", blurb: "Blue Sky Tower. 11:00 TenGer Demo Show. 14:00 ЭШХ-ын шагнал, Хакатоны шагнал. 15:00 Launchpad Meetup Ulaanbaatar Volume 2.", allDay: true },
 ];
 
 export const pillars = [

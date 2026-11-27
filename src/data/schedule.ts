@@ -13,6 +13,7 @@ export type Session = {
   lang: "EN" | "MN" | "EN/MN";
   speakers: string[];
   description: string;
+  about: string; // a short description of the event, written from the sheet
 };
 
 export const tracks: Track[] = ["Ecosystem", "Builders", "Policy & Finance", "Culture & Community", "Hackathon", "Social"];
@@ -26,53 +27,91 @@ export const rooms = {
   city: "Around the city",
 };
 
-// Agenda from the team sheet (owner's update, 24 Nov 2026: "Master Sheet - Хөтөлбөр"). Times are Ulaanbaatar time (UTC+8).
-// room = the sheet's "Хаана". description = its "Сэдэв" (topic), speakers = its "Илтгэгч". An empty start means the
-// sheet has no time yet (shown as TBA). Ids stay with the same event as before (AMA n, Workshop n, EP n, …) because
-// check-ins and places are keyed on them. Must match supabase/migrations/0071_agenda_nov24.sql + 0095_agenda_nov27.sql
-// (27 Nov sheet: AMA 2 Certify, AMA 4 E-Geree, AMA 9 idax, Dev Day at IT Park; the Workshop was kept as it was).
-const add = (id: string, day: string, start: string, end: string, title: string, track: Track, kind: Kind, room = "", description = "", speakers: string[] = []): Session =>
-  ({ id, day, start, end, title, track, kind, room, lang: "EN/MN", speakers, description });
+// Agenda from the team sheet (owner's update, 28 Nov 2026: "Master Sheet - Хөтөлбөр (2)"). Times are Ulaanbaatar time (UTC+8).
+// room = the sheet's "Хаана". description = its "Сэдэв" (topic), speakers = its "Илтгэгч", about = a short description
+// written from the sheet (event sheet in the app, /program on the site). An empty start means no time yet (TBA).
+// Ids stay with the same event as before (AMA n, Workshop n, …) because check-ins and places are keyed on them.
+// Must match supabase/migrations/0071_agenda_nov24.sql + 0095_agenda_nov27.sql + 0098_agenda_nov28.sql.
+const add = (id: string, day: string, start: string, end: string, title: string, track: Track, kind: Kind, room = "", description = "", speakers: string[] = [], about = ""): Session =>
+  ({ id, day, start, end, title, track, kind, room, lang: "EN/MN", speakers, description, about });
+
+const inside = "UB Blockchain Week-ийн өдөр бүрийн тойм нэвтрүүлэг, TenGer TV-ээр онлайнаар.";
+const ama = "Асуултаа шууд асуух боломжтой.";
 
 export const sessions: Session[] = [
   // Mon 30 Nov
-  add("a2", "2026-11-30", "11:00", "12:00", "TenGer Panel 1: 2026 онд яагаад блокчэйн гэж?", "Ecosystem", "Panel", "TenGer TV", "2026 онд яагаад блокчэйн гэж?"),
-  add("a3", "2026-11-30", "14:30", "16:30", "AMA 1: Erchim Labs", "Ecosystem", "Talk", "TenGer TV", "AI-д блокчэйн хэрэгтэй юу?"),
-  add("b2", "2026-11-30", "14:30", "16:30", "AMA 2: Certify", "Ecosystem", "Talk", "TenGer TV", "Certify: Итгэл даах цахим диплом"),
-  add("a4", "2026-11-30", "20:10", "21:00", "UB Blockchain тойм: EP1", "Ecosystem", "Talk", "TenGer TV", "UB Blockchain Week эргэн ирлээ"),
+  add("a2", "2026-11-30", "11:00", "12:00", "TenGer Panel 1: 2026 онд яагаад блокчэйн гэж?", "Ecosystem", "Panel", "TenGer TV", "2026 онд яагаад блокчэйн гэж?",
+    ["Хөтлөгч: Б.Ганцацрал"], "UBBW 2026-г нээх панел. Блокчэйн яагаад яг одоо чухал болсныг TenGer TV-ийн студиэс ярилцана. Онлайнаар үзнэ."),
+  add("a3", "2026-11-30", "14:30", "16:30", "AMA 1: Erchim Labs", "Ecosystem", "Talk", "TenGer TV", "AI-д блокчэйн хэрэгтэй юу?",
+    ["А.Чингүн, Erchim Labs-ийн хамтран үүсгэн байгуулагч"], `AI-д блокчэйн хэрэгтэй юу гэдгийг Erchim Labs-ийн А.Чингүн ярина. ${ama}`),
+  add("b2", "2026-11-30", "14:30", "16:30", "AMA 2: Certify", "Ecosystem", "Talk", "TenGer TV", "Certify: Итгэл даах цахим диплом",
+    ["М.Энхболд, Certify төслийн технологи хариуцсан захирал"], `Certify төсөл дипломыг блокчэйн дээр хэрхэн итгэл даахуйц болгодгийг М.Энхболд танилцуулна. ${ama}`),
+  add("a4", "2026-11-30", "20:10", "21:00", "Inside UB Blockchain Week #1", "Ecosystem", "Talk", "TenGer TV", "UB Blockchain Week эргэн ирлээ", [],
+    `${inside} Эхний дугаар: UB Blockchain Week эргэн ирлээ.`),
 
   // Tue 1 Dec
-  add("b1", "2026-12-01", "12:00", "14:00", "Workshop", "Builders", "Workshop", "IT Park",
-    "From traditional loops to on chain asset · AI, Крипто, Арилжаа",
-    ["Г.Хүрэлтулга, Бүтээгдэхүүн хөгжүүлэлтийн менежер, TenGer TV", "Д.Тулга, idax биржийн технологи хариуцсан захирал"]),
+  add("b1", "2026-12-01", "12:00", "14:00", "Workshop #1, 2", "Builders", "Workshop", "IT Park",
+    "From traditional loops to on chain asset · Стэйблкойноор On chain Wallet - E-Commerce - AI agent",
+    ["Г.Хүрэлтулга, Бүтээгдэхүүн хөгжүүлэлтийн менежер, TenGer TV", "А.Дөлгөөн, Блокчэйн хөгжүүлэгч"],
+    "IT Park-д хоёр хэсэгтэй дадлагын сургалт. Г.Хүрэлтулга уламжлалт процессоос on-chain хөрөнгө рүү шилжих тухай, А.Дөлгөөн стэйблкойноор on-chain хэтэвч, цахим худалдаа, AI агент бүтээх тухай заана."),
   add("a1", "2026-12-01", "14:00", "16:00", "Roundtable #1: Stablecoin: Future of Money", "Policy & Finance", "Panel", "Монголбанк",
-    "Stablecoin: Future of Money", ["Монголбанк, СЗХ, экспертүүд · Powered by MONT"]),
-  add("c4", "2026-12-01", "15:30", "16:30", "AMA 3: Nomad Dao", "Ecosystem", "Talk", "TenGer TV", "Крипто болон AI Guru болох нь", ["Г.Золбоо, Nomad Dao-ийн үүсгэн байгуулагч"]),
-  add("e3", "2026-12-01", "15:30", "16:30", "AMA 4: E-Geree", "Ecosystem", "Talk", "TenGer TV"),
-  add("b3", "2026-12-01", "20:10", "21:00", "UB Blockchain тойм: EP2", "Ecosystem", "Talk", "TenGer TV", "Кибер дайнд криптовалютаа хамгаалахуй"),
+    "Stablecoin: Future of Money", ["Монголбанк, СЗХ, экспертүүд · Powered by MONT"],
+    "Монголбанк, СЗХ болон экспертүүд стэйблкойн ба мөнгөний ирээдүйн талаар хэлэлцэнэ. Урилгаар оролцоно."),
+  add("c4", "2026-12-01", "15:30", "16:30", "AMA 3: Nomad Dao", "Ecosystem", "Talk", "TenGer TV", "Крипто болон AI Guru болох нь",
+    ["Г.Золбоо, Nomad Dao-ийн үүсгэн байгуулагч"], `Крипто болон AI-д хэрхэн мэргэших тухай Nomad Dao-ийн үүсгэн байгуулагч Г.Золбоо ярина. ${ama}`),
+  add("e3", "2026-12-01", "15:30", "16:30", "AMA 4: E-Geree", "Ecosystem", "Talk", "TenGer TV", "E-Geree: Блокчэйн дээр гэрээгээ байгуул",
+    ["Жавхлан"], `E-Geree-ээр гэрээгээ блокчэйн дээр хэрхэн байгуулахыг Жавхлан танилцуулна. ${ama}`),
+  add("b3", "2026-12-01", "20:10", "21:00", "Inside UB Blockchain Week #2", "Ecosystem", "Talk", "TenGer TV", "Кибер дайнд криптовалютаа хамгаалахуй", [],
+    `${inside} Энэ удаа: кибер дайны үед криптовалютаа хэрхэн хамгаалах вэ.`),
 
   // Wed 2 Dec
-  add("c3", "2026-12-02", "11:00", "12:00", "TenGer Panel 2: Бодит хөрөнгийг дижиталжуулах нь (RWA)", "Ecosystem", "Panel", "TenGer TV", "Бодит хөрөнгийг дижиталжуулах нь (RWA)", ["Global MPC"]),
-  add("c6", "2026-12-02", "15:30", "16:30", "AMA 5: X-Meta", "Ecosystem", "Talk", "TenGer TV", "", ["X-Meta CTO"]),
-  add("c7", "2026-12-02", "15:30", "16:30", "AMA 6: Cryptoverse", "Ecosystem", "Talk", "TenGer TV", "Криптогийн эргэн тойронд юу болоод байна?", ["Tomskill"]),
-  add("b6", "2026-12-02", "16:50", "18:00", "Demo Show тэмцээн", "Culture & Community", "Social", "TenGer TV"),
-  add("c5", "2026-12-02", "20:10", "21:00", "UB Blockchain тойм: EP3", "Ecosystem", "Talk", "TenGer TV", "RWA ирээдүй мөн үү?"),
+  add("c3", "2026-12-02", "11:00", "12:00", "TenGer Panel 2: Бодит хөрөнгийг дижиталжуулах нь (RWA)", "Ecosystem", "Panel", "TenGer TV", "Бодит хөрөнгийг дижиталжуулах нь (RWA)",
+    ["Ж.Дашням, Global MPC", "Б.Тамир, Obortech-ийн үүсгэн байгуулагч", "Step Nexus"],
+    "Бодит хөрөнгийг (RWA) блокчэйн дээр дижиталжуулах тухай Global MPC, Obortech, Step Nexus-ийн төлөөлөл ярилцана. Онлайнаар үзнэ."),
+  add("g1", "2026-12-02", "12:00", "14:00", "Roundtable #2: State of crypto industry", "Policy & Finance", "Panel", "СЗХ-ны санхүүгийн хүртээмжийн танхим",
+    "ВХҮҮ салбарын 2026 оны нэгдсэн тайлан · МУТСТ чиглэлээр анхаарах асуудлууд · Панел хэлэлцүүлэг",
+    ["Б.Дэлгэрмаа, ВХҮҮ хэлтсийн мэргэжилтэн", "Г.Ивээл, Мөнгө угаахтай тэмцэх албаны хянан шалгагч", "Биржийн төлөөлөл, СЗХ-ны мэргэжилтнүүд"],
+    "Виртуал хөрөнгийн салбарын 2026 оны нэгдсэн тайлан, мөнгө угаах болон терроризмыг санхүүжүүлэхтэй тэмцэх чиглэлээр анхаарах асуудлыг танилцуулна. Дараа нь биржүүд, СЗХ-ны мэргэжилтнүүдтэй панел хэлэлцүүлэг."),
+  add("c6", "2026-12-02", "15:30", "16:30", "AMA 5: Green Score", "Ecosystem", "Talk", "TenGer TV", "", [],
+    `Green Score төсөл өөрсдийгөө танилцуулна. ${ama}`),
+  add("c7", "2026-12-02", "15:30", "16:30", "AMA 6: Cryptoverse", "Ecosystem", "Talk", "TenGer TV", "Криптогийн эргэн тойронд юу болоод байна?",
+    ["Tomskill"], `Крипто салбарт яг одоо юу болж байгааг Tomskill тоймлон ярина. ${ama}`),
+  add("g2", "2026-12-02", "19:00", "20:00", "University Tour #1: МУИС", "Culture & Community", "Talk", "МУИС", "Partnered with Binance Academy",
+    ["Binance Academy"], "Binance Academy-тай хамтарсан их сургуулийн аялал МУИС-д. Оюутнуудад блокчэйн, криптог танилцуулна."),
+  add("c5", "2026-12-02", "20:10", "21:00", "Inside UB Blockchain Week #3", "Ecosystem", "Talk", "TenGer TV", "RWA ирээдүй мөн үү?", [],
+    `${inside} Энэ удаа: RWA ирээдүй мөн үү?`),
 
   // Thu 3 Dec
-  add("c1", "2026-12-03", "11:00", "20:00", "Хакатон Dev Day: Real World Mining · Powered by Global MPC", "Hackathon", "Hack", "IT Park", "Real World Mining", ["Powered by Global MPC"]),
-  add("d2", "2026-12-03", "11:00", "17:00", "Эрдэм шинжилгээний хурлын финал: The Future of Money", "Ecosystem", "Talk", "СЭЗИС", "The Future of Money"),
+  add("d2", "2026-12-03", "11:00", "15:00", "Эрдэм шинжилгээний хурлын финал: The Future of Money", "Ecosystem", "Talk", "СЭЗИС", "The Future of Money", [],
+    "The Future of Money эрдэм шинжилгээний хурлын финал СЭЗИС-д. Шалгарсан багууд илтгэлээ хамгаална. Бүртгэлтэй оролцогчдод."),
+  add("c1", "2026-12-03", "12:00", "20:00", "Хакатон Dev Day: Real World Mining · Powered by Global MPC", "Hackathon", "Hack", "IT Park", "Real World Mining",
+    ["Powered by Global MPC"], "Real World Mining хакатоны багууд IT Park-д өдөржин бүтээнэ. Бүртгэлтэй багуудад."),
+  add("g3", "2026-12-03", "15:00", "16:30", "University Tour #2: СЭЗИС", "Culture & Community", "Talk", "СЭЗИС", "Partnered with Binance Academy",
+    ["Binance Academy"], "Binance Academy-тай хамтарсан их сургуулийн аялал СЭЗИС-д. Оюутнуудад блокчэйн, криптог танилцуулна."),
   add("e5", "2026-12-03", "15:30", "16:30", "AMA 7: Khatun", "Ecosystem", "Talk", "TenGer TV",
-    "Institutions Are Adopting Blockchain: What Mongolia Must Build to Attract the Capital", ["А.Сайнбилиг, Бүтээгдэхүүн хөгжүүлэлтийн зөвлөх, Хатун студийн үүсгэн байгуулагч"]),
-  add("e6", "2026-12-03", "15:30", "16:30", "AMA 8: Global MPC", "Ecosystem", "Talk", "TenGer TV", "RWA in Mining", ["Ж.Дашням, Global MPC-ийн хамтран үүсгэн байгуулагч"]),
-  add("d5", "2026-12-03", "19:00", "21:00", "Stipendium Hungaricum Alumni Networking", "Social", "Social", "Kryptos"),
-  add("d4", "2026-12-03", "20:10", "21:00", "UB Blockchain тойм: EP4", "Ecosystem", "Talk", "TenGer TV"),
+    "Institutions Are Adopting Blockchain: What Mongolia Must Build to Attract the Capital", ["А.Сайнбилиг, Бүтээгдэхүүн хөгжүүлэлтийн зөвлөх, Хатун студийн үүсгэн байгуулагч"],
+    `Байгууллагууд блокчэйнийг нэвтрүүлж буй энэ үед Монгол хөрөнгө оруулалт татахын тулд юу бүтээх ёстойг А.Сайнбилиг ярина. ${ama}`),
+  add("e6", "2026-12-03", "15:30", "16:30", "AMA 8: Global MPC", "Ecosystem", "Talk", "TenGer TV", "RWA in Mining", ["Ж.Дашням, Global MPC"],
+    `Уул уурхай дахь бодит хөрөнгийг (RWA) блокчэйнд гаргах тухай Global MPC-ийн Ж.Дашням ярина. ${ama}`),
+  add("d5", "2026-12-03", "19:00", "21:00", "Stipendium Hungaricum Alumni Networking", "Social", "Social", "Kryptos", "", [],
+    "Stipendium Hungaricum тэтгэлэгт хөтөлбөрийн төгсөгчдийн networking үдэш Kryptos-д. Урилгаар."),
+  add("d4", "2026-12-03", "20:10", "21:00", "Inside UB Blockchain Week #4", "Ecosystem", "Talk", "TenGer TV", "Ирээдүйн төлбөрийн хэрэгсэл ямар байх вэ?", [],
+    `${inside} Энэ удаа: ирээдүйн төлбөрийн хэрэгсэл ямар байх вэ?`),
 
   // Fri 4 Dec
-  add("e2", "2026-12-04", "11:00", "12:00", "TenGer Panel 3: Криптовалютыг хөрөнгөөр бүртгэх нь зөв үү?", "Ecosystem", "Panel", "TenGer TV", "Криптовалютыг хөрөнгөөр бүртгэх нь зөв үү?", ["СЗХ, Төвбанк, Биржүүд"]),
-  add("e1", "2026-12-04", "13:00", "17:00", "Хакатон финал: 8 баг илтгэл тавина", "Hackathon", "Hack", "TenGer TV", "Финалд үлдсэн 8 баг илтгэл тавина"),
-  add("f1", "2026-12-04", "15:30", "16:30", "AMA 9: idax", "Ecosystem", "Talk"),
-  add("f2", "2026-12-04", "15:30", "16:30", "AMA 10", "Ecosystem", "Talk"),
-  add("e4", "2026-12-04", "20:10", "21:00", "UB Blockchain тойм: EP5", "Ecosystem", "Talk", "TenGer TV", "UBBW 2026 юу болов?"),
+  add("e2", "2026-12-04", "11:00", "12:00", "TenGer Panel 3: Токенжуулалт: Хөрөнгийн шинэ хэлбэр", "Ecosystem", "Panel", "TenGer TV", "Токенжуулалт: Хөрөнгийн шинэ хэлбэр", [],
+    "Токенжуулалт хөрөнгийн шинэ хэлбэр болж буй тухай TenGer-ийн сүүлийн панел. Онлайнаар үзнэ."),
+  add("g4", "2026-12-04", "12:00", "13:30", "Workshop #2", "Builders", "Workshop", "IT Park", "AI, Крипто, Арилжаа",
+    ["Д.Тулга, idax биржийн технологи хариуцсан захирал"], "AI, крипто, арилжааны тухай idax биржийн Д.Тулгатай IT Park-д хийх дадлагын сургалт."),
+  add("e1", "2026-12-04", "13:00", "17:00", "Хакатон финал: 8 баг илтгэл тавина", "Hackathon", "Hack", "TenGer TV", "Финалд үлдсэн 8 баг илтгэл тавина",
+    ["Шүүгч: Ж.Дашням, Global MPC", "Шүүгч: Г.Хүрэлтулга, Бүтээгдэхүүн хөгжүүлэлтийн менежер, TenGer TV", "Шүүгч: Ганхуяг"],
+    "Финалд шалгарсан 8 баг төслөө илтгэж, шүүгчид үнэлнэ. Шагналыг Бямба гаригт гардуулна."),
+  add("f1", "2026-12-04", "15:30", "16:30", "AMA 9: Ard", "Ecosystem", "Talk", "Kryptos restaurant", "Хөрөнгийн токенжуулалт түүний хэрэглээ",
+    ["Ц.Энхтүвшин, Гүйцэтгэх захирал, Монгол ДиФай"], `Хөрөнгийн токенжуулалт, түүний хэрэглээний тухай Монгол ДиФай-н Ц.Энхтүвшин ярина. ${ama}`),
+  add("f2", "2026-12-04", "15:30", "16:30", "AMA 10: idax", "Ecosystem", "Talk", "Kryptos restaurant", "Блокчэйн дээрх бодит хөрөнгө",
+    ["Ж.Амарзаяа, Гүйцэтгэх захирал, Айдакс бирж"], `Блокчэйн дээрх бодит хөрөнгийн тухай Айдакс биржийн Ж.Амарзаяа ярина. ${ama}`),
+  add("e4", "2026-12-04", "20:10", "21:00", "Inside UB Blockchain Week #5", "Ecosystem", "Talk", "TenGer TV", "UBBW 2026 юу болов? Ирэх жил хүртэл баяртай.", [],
+    `${inside} Сүүлийн дугаар: UBBW 2026 юу болов? Ирэх жил хүртэл баяртай.`),
 ];
 
 export function sessionTime(s: Pick<Session, "day" | "start" | "end">) {

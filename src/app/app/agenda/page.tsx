@@ -131,6 +131,7 @@ export default function AgendaPage() {
               lang: s.lang,
               stars: pl?.stars ?? starsFor(s),
               firstN: pl?.firstN !== undefined ? pl.firstN : firstNFor(s),
+              about: s.about,
               topic: s.description,
               speakers: s.speakers,
               where: pl?.mode === "online" ? "Online" : where || "Place to be announced",
