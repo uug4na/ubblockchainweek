@@ -115,7 +115,7 @@ export default function AppHome() {
             </>
           ) : (
             <>
-              <h2>Doors open soon.</h2>
+              <h2>Starting soon.</h2>
               <p>{site.dates} · {site.city}</p>
             </>
           )}

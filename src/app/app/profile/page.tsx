@@ -157,7 +157,7 @@ export default function ProfilePage() {
       <div className="page-in">
         {back}
         <h1 className="app-h1 passport-h1">Your UB Blockchain Passport</h1>
-        <p className="app-sub">One QR for the desk, merch and your contact.</p>
+        <p className="app-sub">One QR for your merch and your contact.</p>
         {/* PC: the card at its phone size, the actions beside it (it used to stretch across the whole column) */}
         <div className="passport-view">
           <BusinessCard person={{ ...u, badges }} qr={cardQr(u.id)} checkedIn={!!u.verifiedAt} />

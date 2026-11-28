@@ -158,12 +158,12 @@ function Invite({ me }: { me: Me }) {
   return (
     <section className="panel invite">
       <div className="panel-head"><h2>Bring friends</h2>{REFERRAL_STARS > 0 && <span className="task-stars"><Star size={13} fill="currentColor" /> {REFERRAL_STARS} each</span>}</div>
-      <p className="muted">{REFERRAL_STARS > 0 ? <>Friend signs up and checks in: +{REFERRAL_STARS}★</> : "A friend who signs up with your link and checks in earns you the Ambassador achievement."}</p>
+      <p className="muted">{REFERRAL_STARS > 0 ? <>Friend signs up and checks in: +{REFERRAL_STARS}★</> : "Friends who sign up with your link count toward the Ambassador achievement."}</p>
       <div className="invite-code">
         <code>{me.user.id}</code>
         <button className="btn btn-clay" onClick={share}>{copied ? <><Copy size={16} /> Link copied</> : <><Share2 size={16} /> Share invite</>}</button>
       </div>
-      <p className="invite-count"><Users size={15} /> {me.invited} signed up · {me.invitedVerified} checked in</p>
+      <p className="invite-count"><Users size={15} /> {me.invited} signed up with your link</p>
     </section>
   );
 }
@@ -184,7 +184,7 @@ function StarsSoon() {
       <section className="panel stars-soon">
         <span className="stars-soon-ico" aria-hidden><Star size={26} fill="currentColor" /></span>
         <h2>Coming soon</h2>
-        <p className="muted">Check-ins, session posters and social tasks open closer to the week.</p>
+        <p className="muted">Session posters, games and social tasks open closer to the week.</p>
       </section>
     </>
   );
@@ -303,7 +303,7 @@ function StarsLive() {
 
       <section className={`tasks-section group-task ${groupDone ? "is-done" : ""}`}>
         <div className="section-mini-head">
-          <h2>Social tasks</h2>
+          <h2>Instagram tasks</h2>
           <span className="task-stars"><Star size={13} fill="currentColor" /> {SOCIAL_GROUP_STARS} for all {socialTasks.length}</span>
         </div>
         <div className="group-progress" role="progressbar" aria-valuemin={0} aria-valuemax={socialTasks.length} aria-valuenow={stepsDone} aria-label="Social tasks done">

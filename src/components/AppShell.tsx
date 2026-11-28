@@ -154,7 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main className="app-main">
         <div className="app-inner">
-          <OfflineBar>Offline — showing your saved Passport. Check-ins and swaps need signal.</OfflineBar>
+          <OfflineBar>Offline — showing your saved Passport. Scanning posters and swaps need signal.</OfflineBar>
           {/* keyed by route only: a screen fades in once per navigation. While the Passport loads it shows a
               skeleton (components/Skeleton), and the real content replaces it in place without a second fade. */}
           <div key={screenKey(path)} className="page-in">{children}</div>
