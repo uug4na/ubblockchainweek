@@ -55,7 +55,8 @@ export async function callApi(input: string, init: RequestInit = {}): Promise<Re
   if (path.startsWith("rpc/")) {
     const fn = path.slice(4);
     if (!DIRECT.test(fn)) return err("Not found.", 404);
-    return rpc(fn, b);
+    // a GET (e.g. usePolling) passes its arguments in the query string: /api/rpc/staff_game_board?game=coin
+    return rpc(fn, method === "GET" ? Object.fromEntries(q) : b);
   }
 
   // ── attendees ──

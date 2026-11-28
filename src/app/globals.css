@@ -4246,3 +4246,7 @@ body { transition: background-color .55s cubic-bezier(.4, 0, .2, 1); }
 .pm-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--label-2); }
 .pm-foot span { display: inline-flex; align-items: center; gap: 4px; }
 .pm.s-resolved, .pm.s-cancelled { background: transparent; }
+
+/* Crew game and star boards (0102): stars up / down */
+.gb-up { color: var(--ok); }
+.gb-down { color: var(--bad); }
