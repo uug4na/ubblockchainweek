@@ -5,6 +5,7 @@ import { usePolling } from "@/lib/usePolling";
 import { usePersisted } from "@/lib/store";
 import { download } from "@/lib/me";
 import { site } from "@/data/site";
+import { StarsBoard } from "./StarsBoard";
 
 type Insights = {
   totals: {
@@ -248,6 +249,7 @@ const tabs = [
   { id: "merch", label: "Merch" },
   { id: "people", label: "People" },
   { id: "activity", label: "Activity" },
+  { id: "stars", label: "Stars" },
 ] as const;
 type Tab = (typeof tabs)[number]["id"];
 
@@ -284,6 +286,7 @@ export function InsightsView() {
       {d && tab === "merch" && <MerchTab d={d} />}
       {d && tab === "people" && <PeopleTab d={d} />}
       {d && tab === "activity" && <ActivityTab d={d} />}
+      {tab === "stars" && <StarsBoard />}
     </>
   );
 }

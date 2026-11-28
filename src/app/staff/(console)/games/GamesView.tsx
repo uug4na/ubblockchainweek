@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Check, Handshake, Ticket, Coins, Vote, Dices, ChevronDown } from "lucide-react";
+import { Plus, X, Check, Handshake, Ticket, Coins, Vote, Dices, Brain } from "lucide-react";
 import { api } from "@/lib/me";
 import { usePolling } from "@/lib/usePolling";
 import { usePersisted } from "@/lib/store";
@@ -9,19 +9,10 @@ import type { Market } from "@/lib/types";
 import { site } from "@/data/site";
 import { FlappyBoard } from "./FlappyBoard";
 import { PlayersBoard } from "./PlayersBoard";
+import { GameBoard } from "./GameBoard";
 
-type Stats = {
-  meet: { connections: number; today: number; bonus: number };
-  scratch: { tickets: number; today: number; starsIn: number; starsOut: number; merchWon: number; prizes: { id: string; label: string; weight: number; won: number }[] };
-  predictions: { open: number; staked: number; paidOut: number };
-  coinflip: { flips: number; today: number; staked: number; paidOut: number; heads: number };
-};
-type Shagai = { throws: number; today: number; players: number; staked: number; paidOut: number; combos: Record<string, number> };
-// Same names and payouts the attendee app shows (see 0017_shagai.sql).
-const COMBOS: [string, string][] = [
-  ["nomad", "Grand Nomad · 3×"], ["berkh", "Dorvon Berkh · 3×"], ["pack", "Lucky Pack · 1.2×"],
-  ["balance", "The Balance · money back"], ["stray", "Stray Flock · lost"], ["frost", "Winter Frost · lost"],
-];
+// Scratch prize odds come from staff_games; every game's plays come from GameBoard (staff_game_board, 0102).
+type Stats = { scratch: { prizes: { id: string; label: string; weight: number; won: number }[] } };
 type Markets ={ markets: (Market & { resolvedBy?: string })[] };
 
 const when = (ms: number) => new Date(ms).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: site.tz });
@@ -31,33 +22,6 @@ const localInput = (ms: number) => { const d = new Date(ms); d.setMinutes(d.getM
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
 const n = (v: number) => (Math.abs(v) >= 100_000 ? compact.format(v) : v.toLocaleString("en-US"));
 
-// One card per game: what it is, one headline number, then plain rows. "net" = stars the
-// game took out of circulation (players paid in minus what they won back).
-function GameCard({ icon, tint, name, what, big, bigLabel, rows, net, children }: {
-  icon: React.ReactNode; tint: string; name: string; what: string; big: number; bigLabel: string;
-  rows: [string, string][]; net?: number; children?: React.ReactNode;
-}) {
-  return (
-    <section className="gm-card">
-      <div className="gm-top">
-        <i className={`more-tile ${tint}`}>{icon}</i>
-        <span><b>{name}</b><small>{what}</small></span>
-      </div>
-      <p className="gm-big"><b title={big.toLocaleString("en-US")}>{n(big)}</b> {bigLabel}</p>
-      <div className="gm-rows">
-        {rows.map(([k, v]) => <div className="gm-row" key={k}><span>{k}</span><b>{v}</b></div>)}
-        {net !== undefined && (
-          <div className={`gm-row gm-net ${net >= 0 ? "is-kept" : "is-lost"}`}>
-            <span>{net >= 0 ? "Event kept" : "Players are up"}</span>
-            <b>{n(Math.abs(net))}★</b>
-          </div>
-        )}
-      </div>
-      {children}
-    </section>
-  );
-}
-
 export function GamesView() {
   const { data: stats } = usePolling<Stats>("/api/rpc/staff_games", 15_000);
   const { data, error, setData } = usePolling<Markets>("/api/rpc/staff_markets", 15_000);
@@ -66,7 +30,6 @@ export function GamesView() {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState<{ id: string; winner: number } | null>(null);
-  const { data: shagai, error: shagaiErr } = usePolling<Shagai>("/api/rpc/staff_shagai", 15_000);
   const tabs = [
     { id: "predict", label: "Predict" },
     { id: "players", label: "Players" },
@@ -74,6 +37,7 @@ export function GamesView() {
     { id: "scratch", label: "Scratch" },
     { id: "coin", label: "Coin" },
     { id: "shagai", label: "Shagai" },
+    { id: "quiz", label: "Quiz" },
     { id: "flappy", label: "Devee" },
   ];
   const [saved, setTab] = usePersisted<string>("ubbw.staff.games", "predict");
@@ -192,12 +156,7 @@ export function GamesView() {
 
       {data && live.length === 0 && !adding && <div className="panel empty"><Vote size={32} /><p>No predictions running. Open one with New prediction.</p></div>}
 
-      {s && (
-        <div className="gm-grid" style={{ marginTop: 16 }}>
-          <GameCard icon={<Vote size={20} />} tint="t-violet" name="Predictions" what="Pick an answer; right pays ×2, wrong is lost." big={s.predictions.open} bigLabel="open now"
-            rows={[["Stars bet", n(s.predictions.staked)], ["Stars paid out", n(s.predictions.paidOut)]]} />
-        </div>
-      )}
+      <div style={{ marginTop: 16 }}><GameBoard game="predict" icon={<Vote size={32} />} /></div>
 
       {past.length > 0 && (
         <details className="bonus" style={{ marginTop: 16 }}>
@@ -216,46 +175,24 @@ export function GamesView() {
       {tab === "players" && <PlayersBoard />}
       {tab === "flappy" && <FlappyBoard />}
 
-      {s && tab !== "predict" && tab !== "players" && tab !== "flappy" && (
-        <>
-          <div className="gm-grid gm-one">
-            {tab === "meet" && <GameCard icon={<Handshake size={20} />} tint="t-blue" name="Proof of Meet" what="Attendees scan each other to connect." big={s.meet.connections} bigLabel="connections made"
-              rows={[["Today", n(s.meet.today)], ["Different interests (×2 stars)", n(s.meet.bonus)]]} />}
-            {tab === "scratch" && <GameCard icon={<Ticket size={20} />} tint="t-magenta" name="Scratch cards" what="Pay stars for a card, maybe win stars or merch." big={s.scratch.tickets} bigLabel="cards bought"
-              rows={[["Today", n(s.scratch.today)], ["Stars paid in", n(s.scratch.starsIn)], ["Stars won back", n(s.scratch.starsOut)], ["Merch won", n(s.scratch.merchWon)]]}
-              net={s.scratch.starsIn - s.scratch.starsOut}>
-              {s.scratch.prizes.length > 0 && (
-                <details className="gm-more">
-                  <summary>Prize odds <ChevronDown size={15} /></summary>
-                  {s.scratch.prizes.map((p) => {
-                    const totalW = s.scratch.prizes.reduce((t, x) => t + x.weight, 0);
-                    return <div className="gm-row" key={p.id}><span>{p.label} · {totalW ? ((p.weight / totalW) * 100).toFixed(1) : 0}%</span><b>{n(p.won)} won</b></div>;
-                  })}
-                </details>
-              )}
-            </GameCard>}
-            {tab === "coin" && <GameCard icon={<Coins size={20} />} tint="t-lime" name="Coin flip" what="Bet stars on heads or tails." big={s.coinflip.flips} bigLabel="flips"
-              rows={[["Today", n(s.coinflip.today)], ["Stars bet", n(s.coinflip.staked)], ["Stars won back", n(s.coinflip.paidOut)], ["Landed heads", `${s.coinflip.flips ? Math.round((s.coinflip.heads / s.coinflip.flips) * 100) : 0}%`]]}
-              net={s.coinflip.staked - s.coinflip.paidOut} />}
-            {tab === "shagai" && (shagai ? (
-              <GameCard icon={<Dices size={20} />} tint="t-orange" name="Shagai" what="Bet stars, throw four ankle bones." big={shagai.throws} bigLabel="throws"
-                rows={[["Today", n(shagai.today)], ["Players", n(shagai.players)], ["Stars bet", n(shagai.staked)], ["Stars won back", n(shagai.paidOut)]]}
-                net={shagai.staked - shagai.paidOut}>
-                {shagai.throws > 0 && (
-                  <details className="gm-more">
-                    <summary>How throws landed <ChevronDown size={15} /></summary>
-                    {COMBOS.map(([id, label]) => (
-                      <div className="gm-row" key={id}><span>{label}</span><b>{n(shagai.combos[id] ?? 0)}</b></div>
-                    ))}
-                  </details>
-                )}
-              </GameCard>
-            ) : (
-              <div className="panel empty"><Dices size={32} /><p>{shagaiErr ? "Shagai stats need a database update." : "Loading…"}</p></div>
-            ))}
-          </div>
-        </>
-      )}
+      {tab === "meet" && <GameBoard game="meet" icon={<Handshake size={32} />} />}
+      {tab === "coin" && <GameBoard game="coin" icon={<Coins size={32} />} />}
+      {tab === "shagai" && <GameBoard game="shagai" icon={<Dices size={32} />} />}
+      {tab === "quiz" && <GameBoard game="quiz" icon={<Brain size={32} />} />}
+      {tab === "scratch" && (<>
+        <GameBoard game="scratch" icon={<Ticket size={32} />} />
+        {s && s.scratch.prizes.length > 0 && (
+          <section className="panel" style={{ marginTop: 16 }}>
+            <div className="panel-head"><h2>Prize odds</h2></div>
+            <div className="gm-rows">
+              {s.scratch.prizes.map((p) => {
+                const totalW = s.scratch.prizes.reduce((t, x) => t + x.weight, 0);
+                return <div className="gm-row" key={p.id}><span>{p.label} · {totalW ? ((p.weight / totalW) * 100).toFixed(1) : 0}%</span><b>{n(p.won)} won</b></div>;
+              })}
+            </div>
+          </section>
+        )}
+      </>)}
     </>
   );
 }
