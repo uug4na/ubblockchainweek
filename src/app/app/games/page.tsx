@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { preload } from "react-dom";
 import Link from "next/link";
 import { Handshake, TrendingUp, Ticket, Coins, ChevronRight, Zap, Bird } from "lucide-react";
 import type { SVGProps } from "react";
@@ -27,12 +28,12 @@ function ShagaiIcon({ strokeWidth = 2, ...p }: SVGProps<SVGSVGElement>) {
 
 // Each game keeps its own colour (the card's background), wherever it sits in the list.
 const games = [
-  { href: "/app/games/shagai", icon: ShagaiIcon, title: "Shagai", body: "Roll the Dorvon Berkh", tag: "Luck", tone: "var(--violet)", image: "/games/cards/shagai.jpg", glass: true },
-  { href: "/app/games/flip", icon: Coins, title: "Coin flip", body: "Heads or tails, double up", tag: "Luck", tone: "var(--cyan)", image: "/games/cards/flip.jpg", glass: true },
-  { href: "/app/games/devee", icon: Bird, title: "Devee", body: "Ardcoin · fly the pipes", tag: "Skill", tone: "#2f8fe0", image: "/games/flappy/devee.jpg" },
-  { href: "/app/games/scratch", icon: Ticket, title: "Scratch card", body: "Stars, jackpot or merch", tag: "Luck", tone: "var(--klein)", image: "/games/cards/scratch.jpg", glass: true },
-  { href: "/app/games/meet", icon: Handshake, title: "Proof of Meet", body: "Scan a new contact", tag: "Earn", tone: "var(--fushia)", image: "/games/cards/meet.jpg", glass: true },
-  { href: "/app/games/predict", icon: TrendingUp, title: "Predictions", body: "Call it, win double", tag: "Risk", tone: "#9ccf2e", image: "/games/cards/predict.jpg", glass: true },
+  { href: "/app/games/shagai", icon: ShagaiIcon, title: "Shagai", body: "Roll the Dorvon Berkh", tag: "Luck", tone: "var(--violet)", image: "/games/cards/shagai.webp", glass: true },
+  { href: "/app/games/flip", icon: Coins, title: "Coin flip", body: "Heads or tails, double up", tag: "Luck", tone: "var(--cyan)", image: "/games/cards/flip.webp", glass: true },
+  { href: "/app/games/devee", icon: Bird, title: "Devee", body: "Ardcoin · fly the pipes", tag: "Skill", tone: "#2f8fe0", image: "/games/flappy/devee-card.webp" },
+  { href: "/app/games/scratch", icon: Ticket, title: "Scratch card", body: "Stars, jackpot or merch", tag: "Luck", tone: "var(--klein)", image: "/games/cards/scratch.webp", glass: true },
+  { href: "/app/games/meet", icon: Handshake, title: "Proof of Meet", body: "Scan a new contact", tag: "Earn", tone: "var(--fushia)", image: "/games/cards/meet.webp", glass: true },
+  { href: "/app/games/predict", icon: TrendingUp, title: "Predictions", body: "Call it, win double", tag: "Risk", tone: "#9ccf2e", image: "/games/cards/predict.webp", glass: true },
 ];
 
 // The global quiz sits above the other games: live now, or counting down to the next drop.
@@ -72,6 +73,8 @@ function LiveQuizCard() {
 }
 
 export default function GamesPage() {
+  // Start the card images while sign-in and stars are still loading, so they're ready when the list appears.
+  for (const g of games) if (g.image) preload(withBase(g.image), { as: "image" });
   const { status, me } = useMe();
   const [soon, setSoon] = useState<{ title: string; tone: string } | null>(null);
   if (status === "loading") return <PageSkeleton />;
@@ -96,7 +99,7 @@ export default function GamesPage() {
             {/* Glass cards: one continuous panorama fills the card; the text side is frosted with a progressive blur
                 (strong on the left, easing to sharp toward the art) so there's no seam or ghosting. */}
             {g.glass && <span className="game-blur" aria-hidden><i /><i /><i /><i /><i /></span>}
-            {g.image ? <img className="game-photo" src={withBase(g.image)} alt="" aria-hidden /> : <g.icon className="game-art" aria-hidden strokeWidth={1.5} />}
+            {g.image ? <img className="game-photo" src={withBase(g.image)} alt="" aria-hidden decoding="async" /> : <g.icon className="game-art" aria-hidden strokeWidth={1.5} />}
             <span className="game-text">
               <span className="game-tag">{g.tag}</span>
               <b>{g.title}{!gameOpen(g.href, me.user.email, !!me.user.isCrew) && <span className="soon-tag">Coming soon</span>}</b>

@@ -30,7 +30,7 @@ self.addEventListener("fetch", (event) => {
   const rel = "/" + url.pathname.slice(BASE.length); // path inside the app, e.g. "/app/scan"
   if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE) || rel.startsWith("/api/")) return;
 
-  if (rel.startsWith("/_next/static/") || rel.startsWith("/icons/") || /\.(woff2?|png|svg|ico)$/.test(rel)) {
+  if (rel.startsWith("/_next/static/") || rel.startsWith("/icons/") || /\.(woff2?|png|jpe?g|webp|svg|ico)$/.test(rel)) {
     event.respondWith(
       caches.match(req).then(
         (hit) =>
