@@ -94,7 +94,7 @@ function EventCard({ group, stock, me, now, onBought, onPass }: { group: SeatGro
     );
   else if (closed(seat)) action = <p className="event-state">Closed</p>;
   else if (full(seat)) action = <p className="event-state is-full">Full</p>;
-  else if (!me.user.verifiedAt) action = <p className="event-state">Check in first</p>;
+  else if (!me.user.verifiedAt) action = <p className="event-state">Sign up first</p>;
   else if (short > 0)
     action = (
       <div className="event-progress">
@@ -178,7 +178,7 @@ function Item({ item, left, me, onRedeemed, onOpen, full = false }: { item: Merc
   if (claimed) action = <span className="task-status ok"><Check size={15} /> Yours</span>;
   else if (soldOut) action = <span className="merch-gone">Gone</span>;
   else if (mine) action = <span className="muted small">Swap used</span>;
-  else if (!me.user.verifiedAt) action = <span className="muted small">Check in first</span>;
+  else if (!me.user.verifiedAt) action = <span className="muted small">Sign up first</span>;
   else if (short > 0) action = <span className="muted small">{short}★ to go</span>;
   else if (confirm)
     action = (

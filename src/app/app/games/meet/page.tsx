@@ -310,7 +310,7 @@ export default function MeetPage() {
             <div><span>Meets that pay stars</span><b>first {rules.cap}</b></div>
             <div><span>People you can meet</span><b>no limit</b></div>
           </div>
-          <p className="muted small" style={{ marginTop: 10 }}>Both of you must be checked in at the event. Each pair counts once.</p>
+          <p className="muted small" style={{ marginTop: 10 }}>Both of you need a Passport in the app. Each pair counts once.</p>
         </section>
       )}
 

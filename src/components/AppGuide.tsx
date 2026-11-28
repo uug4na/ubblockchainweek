@@ -29,7 +29,7 @@ const tabsFor = (open: Open): Tab[] => [
     id: "stars",
     label: "Stars & games",
     rows: [
-      { icon: Star, tile: "t-citric", title: "Earn stars", line: "Check-ins, sessions and tasks", href: "/app/stars", soon: !open.stars },
+      { icon: Star, tile: "t-citric", title: "Earn stars", line: "Sign-up, session posters and tasks", href: "/app/stars", soon: !open.stars },
       { icon: Handshake, tile: "t-fushia", title: "Proof of Meet", line: "Scan someone new, earn together", href: "/app/games/meet", soon: !open.games },
       { icon: Dices, tile: "t-klein", title: "Play games", line: "Shagai, Coin flip, Scratch, Devee", href: "/app/games", soon: !open.games },
       { icon: Gift, tile: "t-aqua", title: "Spend them", line: `Merch for ${MERCH_COST}★, AMA and workshop seats`, href: "/app/merch", soon: !open.merch },
@@ -42,7 +42,7 @@ const tabsFor = (open: Open): Tab[] => [
       { icon: MessageCircle, tile: "t-klein", title: "Ask the UBBW Team", line: "Your own thread in Messages", href: "/app/chat" },
       { icon: MapPin, tile: "t-fushia", title: "Every place on the map", line: "Directions from the Agenda", href: "/app/agenda" },
       { icon: Radio, tile: "t-aqua", title: "Online sessions", line: "Marked in the Agenda", href: "/app/agenda" },
-      { icon: UsersRound, tile: "t-gray", title: "Crew at the desk", line: "Help with check-in, Passport and merch" },
+      { icon: UsersRound, tile: "t-gray", title: "Ask the crew", line: "Help with the app, Passport and merch" },
     ],
   },
 ];
