@@ -1,7 +1,7 @@
 "use client";
 
 // ARDCoin swap (owner, 25 Nov 2026; supabase/migrations/0074_ardcoin_swap.sql): 1,000★ → 1,000 ARDCoin, once per
-// person, first 200. Attendees fill in their name and the phone number registered in the ARD app (no ACO address since 0083); ARD send the coins 7 days
+// person, first 100 (ardcoin_stock). Attendees fill in their name and the phone number registered in the ARD app (no ACO address since 0083); ARD send the coins 7 days
 // after the swap. Separate from the one merch swap.
 import { useEffect, useRef, useState } from "react";
 import { Check, CircleCheck, Star } from "lucide-react";

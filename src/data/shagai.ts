@@ -1,5 +1,5 @@
 // Shagai: four ankle bones, paid by how many land on a lucky side.
-// The database throws the bones (supabase/migrations/0017_shagai.sql); this file only
+// The database throws the bones (0017_shagai.sql, paytable from 0103_better_odds.sql); this file only
 // describes the rules for the screen, so keep it in step with that migration.
 
 export type Bone = "horse" | "sheep" | "camel" | "goat";
@@ -15,10 +15,10 @@ export const BONES: Record<Bone, { mn: string; en: string; lucky: boolean; odds:
 
 // Paytable, best first. `lucky` = how many lucky sides the pattern shows (for the little dots).
 export const COMBOS: { id: Combo; name: string; rule: string; lucky: number; x: number; chance: number }[] = [
-  { id: "berkh", name: "Dorvon Berkh", rule: "One of each animal", lucky: 2, x: 3, chance: 0.047 },
+  { id: "berkh", name: "Dorvon Berkh", rule: "One of each animal", lucky: 2, x: 2, chance: 0.047 },
   { id: "nomad", name: "Grand Nomad", rule: "4 lucky", lucky: 4, x: 3, chance: 0.0625 },
-  { id: "pack", name: "Lucky Pack", rule: "3 lucky", lucky: 3, x: 1, chance: 0.25 },
-  { id: "balance", name: "The Balance", rule: "2 lucky", lucky: 2, x: 0.5, chance: 0.328 },
+  { id: "pack", name: "Lucky Pack", rule: "3 lucky", lucky: 3, x: 1.5, chance: 0.25 },
+  { id: "balance", name: "The Balance", rule: "2 lucky", lucky: 2, x: 1, chance: 0.328 },
   { id: "stray", name: "Stray Flock", rule: "1 lucky", lucky: 1, x: 0, chance: 0.25 },
   { id: "frost", name: "Winter Frost", rule: "0 lucky", lucky: 0, x: 0, chance: 0.0625 },
 ];
